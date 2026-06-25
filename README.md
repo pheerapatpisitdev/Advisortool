@@ -11,7 +11,6 @@
 | `/ihealthy` | iHealthy Ultra | เปรียบเทียบแผนประกันสุขภาพ (shadcn/ui) |
 | `/ci123` | CI 123 | ประกันโรคร้ายแรง + เครื่องคำนวณเบี้ย |
 | `/group-insurance` | Group Insurance | ใบเสนอราคาประกันกลุ่ม (Vite → client-only, PDF) |
-| `/family-planning` | Family Financial Planning | กระดานวางแผนการเงินครอบครัว (static) |
 | `/fhc` | แบบสอบถามคุณภาพชีวิต | ฟอร์มประเมินการเงิน + บันทึก Supabase (แปลงจาก static HTML) |
 
 ## เริ่มใช้งาน

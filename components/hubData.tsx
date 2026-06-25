@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { HeartPulse, PiggyBank, ActivitySquare, Users, Wallet, ClipboardList } from "lucide-react";
+import { HeartPulse, PiggyBank, ActivitySquare, Users, ClipboardList } from "lucide-react";
 
 export type Product = {
   href: string;
@@ -65,19 +65,6 @@ export const products: Product[] = [
     gradient: "linear-gradient(135deg, #3b3fb6 0%, #6d5ae0 55%, #9a7af0 100%)",
     imageSrc: "/hub/group-insurance.jpg",
     icon: <Users size={56} strokeWidth={1.4} />,
-  },
-  {
-    href: "/family-planning",
-    band: "Family Financial Planning",
-    tagline: "วางแผนการเงินครอบครัวแบบเห็นภาพรวมทั้งกระดาน",
-    bullets: [
-      "มองเห็นเป้าหมายและความเสี่ยงทางการเงินของครอบครัว",
-      "จัดลำดับความสำคัญของแผนแต่ละด้าน",
-      "ใช้เป็นเครื่องมือพูดคุยวางแผนกับครอบครัว",
-    ],
-    gradient: "linear-gradient(135deg, #0e7490 0%, #06b6d4 55%, #67e8f9 100%)",
-    imageSrc: "/hub/family-planning.jpg",
-    icon: <Wallet size={56} strokeWidth={1.4} />,
   },
   {
     href: "/fhc",
