@@ -5,7 +5,7 @@ export default function Hub() {
   return (
     <div className="az-shell">
       <main className="az-main">
-        <h1 className="az-headline">My App</h1>
+        <h1 className="az-headline">AdvisorKu</h1>
 
         <div className="az-grid">
           {products.map((p, i) => (
