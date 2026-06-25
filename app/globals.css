@@ -68,7 +68,9 @@ body { margin: 0; }
 
 /* --- Top header (replaces the old navbar, shown on every route) --- */
 .az-header {
-  position: relative;
+  position: sticky;
+  top: 0;
+  z-index: 120;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -295,3 +297,12 @@ body { margin: 0; }
   align-items: center;
   gap: 6px;
 }
+
+/* --- Group Insurance full-viewport SPA: shift its own fixed chrome below the
+   64px global header. Selectors target only `position:fixed` elements (via the
+   .fixed utility) so absolute/sticky decorations inside the app are untouched. --- */
+.gi-frame .fixed.top-0 { top: 64px; }
+.gi-frame .fixed.top-4 { top: calc(64px + 1rem); }
+.gi-frame .fixed.inset-0 { top: 64px; }
+.gi-frame .fixed.h-screen { height: calc(100vh - 64px); }
+.gi-frame .min-h-screen { min-height: calc(100vh - 64px); }
