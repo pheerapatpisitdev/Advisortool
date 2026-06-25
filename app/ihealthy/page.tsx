@@ -2,13 +2,13 @@
 
 import { useEffect } from "react";
 import DetailedBenefits from "@/components/detailed-benefits";
-import { useLanguage } from "@/context/language-context";
-import { LanguageProvider } from "@/context/language-context";
+import { LanguageProvider, useLanguage } from "@/context/language-context";
 import { Toaster } from "@/components/ui/toaster";
 
 function IHealthyContent() {
   const { t, language } = useLanguage();
 
+  // Manually sync document meta here because this route owns its LanguageProvider; the root layout's metadata export can't reach the language context.
   useEffect(() => {
     if (typeof document === "undefined") {
       return;
