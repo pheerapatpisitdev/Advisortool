@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { HeartPulse, PiggyBank, ActivitySquare, Users, ClipboardList } from "lucide-react";
+import { HeartPulse, PiggyBank, ActivitySquare, Users, ClipboardList, Briefcase } from "lucide-react";
 
 export type Product = {
   href: string;
@@ -78,5 +78,18 @@ export const products: Product[] = [
     gradient: "linear-gradient(135deg, #b45309 0%, #d97757 55%, #fbbf24 100%)",
     imageSrc: "/hub/fhc.jpg",
     icon: <ClipboardList size={56} strokeWidth={1.4} />,
+  },
+  {
+    href: "/career-agent",
+    band: "Career-Agent-Question",
+    tagline: "แบบสอบถามความถนัดในอาชีพตัวแทน — ประเมินและส่งผลอัตโนมัติ",
+    bullets: [
+      "แบบสอบถามหลายส่วน + คำถามปลายเปิด",
+      "ให้คะแนนและจัดระดับ (เขียว/ส้ม/แดง) อัตโนมัติ",
+      "ส่งผลทางอีเมล/LINE และบันทึกคำตอบได้",
+    ],
+    gradient: "linear-gradient(135deg, #1C1B1A 0%, #4a4641 55%, #d97757 100%)",
+    imageSrc: "/hub/career-agent.jpg",
+    icon: <Briefcase size={56} strokeWidth={1.4} />,
   },
 ];

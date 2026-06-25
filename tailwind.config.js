@@ -40,6 +40,14 @@ module.exports = {
           accent: "hsl(var(--sidebar-accent))", "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
           border: "hsl(var(--sidebar-border))", ring: "hsl(var(--sidebar-ring))",
         },
+        /* Career-Agent questionnaire tokens (ported from its Tailwind theme) */
+        "bg-dark": "#1C1B1A",
+        "surface-light": "#F7F5F2",
+        "text-primary-light": "#1A1917",
+        "text-primary-dark": "#EEEBE6",
+        "text-secondary": "#9C9A96",
+        "bubble-user-light": "#EDEAE5",
+        "border-light": "#D9D5CE",
       },
       borderRadius: {
         lg: "var(--radius)", md: "calc(var(--radius) - 2px)", sm: "calc(var(--radius) - 4px)",

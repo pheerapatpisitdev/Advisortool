@@ -5,9 +5,7 @@ export default function Hub() {
   return (
     <div className="az-shell">
       <main className="az-main">
-        <h1 className="az-headline">เลือกผลิตภัณฑ์ที่ใช่สำหรับคุณ</h1>
-
-        <div className="az-section-label">ผลิตภัณฑ์และแพ็คเกจแนะนำ</div>
+        <h1 className="az-headline">My App</h1>
 
         <div className="az-grid">
           {products.map((p, i) => (
