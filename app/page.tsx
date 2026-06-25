@@ -5,10 +5,7 @@ export default function Hub() {
   return (
     <div className="az-shell">
       <main className="az-main">
-        <h1 className="az-headline">
-          <span className="az-slash" aria-hidden />
-          เลือกผลิตภัณฑ์ที่ใช่สำหรับคุณ
-        </h1>
+        <h1 className="az-headline">เลือกผลิตภัณฑ์ที่ใช่สำหรับคุณ</h1>
 
         <div className="az-section-label">ผลิตภัณฑ์และแพ็คเกจแนะนำ</div>
 

@@ -157,16 +157,6 @@ body { margin: 0; }
   letter-spacing: -0.5px;
   padding: 18px 0 26px;
 }
-.az-headline .az-slash {
-  display: inline-block;
-  width: 16px;
-  height: 1em;
-  margin-right: 14px;
-  background: #e2231a;
-  transform: skewX(-16deg);
-  vertical-align: -0.08em;
-  box-shadow: 9px 0 0 #e2231a, 22px 0 0 rgba(226,35,26,.35);
-}
 .az-section-label {
   font-size: 19px;
   font-weight: 700;
