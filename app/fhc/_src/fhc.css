@@ -1,0 +1,156 @@
+@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
+
+/* All selectors scoped under .fhc-scope so the questionnaire's reset/body
+   styles never leak to the rest of the app. */
+.fhc-scope {
+  font-family: 'Sarabun', system-ui, sans-serif;
+  background: #F0EBE3;
+  min-height: calc(100vh - var(--az-header-h, 64px));
+  padding: 1.5rem 1rem 3rem;
+  color: #1A1A1A;
+}
+.fhc-scope * { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* Layout */
+.fhc-scope .wrap { max-width: 980px; margin: 0 auto; }
+.fhc-scope .page-title {
+  text-align: center; font-size: 22px; font-weight: 700; color: #1A1A1A;
+  margin-bottom: 1.75rem; letter-spacing: -0.3px;
+}
+.fhc-scope .page-title span { display: inline-block; border-bottom: 2.5px solid #D97757; padding-bottom: 3px; }
+.fhc-scope .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.fhc-scope .row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
+
+/* Card */
+.fhc-scope .card {
+  background: #FFFFFF; border-radius: 16px; padding: 1.1rem 1.2rem; margin-bottom: 1rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.07), 0 0 0 1px rgba(0,0,0,0.04); transition: box-shadow 0.2s;
+}
+.fhc-scope .card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.09), 0 0 0 1px rgba(0,0,0,0.04); }
+
+/* Badge */
+.fhc-scope .badge {
+  display: inline-flex; align-items: center; font-size: 11.5px; font-weight: 600;
+  padding: 4px 12px; border-radius: 20px; margin-bottom: 12px; letter-spacing: 0.1px;
+}
+.fhc-scope .bg-yellow { background: #FEF3C7; color: #92400E; }
+.fhc-scope .bg-pink   { background: #FCE7F3; color: #9D174D; }
+.fhc-scope .bg-green  { background: #D1FAE5; color: #065F46; }
+.fhc-scope .bg-blue   { background: #DBEAFE; color: #1E40AF; }
+.fhc-scope .bg-orange { background: #FFEDD5; color: #9A3412; }
+.fhc-scope .bg-purple { background: #EDE9FE; color: #4C1D95; }
+.fhc-scope .bg-red    { background: #FEE2E2; color: #991B1B; }
+.fhc-scope .bg-teal   { background: #CCFBF1; color: #134E4A; }
+
+/* Form fields */
+.fhc-scope .fg { display: flex; flex-direction: column; gap: 5px; margin-bottom: 10px; }
+.fhc-scope .fg label { font-size: 12px; font-weight: 500; color: #6B6B6B; }
+.fhc-scope .fg input, .fhc-scope .fg select, .fhc-scope .fg textarea {
+  padding: 8px 12px; border-radius: 10px; border: 1.5px solid #E8E3DC; font-size: 13px;
+  background: #FAFAF8; color: #1A1A1A; width: 100%; font-family: 'Sarabun', sans-serif;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.fhc-scope .fg textarea { resize: vertical; min-height: 48px; line-height: 1.6; }
+.fhc-scope .fg input:focus, .fhc-scope .fg select:focus, .fhc-scope .fg textarea:focus {
+  outline: none; border-color: #D97757; background: #FFFFFF; box-shadow: 0 0 0 3px rgba(217,119,87,0.12);
+}
+
+/* Calc row */
+.fhc-scope .calc {
+  display: flex; align-items: center; gap: 10px; background: #FAF7F4;
+  border: 1px solid #EDE8E1; border-radius: 10px; padding: 8px 12px; margin-top: 6px;
+}
+.fhc-scope .calc-lbl { font-size: 12px; color: #8A8A8A; flex: 1; font-weight: 500; }
+.fhc-scope .calc-val { font-size: 14px; font-weight: 700; color: #D97757; }
+.fhc-scope .calc-unit { font-size: 11px; color: #ABABAB; font-weight: 500; }
+
+/* Age circles */
+.fhc-scope .av-lbl { font-size: 10px; color: #9A9A9A; text-align: center; max-width: 64px; font-weight: 500; }
+.fhc-scope .circ {
+  border-radius: 50%; background: #FDDCCC; display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; color: #7A3520; border: 2.5px solid transparent; cursor: pointer;
+  transition: border-color 0.15s, transform 0.15s;
+}
+.fhc-scope .circ:hover { border-color: #D97757; transform: scale(1.05); }
+.fhc-scope .circ.lg { width: 56px; height: 56px; font-size: 13px; }
+.fhc-scope .circ.md { width: 56px; height: 56px; font-size: 13px; }
+.fhc-scope .circ.filled { background: #D97757; color: #fff; border-color: #C0663F; }
+.fhc-scope .hline { width: 20px; height: 2.5px; background: #D97757; border-radius: 2px; }
+.fhc-scope .vline { width: 2.5px; height: 20px; background: #D97757; border-radius: 2px; margin: 0 auto; }
+.fhc-scope .age-grid { display: grid; grid-template-columns: 1fr 28px 1fr 28px 1fr; padding: 8px 0 14px; text-align: center; }
+.fhc-scope .age-center { display: flex; justify-content: center; }
+.fhc-scope .age-connector { display: flex; align-items: center; justify-content: center; }
+
+/* Person list */
+.fhc-scope .person-row { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
+.fhc-scope .pnum {
+  width: 24px; height: 24px; border-radius: 50%; background: #FFEDD5; color: #9A3412;
+  font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.fhc-scope .person-row input {
+  flex: 1; padding: 7px 10px; border-radius: 10px; border: 1.5px solid #E8E3DC;
+  font-size: 12.5px; background: #FAFAF8; color: #1A1A1A; font-family: 'Sarabun', sans-serif;
+  transition: border-color 0.15s;
+}
+.fhc-scope .person-row input:focus { outline: none; border-color: #D97757; background: #fff; box-shadow: 0 0 0 3px rgba(217,119,87,0.1); }
+
+/* Events */
+.fhc-scope .event-row { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; }
+.fhc-scope .enum {
+  width: 28px; height: 28px; border-radius: 50%; background: #FEE2E2; color: #991B1B;
+  font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+
+/* Summary grid */
+.fhc-scope .sum-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 1rem; }
+.fhc-scope .sum-card { background: #FAF7F4; border: 1px solid #EDE8E1; border-radius: 12px; padding: 12px 10px; text-align: center; }
+.fhc-scope .sum-lbl { font-size: 11px; color: #8A8A8A; margin-bottom: 4px; font-weight: 500; }
+.fhc-scope .sum-val { font-size: 16px; font-weight: 700; color: #1A1A1A; }
+
+/* Footer */
+.fhc-scope .footer-row { display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; border-top: 1.5px solid #EDE8E1; padding-top: 14px; margin-top: 8px; }
+.fhc-scope .footer-field { display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 140px; }
+.fhc-scope .footer-field label { font-size: 11.5px; color: #6B6B6B; font-weight: 500; }
+.fhc-scope .footer-field input {
+  padding: 8px 12px; border-radius: 10px; border: 1.5px solid #E8E3DC; font-size: 13px;
+  background: #FAFAF8; color: #1A1A1A; font-family: 'Sarabun', sans-serif; transition: border-color 0.15s;
+}
+.fhc-scope .footer-field input:focus { outline: none; border-color: #D97757; background: #fff; box-shadow: 0 0 0 3px rgba(217,119,87,0.1); }
+
+/* Buttons */
+.fhc-scope .analyze-btn {
+  padding: 12px 24px; border-radius: 12px; border: none; background: #D97757; color: #fff;
+  font-size: 14.5px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 1rem;
+  font-family: 'Sarabun', sans-serif; letter-spacing: 0.2px;
+  transition: background 0.2s, transform 0.1s, box-shadow 0.2s; box-shadow: 0 2px 8px rgba(217,119,87,0.35);
+}
+.fhc-scope .analyze-btn:hover { background: #C0663F; box-shadow: 0 4px 14px rgba(217,119,87,0.4); }
+.fhc-scope .analyze-btn:active { transform: scale(0.99); }
+.fhc-scope .btn-row { display: flex; gap: 10px; margin-top: 1rem; }
+.fhc-scope .btn-row .analyze-btn { flex: 1; margin-top: 0; }
+.fhc-scope .line-btn {
+  display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 20px;
+  border-radius: 12px; border: none; background: #06C755; color: #fff; font-size: 14.5px; font-weight: 700;
+  cursor: pointer; font-family: 'Sarabun', sans-serif; transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(6,199,85,0.35); white-space: nowrap;
+}
+.fhc-scope .line-btn:hover { background: #05A847; box-shadow: 0 4px 14px rgba(6,199,85,0.4); }
+.fhc-scope .line-btn:active { transform: scale(0.99); }
+.fhc-scope .ev-btn {
+  padding: 5px 16px; border-radius: 20px; border: 1.5px solid #D97757; background: #FFF7F4; color: #C0663F;
+  font-size: 12px; font-weight: 600; cursor: pointer; font-family: 'Sarabun', sans-serif; transition: background 0.15s, color 0.15s;
+}
+.fhc-scope .ev-btn:hover { background: #D97757; color: #fff; }
+
+/* Result / loading box */
+.fhc-scope .result-box {
+  background: #F0FDF4; border: 1.5px solid #86EFAC; border-radius: 14px; padding: 1.1rem 1.2rem;
+  margin-top: 1rem; white-space: pre-wrap; font-size: 13px; color: #14532D; line-height: 1.8;
+}
+
+/* Responsive */
+@media (max-width: 620px) {
+  .fhc-scope .row2, .fhc-scope .row3 { grid-template-columns: 1fr; }
+  .fhc-scope .sum-grid { grid-template-columns: 1fr 1fr; }
+  .fhc-scope { padding: 1rem 0.75rem 2rem; }
+}
