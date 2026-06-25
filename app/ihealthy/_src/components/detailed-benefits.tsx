@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState, useRef } from "react";
-import html2canvas from "html2canvas";
+// html2canvas (~50KB gz) is loaded on demand inside the screenshot handler so it
+// stays out of the /ihealthy first-load bundle.
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import {
   Table,
@@ -128,6 +129,7 @@ export default function DetailedBenefits() {
       el.style.maxWidth = "1200px";
       el.style.margin = "0 auto";
 
+      const html2canvas = (await import("html2canvas")).default;
       const canvas = await html2canvas(el, {
         backgroundColor: "#faf9f5",
         scale: 2,

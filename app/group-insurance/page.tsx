@@ -1,7 +1,11 @@
 "use client";
 import dynamic from "next/dynamic";
+import RouteLoading from "../../components/RouteLoading";
 
-const GroupInsuranceApp = dynamic(() => import("./_src/AppWithProviders"), { ssr: false });
+const GroupInsuranceApp = dynamic(() => import("./_src/AppWithProviders"), {
+  ssr: false,
+  loading: () => <RouteLoading />,
+});
 
 export default function Page() {
   // .gi-frame keeps this app's own full-viewport fixed sidebar/menu below the
