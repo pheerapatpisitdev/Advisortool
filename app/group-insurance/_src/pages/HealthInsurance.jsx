@@ -13,7 +13,7 @@ function HealthInsurance() {
         <div className="flex flex-col items-center">
           <div className="w-full max-w-4xl flex justify-center mb-4">
             <img
-              src={lang === 'en' ? imgHealthEn : imgHealth}
+              src={(lang === 'en' ? imgHealthEn : imgHealth).src}
               alt={lang === 'en' ? 'Group Health Insurance' : 'ประกันสุขภาพกลุ่ม'}
               className="w-full h-auto object-contain"
             />
