@@ -1,4 +1,4 @@
-# Combined App (AdvisorZone)
+# AdvisorKu
 
 รวมเว็บแอป 4 ตัวเข้าเป็นแอปเดียวด้วย **Next.js 15 (App Router) + React 19 + TypeScript + Tailwind CSS** โดยมีหน้า Hub สไตล์ AdvisorZone เป็นหน้าแรกสำหรับเลือกเข้าแต่ละแอป
 
