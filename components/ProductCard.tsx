@@ -27,7 +27,7 @@ export function ProductCard({ p, index }: { p: Product; index: number }) {
         {p.isNew && <span className="az-ribbon">NEW</span>}
       </div>
 
-      <div className="az-band">{p.band}</div>
+      <h2 className="az-band">{p.band}</h2>
 
       <div className="az-body">
         <p className="az-tagline">{p.tagline}</p>

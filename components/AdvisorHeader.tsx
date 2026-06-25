@@ -10,16 +10,6 @@ export default function AdvisorHeader() {
         <Home size={20} />
       </Link>
 
-      <Link href="/" className="az-header__brand" style={{ textDecoration: "none" }}>
-        <div className="az-header__logo">
-          <span className="b1">Advisor</span>
-          <span className="b2">Zone</span>
-        </div>
-        <div className="az-header__sub">
-          app: 6.22.0 <span className="az-header__api">API</span>
-        </div>
-      </Link>
-
       <span className="az-header__avatar" aria-label="โปรไฟล์">
         <User size={22} />
         <span className="az-header__check">
