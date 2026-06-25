@@ -15,7 +15,8 @@
     "incremental": true,
     "plugins": [{ "name": "next" }],
     "paths": {
-      "@/*": ["./app/ihealthy/_src/*"]
+      "@/*": ["./app/ihealthy/_src/*"],
+      "@agency/*": ["./app/agency/_src/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

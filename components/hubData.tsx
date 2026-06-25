@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { HeartPulse, PiggyBank, ActivitySquare, Users, ClipboardList, Briefcase } from "lucide-react";
+import { HeartPulse, PiggyBank, ActivitySquare, Users, ClipboardList, Briefcase, Network } from "lucide-react";
 
 export type Product = {
   href: string;
@@ -91,5 +91,18 @@ export const products: Product[] = [
     gradient: "linear-gradient(135deg, #1C1B1A 0%, #4a4641 55%, #d97757 100%)",
     imageSrc: "/hub/career-agent.jpg",
     icon: <Briefcase size={56} strokeWidth={1.4} />,
+  },
+  {
+    href: "/agency",
+    band: "Agency Blueprint",
+    tagline: "ชุดเครื่องมือตัวแทน — คำนวณค่าบริหาร/รายได้ + แบบทดสอบผู้จัดการ",
+    bullets: [
+      "เครื่องคำนวณค่าบริหาร (commission)",
+      "เครื่องคำนวณรายได้ตัวแทน + โบนัส",
+      "แบบทดสอบความพร้อมผู้จัดการ",
+    ],
+    gradient: "linear-gradient(135deg, #314059 0%, #5A8282 55%, #B48749 100%)",
+    imageSrc: "/hub/agency.jpg",
+    icon: <Network size={56} strokeWidth={1.4} />,
   },
 ];
