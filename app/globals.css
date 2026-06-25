@@ -55,3 +55,243 @@
 
 html { scroll-behavior: smooth; }
 body { margin: 0; }
+
+/* ===================================================================
+   AdvisorZone-style Hub (home page) — all scoped under .az- prefix
+   =================================================================== */
+.az-shell {
+  font-family: 'IBM Plex Sans Thai', system-ui, sans-serif;
+  background: #f4f5f7;
+  min-height: calc(100vh - 64px);
+  color: #33415c;
+}
+
+/* --- Top header (replaces the old navbar, shown on every route) --- */
+.az-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+  padding: 0 22px;
+  background: #ffffff;
+  border-bottom: 1px solid #e9eaee;
+  font-family: 'IBM Plex Sans Thai', system-ui, sans-serif;
+}
+.az-header__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  color: #1f3aa0;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  transition: background .18s ease, transform .18s ease;
+}
+.az-header__icon:hover { background: #f1f4fb; transform: translateY(-1px); }
+.az-header__brand {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  line-height: 1;
+}
+.az-header__logo { font-size: 26px; font-weight: 700; letter-spacing: -0.3px; }
+.az-header__logo .b1 { color: #1f3aa0; }
+.az-header__logo .b2 { color: #2b6cc4; }
+.az-header__sub {
+  margin-top: 4px;
+  font-size: 11px;
+  color: #9aa1ad;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.az-header__api {
+  font-size: 9px;
+  font-weight: 700;
+  color: #2b6cc4;
+  border: 1px solid #bcd2ef;
+  border-radius: 4px;
+  padding: 1px 4px;
+}
+.az-header__avatar {
+  position: relative;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #eef2fb;
+  color: #1f3aa0;
+}
+.az-header__check {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #16a34a;
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #fff;
+}
+
+/* --- Hub body --- */
+.az-main { max-width: 1240px; margin: 0 auto; padding: 30px 22px 64px; }
+.az-headline {
+  position: relative;
+  text-align: center;
+  font-size: clamp(28px, 4.4vw, 46px);
+  font-weight: 800;
+  color: #14266b;
+  letter-spacing: -0.5px;
+  padding: 18px 0 26px;
+}
+.az-headline .az-slash {
+  display: inline-block;
+  width: 16px;
+  height: 1em;
+  margin-right: 14px;
+  background: #e2231a;
+  transform: skewX(-16deg);
+  vertical-align: -0.08em;
+  box-shadow: 9px 0 0 #e2231a, 22px 0 0 rgba(226,35,26,.35);
+}
+.az-section-label {
+  font-size: 19px;
+  font-weight: 700;
+  color: #1f2f6b;
+  margin: 6px 0 16px;
+}
+
+/* --- Category chips --- */
+.az-chips { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 26px; }
+.az-chip {
+  flex: 1 1 0;
+  min-width: 150px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid #e3e6ec;
+  background: #fff;
+  color: #2a3f9e;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color .18s, box-shadow .18s, transform .18s, background .18s;
+}
+.az-chip:hover { border-color: #b9c5ec; transform: translateY(-1px); box-shadow: 0 6px 16px rgba(31,58,160,.08); }
+.az-chip--active {
+  background: #3b3fb6;
+  border-color: #3b3fb6;
+  color: #fff;
+  box-shadow: 0 10px 22px rgba(59,63,182,.28);
+}
+
+/* --- Product card grid --- */
+.az-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+}
+@media (max-width: 1100px) { .az-grid { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+@media (max-width: 560px) { .az-grid { grid-template-columns: 1fr; } .az-chip { flex-basis: 100%; } }
+
+.az-card {
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  text-decoration: none;
+  border: 1px solid #eceef2;
+  box-shadow: 0 1px 2px rgba(20,38,107,.04);
+  transition: transform .2s ease, box-shadow .2s ease;
+  opacity: 0;
+  transform: translateY(14px);
+  animation: az-rise .5s cubic-bezier(.2,.7,.2,1) forwards;
+}
+.az-card:hover { transform: translateY(-6px); box-shadow: 0 18px 38px rgba(20,38,107,.16); }
+@keyframes az-rise { to { opacity: 1; transform: translateY(0); } }
+
+.az-card__media {
+  position: relative;
+  aspect-ratio: 16 / 11;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255,255,255,.9);
+  overflow: hidden;
+}
+.az-card__media img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.az-card__icon { opacity: .55; }
+.az-ribbon {
+  position: absolute;
+  top: 14px;
+  right: -34px;
+  width: 130px;
+  text-align: center;
+  transform: rotate(45deg);
+  background: #e2231a;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  padding: 5px 0;
+  box-shadow: 0 4px 10px rgba(226,35,26,.35);
+}
+.az-band {
+  background: #243f9c;
+  color: #fff;
+  font-size: 17px;
+  font-weight: 700;
+  padding: 13px 16px;
+  line-height: 1.3;
+}
+.az-body { padding: 16px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+.az-tagline { color: #2b6cc4; font-weight: 700; font-size: 14.5px; line-height: 1.45; margin: 0; }
+.az-bullets { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.az-bullets li {
+  position: relative;
+  padding-left: 18px;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: #4b5563;
+}
+.az-bullets li::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 8px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #2b6cc4;
+}
+.az-cta {
+  margin-top: auto;
+  padding-top: 6px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #1f3aa0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}

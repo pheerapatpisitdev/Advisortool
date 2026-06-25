@@ -1,29 +1,43 @@
-import Link from "next/link";
-
-const apps = [
-  { href: "/ci123", title: "CI123", desc: "ประกันโรคร้ายแรง — landing & เครื่องคำนวณเบี้ย" },
-  { href: "/ihealthy", title: "iHealthyUltra", desc: "เปรียบเทียบแผนประกันสุขภาพ" },
-  { href: "/global-saving", title: "Global Saving Plus", desc: "เครื่องคำนวณเงินออม 15/8" },
-  { href: "/group-insurance", title: "Group Insurance", desc: "ใบเสนอราคาประกันกลุ่ม" },
-];
+"use client";
+import { useState } from "react";
+import { ProductCard } from "../components/ProductCard";
+import { categories, products } from "../components/hubData";
 
 export default function Hub() {
+  const [active, setActive] = useState("all");
+  const shown =
+    active === "all" ? products : products.filter((p) => p.category === active);
+
   return (
-    <div style={{ maxWidth: 1000, margin: "0 auto", padding: "48px 20px" }}>
-      <h1 style={{ fontSize: 32, fontWeight: 800, color: "#141413", marginBottom: 8 }}>เลือกแอป</h1>
-      <p style={{ color: "#2a2a28", marginBottom: 32 }}>รวม 4 แอปไว้ในที่เดียว</p>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 16 }}>
-        {apps.map((a) => (
-          <Link
-            key={a.href}
-            href={a.href}
-            style={{ display: "block", padding: 20, borderRadius: 12, border: "1px solid #e8e6dc", background: "#fff", textDecoration: "none" }}
-          >
-            <div style={{ fontSize: 18, fontWeight: 700, color: "#d97757", marginBottom: 6 }}>{a.title}</div>
-            <div style={{ color: "#2a2a28", fontSize: 14 }}>{a.desc}</div>
-          </Link>
-        ))}
-      </div>
+    <div className="az-shell">
+      <main className="az-main">
+        <h1 className="az-headline">
+          <span className="az-slash" aria-hidden />
+          เลือกผลิตภัณฑ์ที่ใช่สำหรับคุณ
+        </h1>
+
+        <div className="az-section-label">ผลิตภัณฑ์และแพ็คเกจแนะนำ</div>
+
+        <div className="az-chips">
+          {categories.map((c) => (
+            <button
+              key={c.key}
+              type="button"
+              onClick={() => setActive(c.key)}
+              className={`az-chip${active === c.key ? " az-chip--active" : ""}`}
+            >
+              {c.icon}
+              {c.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="az-grid" key={active}>
+          {shown.map((p, i) => (
+            <ProductCard key={p.href} p={p} index={i} />
+          ))}
+        </div>
+      </main>
     </div>
   );
 }

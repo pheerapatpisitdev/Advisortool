@@ -1,9 +1,13 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Navbar from "../components/Navbar";
+import "@fontsource/ibm-plex-sans-thai/400.css";
+import "@fontsource/ibm-plex-sans-thai/500.css";
+import "@fontsource/ibm-plex-sans-thai/600.css";
+import "@fontsource/ibm-plex-sans-thai/700.css";
+import AdvisorHeader from "../components/AdvisorHeader";
 
 export const metadata: Metadata = {
-  title: "Combined App",
+  title: "AdvisorZone",
   description: "CI123 · iHealthyUltra · Global Saving Plus · Group Insurance",
 };
 
@@ -11,7 +15,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="th">
       <body>
-        <Navbar />
+        <AdvisorHeader />
         <main>{children}</main>
       </body>
     </html>
