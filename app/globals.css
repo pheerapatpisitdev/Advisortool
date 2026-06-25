@@ -1,0 +1,57 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 48 33% 97%;
+    --foreground: 60 3% 8%;
+    --card: 48 33% 98%;
+    --card-foreground: 60 3% 8%;
+    --popover: 48 33% 98%;
+    --popover-foreground: 60 3% 8%;
+    --primary: 14 64% 60%;
+    --primary-foreground: 48 33% 97%;
+    --secondary: 211 48% 61%;
+    --secondary-foreground: 48 33% 97%;
+    --muted: 45 25% 89%;
+    --muted-foreground: 60 3% 8%;
+    --accent: 85 20% 46%;
+    --accent-foreground: 48 33% 97%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 60 3% 8%;
+    --input: 60 3% 8%;
+    --ring: 14 64% 60%;
+    --radius: 0.5rem;
+    --chart-1: 14 64% 60%;
+    --chart-2: 211 48% 61%;
+    --chart-3: 85 20% 46%;
+    --chart-4: 50 9% 67%;
+    --chart-5: 45 25% 89%;
+    --sidebar-background: 48 33% 98%;
+    --sidebar-foreground: 60 3% 8%;
+    --sidebar-primary: 14 64% 60%;
+    --sidebar-primary-foreground: 48 33% 97%;
+    --sidebar-accent: 85 20% 46%;
+    --sidebar-accent-foreground: 48 33% 97%;
+    --sidebar-border: 60 3% 8%;
+    --sidebar-ring: 14 64% 60%;
+  }
+}
+
+/* iHealthyUltra's global reset, scoped to its route only */
+.ihealthy-scope * {
+  @apply border-border;
+}
+.ihealthy-scope {
+  @apply bg-background text-foreground;
+}
+
+/* CI123 expects a plain white page */
+.ci123-scope {
+  background-color: #ffffff;
+}
+
+html { scroll-behavior: smooth; }
+body { margin: 0; }
