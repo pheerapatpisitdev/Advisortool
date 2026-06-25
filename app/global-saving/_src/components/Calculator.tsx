@@ -167,7 +167,7 @@ export default function Calculator({ productId }: { productId: ProductId }) {
       <div className="tblwrap">
         <div className="chartwrap">
           {R.map((x, i) => {
-            const gH = gnt / mx * H, bH = (x.total - gnt) / mx * H;
+            const gH = mx > 0 ? gnt / mx * H : 0, bH = mx > 0 ? (x.total - gnt) / mx * H : 0;
             return (
               <div key={i} className="chcol">
                 <div className="chbar">
