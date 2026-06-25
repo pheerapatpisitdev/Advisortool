@@ -454,7 +454,7 @@ const App = () => {
       <div className="text-center py-4 sm:py-6">
         <div className="flex justify-center mb-4 sm:mb-6">
           <div className="flex justify-center">
-            <img src="/logo.png" alt="Career Agent Question (CAQ)" className="w-20 h-20 sm:w-24 sm:h-24 object-contain" />
+            <img src="/career-agent/logo.png" alt="Career Agent Question (CAQ)" className="w-20 h-20 sm:w-24 sm:h-24 object-contain" />
           </div>
         </div>
         <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-text-primary-light tracking-tight px-1">ส่งแบบสอบถามเรียบร้อย</h1>
