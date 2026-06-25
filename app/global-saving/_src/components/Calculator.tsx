@@ -16,6 +16,10 @@ function fmtInt(raw: string): string {
   const v = raw.split('.')[0].replace(/[^0-9]/g, '').replace(/^0+(?=\d)/, '');
   return v ? Number(v).toLocaleString('en-US') : '';
 }
+// เบี้ยประกันภัยต่อปีสูงสุด 20 ล้านบาท
+const MAX_PREM = 20_000_000;
+const capPrem = (formatted: string): string =>
+  numVal(formatted) > MAX_PREM ? MAX_PREM.toLocaleString('en-US') : formatted;
 const label = (r: number) => { const p = +(r * 100).toFixed(2); return (p >= 0 ? '+' : '') + p + '%'; };
 
 const PrinterIcon = () => (
@@ -54,6 +58,7 @@ export default function Calculator({ productId }: { productId: ProductId }) {
   const minPrem = minSA ? minSA * prod.premRate(minSA, age) / 1000 : 0;
   const premFloor = prod.minPrem || 0;
   const belowMinPrem = premFloor > 0 && P > 0 && P < premFloor;
+  const overMaxPrem = P > MAX_PREM;
   const N = SCEN.length, PY = prod.premYears, T = prod.term;
 
   const premValue = src === 'prem' ? prem : (P ? P.toLocaleString('en-US', { maximumFractionDigits: 2 }) : '');
@@ -97,7 +102,7 @@ export default function Calculator({ productId }: { productId: ProductId }) {
               {src === 'sa' && <span className="autotag">คำนวณให้</span>}</label>
             <div className={src === 'sa' ? 'amtbox computed' : 'amtbox'}>
               <input id="f-prem" type="text" inputMode="decimal" value={premValue}
-                onChange={(e) => { setSrc('prem'); setPrem(fmtDecimal(e.target.value)); }} />
+                onChange={(e) => { setSrc('prem'); setPrem(capPrem(fmtDecimal(e.target.value))); }} />
               <span className="unit">บาท</span>
             </div>
           </div>
@@ -112,6 +117,12 @@ export default function Calculator({ productId }: { productId: ProductId }) {
         {belowMinPrem && (
           <div className="warn" role="alert"><WarnIcon />
             <span><b>เบี้ยประกันภัยขั้นต่ำ {fmt(premFloor)} บาท/ปี</b> · เบี้ยปัจจุบัน {fmt(P)} บาท ต่ำกว่าขั้นต่ำ — กรุณาเพิ่มเบี้ยเป็นอย่างน้อย {fmt(premFloor)} บาท/ปี</span>
+          </div>
+        )}
+
+        {overMaxPrem && (
+          <div className="warn" role="alert"><WarnIcon />
+            <span><b>เบี้ยประกันภัยต่อปีสูงสุด {fmt(MAX_PREM)} บาท</b> · เบี้ยที่คำนวณได้ {fmt(P)} บาท เกินกำหนด — กรุณาลดจำนวนเงินเอาประกันภัย</span>
           </div>
         )}
 
