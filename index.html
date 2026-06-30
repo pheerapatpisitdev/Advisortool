@@ -42,6 +42,32 @@
       position: absolute; right: -2px; bottom: -2px; width: 16px; height: 16px; border-radius: 50%;
       background: #16a34a; color: #fff; display: inline-flex; align-items: center; justify-content: center; border: 2px solid #fff;
     }
+    .az-header__left { display: flex; align-items: center; gap: 14px; }
+    .az-header__right { display: flex; align-items: center; gap: 12px; }
+    .az-brand { font-weight: 800; font-size: 18px; letter-spacing: -0.3px; color: #14266b; text-decoration: none; }
+    .az-menu { position: relative; }
+    .az-menu__btn {
+      display: inline-flex; align-items: center; gap: 7px; height: 40px; padding: 0 14px;
+      border: 1px solid #e5e7eb; background: #fff; border-radius: 10px; color: #1f3aa0;
+      font-family: 'IBM Plex Sans Thai', system-ui, sans-serif; font-size: 14px; font-weight: 600; cursor: pointer;
+      transition: background .15s;
+    }
+    .az-menu__btn:hover { background: #f1f4fb; }
+    .az-menu__chev { transition: transform .18s; }
+    .az-menu.open .az-menu__chev { transform: rotate(180deg); }
+    .az-menu__panel {
+      position: absolute; top: 50px; right: 0; min-width: 264px; background: #fff;
+      border: 1px solid #e9eaee; border-radius: 12px; box-shadow: 0 14px 36px rgba(20,38,107,.18);
+      padding: 6px; display: none; z-index: 200;
+    }
+    .az-menu.open .az-menu__panel { display: block; }
+    .az-menu__panel a {
+      display: flex; align-items: center; gap: 9px; padding: 9px 12px; border-radius: 8px;
+      color: #33415c; text-decoration: none; font-size: 14px; white-space: nowrap;
+    }
+    .az-menu__panel a:hover { background: #f1f4fb; color: #1f3aa0; }
+    .az-menu__dot { width: 7px; height: 7px; border-radius: 50%; background: #2b6cc4; flex-shrink: 0; }
+    @media (max-width: 520px) { .az-brand { display: none; } .az-menu__btn span { display: none; } .az-menu__btn { padding: 0 11px; } }
 
     .az-main { max-width: 1240px; margin: 0 auto; padding: 30px 22px 64px; }
     .az-headline {
@@ -102,14 +128,49 @@
 </head>
 <body>
   <header class="az-header">
-    <a href="./" class="az-header__icon" aria-label="หน้าแรก">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg>
-    </a>
-    <span class="az-header__avatar" aria-label="โปรไฟล์">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      <span class="az-header__check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
-    </span>
+    <div class="az-header__left">
+      <a href="./" class="az-header__icon" aria-label="หน้าแรก">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg>
+      </a>
+      <a href="./" class="az-brand">Advisortool</a>
+    </div>
+    <div class="az-header__right">
+      <div class="az-menu" id="azMenu">
+        <button class="az-menu__btn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="azMenuPanel">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          <span>เครื่องมือ</span>
+          <svg class="az-menu__chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="az-menu__panel" id="azMenuPanel" role="menu">
+          <a href="global-saving/" role="menuitem"><span class="az-menu__dot"></span>Global Saving Plus 15/8</a>
+          <a href="ihealthy/" role="menuitem"><span class="az-menu__dot"></span>iHealthy Ultra</a>
+          <a href="ci123/" role="menuitem"><span class="az-menu__dot"></span>CI 123 ประกันโรคร้ายแรง</a>
+          <a href="group-insurance/" role="menuitem"><span class="az-menu__dot"></span>ประกันกลุ่ม Group Insurance</a>
+          <a href="fhc/" role="menuitem"><span class="az-menu__dot"></span>FHC — แบบสอบถามคุณภาพชีวิต</a>
+          <a href="career-agent/" role="menuitem"><span class="az-menu__dot"></span>Career-Agent-Question</a>
+          <a href="agency/" role="menuitem"><span class="az-menu__dot"></span>Agency Blueprint</a>
+        </div>
+      </div>
+      <span class="az-header__avatar" aria-label="โปรไฟล์">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span class="az-header__check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+      </span>
+    </div>
   </header>
+  <script>
+    (function () {
+      var menu = document.getElementById('azMenu'), btn = menu.querySelector('.az-menu__btn');
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var open = menu.classList.toggle('open');
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+      document.addEventListener('click', function (e) {
+        if (!menu.contains(e.target)) { menu.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); }
+      });
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { menu.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); } });
+    })();
+  </script>
 
   <div class="az-shell">
     <main class="az-main">
