@@ -114,7 +114,7 @@
   <div class="az-shell">
     <main class="az-main">
       <h1 class="az-headline">Advisortool</h1>
-      <p class="az-subhead">เวอร์ชันวานิลลา (HTML + CSS + JS) — ครบทั้ง 7 เครื่องมือ กดการ์ดเพื่อเข้าใช้งานได้เลย</p>
+      <p class="az-subhead">เลือกเครื่องมือที่ต้องการ กดการ์ดเพื่อเริ่มใช้งานได้เลย</p>
       <div class="az-grid" id="grid"></div>
     </main>
   </div>
@@ -161,7 +161,7 @@
   const grid = document.getElementById('grid');
 
   grid.innerHTML = products.map((p, i) => {
-    const tag = p.ready ? "วานิลลาแล้ว" : "เร็วๆ นี้";
+    const tag = p.ready ? "พร้อมใช้งาน" : "เร็วๆ นี้";
     const tagClass = p.ready ? "az-status--ready" : "az-status--soon";
     const inner = `
       <div class="az-card__media" style="background:${p.gradient}">
