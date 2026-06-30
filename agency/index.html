@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Agency Blueprint</title>
+  <link rel="icon" href="icon.png" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    // Re-declare the Agency Blueprint custom theme tokens (Sand / Navy / Golden)
+    // from app/agency/_src/agency.css, mapped to Tailwind colors via CSS vars.
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            background: 'hsl(var(--background))',
+            foreground: 'hsl(var(--foreground))',
+            card: { DEFAULT: 'hsl(var(--card))', foreground: 'hsl(var(--card-foreground))' },
+            primary: { DEFAULT: 'hsl(var(--primary))', foreground: 'hsl(var(--primary-foreground))' },
+            secondary: { DEFAULT: 'hsl(var(--secondary))', foreground: 'hsl(var(--secondary-foreground))' },
+            muted: { DEFAULT: 'hsl(var(--muted))', foreground: 'hsl(var(--muted-foreground))' },
+            accent: { DEFAULT: 'hsl(var(--accent))', foreground: 'hsl(var(--accent-foreground))' },
+            destructive: { DEFAULT: 'hsl(var(--destructive))', foreground: 'hsl(var(--destructive-foreground))' },
+            border: 'hsl(var(--border))',
+            ring: 'hsl(var(--ring))',
+          },
+          borderRadius: { lg: 'var(--radius)', md: 'calc(var(--radius) - 2px)', sm: 'calc(var(--radius) - 4px)' },
+          fontFamily: { sans: ['IBM Plex Sans Thai', 'system-ui', 'sans-serif'] },
+        },
+      },
+    };
+  </script>
+  <style>
+    /* Agency Blueprint theme — from agency.css */
+    :root {
+      --background: 42 25% 89%;
+      --foreground: 216 29% 27%;
+      --card: 36 50% 98%;
+      --card-foreground: 216 29% 27%;
+      --primary: 36 45% 50%;
+      --primary-foreground: 36 50% 98%;
+      --secondary: 180 18% 43%;
+      --secondary-foreground: 36 50% 98%;
+      --muted: 42 25% 89%;
+      --muted-foreground: 216 29% 45%;
+      --accent: 172 22% 65%;
+      --accent-foreground: 216 29% 27%;
+      --destructive: 0 84.2% 60.2%;
+      --destructive-foreground: 0 0% 98%;
+      --border: 42 20% 80%;
+      --ring: 36 45% 50%;
+      --radius: 0.75rem;
+    }
+    body {
+      font-family: 'IBM Plex Sans Thai', system-ui, sans-serif;
+      background-color: hsl(var(--background));
+      color: hsl(var(--foreground));
+    }
+    * { border-color: hsl(var(--border)); }
+  </style>
+</head>
+<body class="min-h-screen">
+  <div class="flex flex-col min-h-screen">
+    <main class="flex-grow container mx-auto px-4 py-8 md:py-12 flex flex-col items-center justify-center">
+      <div class="text-center mb-12">
+        <a href="index.html" class="inline-block">
+          <img src="logo.png" alt="Agency Blueprint" width="120" height="120" class="mx-auto mb-4 rounded-xl object-cover hover:opacity-90 transition-opacity" />
+        </a>
+        <h1 class="text-4xl md:text-5xl font-bold text-primary">Agency Blueprint</h1>
+        <p class="text-lg text-muted-foreground mt-2">เลือกเครื่องมือที่คุณต้องการใช้งาน</p>
+      </div>
+      <div class="flex justify-center">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl">
+
+          <a href="calculator.html" class="block transform transition-transform duration-300 hover:scale-105">
+            <div class="h-full bg-card text-card-foreground shadow-xl hover:shadow-2xl transition-shadow text-center rounded-2xl border p-6">
+              <div class="flex flex-col items-center">
+                <div class="bg-primary/10 rounded-full p-4 mb-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="20" x="4" y="2" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="16" x2="16" y1="14" y2="18"/><path d="M16 10h.01"/><path d="M12 10h.01"/><path d="M8 10h.01"/><path d="M12 14h.01"/><path d="M8 14h.01"/><path d="M12 18h.01"/><path d="M8 18h.01"/></svg>
+                </div>
+                <h3 class="text-xl font-semibold text-foreground mt-2 mb-3">เครื่องคำนวณค่าบริหาร</h3>
+              </div>
+              <p class="text-muted-foreground">คำนวณรายได้ค่าบริหารจากหน่วยงานของคุณ</p>
+            </div>
+          </a>
+
+          <a href="bonus-calculator.html" class="block transform transition-transform duration-300 hover:scale-105">
+            <div class="h-full bg-card text-card-foreground shadow-xl hover:shadow-2xl transition-shadow text-center rounded-2xl border p-6">
+              <div class="flex flex-col items-center">
+                <div class="bg-accent/10 rounded-full p-4 mb-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>
+                </div>
+                <h3 class="text-xl font-semibold text-foreground mt-2 mb-3">เครื่องมือคำนวนรายได้ตัวแทน</h3>
+              </div>
+              <p class="text-muted-foreground">คำนวณรายได้และโบนัสสำหรับตัวแทน</p>
+            </div>
+          </a>
+
+          <a href="manager-test.html" class="block transform transition-transform duration-300 hover:scale-105">
+            <div class="h-full bg-card text-card-foreground shadow-xl hover:shadow-2xl transition-shadow text-center rounded-2xl border p-6">
+              <div class="flex flex-col items-center">
+                <div class="bg-secondary/70 rounded-full p-4 mb-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-secondary-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg>
+                </div>
+                <h3 class="text-xl font-semibold text-foreground mt-2 mb-3">แบบทดสอบผู้จัดการ</h3>
+              </div>
+              <p class="text-muted-foreground">แบบทดสอบ 24 ข้อ</p>
+            </div>
+          </a>
+
+        </div>
+      </div>
+    </main>
+    <footer class="py-4 text-center text-muted-foreground text-sm">
+      <p>Application by Pheerapatpisit Thongsrithong</p>
+    </footer>
+  </div>
+</body>
+</html>

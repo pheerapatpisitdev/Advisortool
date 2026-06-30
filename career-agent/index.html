@@ -1,0 +1,639 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>แบบสอบถามความถนัดในอาชีพ (CAQ)</title>
+
+  <!-- Tailwind Play CDN (วานิลลา ไม่ต้อง build) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    // คงสี/โทเคนเดิมจาก tailwind.config.js ของโปรเจกต์
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            "bg-dark": "#1C1B1A",
+            "surface-light": "#F7F5F2",
+            "text-primary-light": "#1A1917",
+            "text-primary-dark": "#EEEBE6",
+            "text-secondary": "#9C9A96",
+            "bubble-user-light": "#EDEAE5",
+            "border-light": "#D9D5CE",
+          },
+        },
+      },
+    };
+  </script>
+
+  <!-- SweetAlert2 ผ่าน CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <!-- Supabase JS (สำหรับบันทึกคำตอบ) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    /* แอนิเมชันเดิมจาก career.css */
+    @keyframes caq-fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes caq-scaleUp {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .animate-fadeIn { animation: caq-fadeIn 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+    .animate-scaleUp { animation: caq-scaleUp 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+    body { font-family: "Google Sans", system-ui, -apple-system, "Segoe UI", sans-serif; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script>
+  /* =========================================================================
+   * CONFIG — กรอกค่าตรงนี้เมื่อพร้อมใช้ Supabase / อีเมล
+   * ปล่อยว่างได้: ถ้าไม่กรอก แบบสอบถามจะยังทำงานครบ แค่ข้ามการบันทึก (graceful)
+   * ========================================================================= */
+  const CONFIG = {
+    // จาก Supabase: Project Settings → API
+    SUPABASE_URL: "https://jkobdgurhxfmscloduhw.supabase.co",
+    SUPABASE_ANON_KEY: "sb_publishable_ACfHyPhgcrKCM72m4bkv3A_--cEb0yV", // publishable key (ใส่ในหน้าเว็บได้)
+    SUPABASE_TABLE: "career_responses",
+
+    // (ทางเลือก) URL ของ Supabase Edge Function ที่ส่งอีเมลผลลัพธ์
+    // ถ้าปล่อยว่างจะข้ามการส่งอีเมล
+    SEND_RESULTS_URL: "",
+
+    LOGO_URL: "logo.png",        // คัดลอก public/career-agent/logo.png มาวางข้างไฟล์นี้
+  };
+
+  /* ===================== ข้อมูลแบบสอบถาม (เหมือนต้นฉบับเป๊ะ) ===================== */
+  const mcqSections = [
+    { key: 'plan', label: 'การวางแผนและเป้าหมาย' },
+    { key: 'learn', label: 'การเรียนรู้และพัฒนาตนเอง' },
+    { key: 'self', label: 'มุมมองต่อตนเองและความมุ่งมั่น' },
+    { key: 'social', label: 'บุคลิกภาพทางสังคม' },
+    { key: 'business', label: 'ความคาดหวังทางธุรกิจ' },
+    { key: 'insurance', label: 'ทัศนคติต่อประกันชีวิต' },
+    { key: 'financial', label: 'การวางแผนการเงินและเกษียณ' },
+  ];
+
+  const mcqQuestions = [
+    { id: 1, q: "หากเราวางแผนได้ดี ย่อมมีผลที่ดีตามมา", type: "likert", scoreType: "normal", section: "plan" },
+    { id: 2, q: "ตราบใดที่ฉันทำงานที่ฉันรับผิดชอบได้ดี ฉันสามารถเลิกงานได้ตามที่ฉันต้องการ", type: "likert", scoreType: "inverse", section: "plan" },
+    { id: 3, q: "ถ้ามีคนทำผิด ฉันจะได้บอกว่าเขาทำผิด", type: "likert", scoreType: "normal", section: "self" },
+    { id: 4, q: "คนส่วนใหญ่เรียนรู้จากฉันในเรื่องต่าง ๆ", type: "likert", scoreType: "normal", section: "learn" },
+    { id: 5, q: "หากเปิดใจยอมรับ การพัฒนาตนเองจะเกิดขึ้นได้เสมอ", type: "likert", scoreType: "normal", section: "learn" },
+    { id: 6, q: "ฉันยอมรับคำวิจารณ์ เพราะมันเป็นสิ่งที่เป็นประโยชน์สำหรับฉัน", type: "likert", scoreType: "normal", section: "learn" },
+    { id: 7, q: "ฉันคิดว่าฉันเองว่า ฉัน.......", type: "choice", scoreType: "normal", section: "self", options: ["ต้องเป็นที่ 1 หรือ ยอดเยี่ยมที่สุดเสมอ", "ยอมรับได้หากได้ลำดับที่ 2 หรือ 3 ในการแข่งขัน", "พึงพอใจในสถานการณ์ปัจจุบัน แต่ทุกสิ่งควรดีขึ้นกว่าเดิม", "เป็นนักจัดหาสิ่งที่ตอบสนองความจำเป็นขั้นพื้นฐานของชีวิตที่ยอดเยี่ยม", "ปล่อยให้ทุกอย่างเป็นไปตามโชคชะตา"] },
+    { id: 8, q: "ฉันเห็นคุณค่าของการกำหนดเป้าหมายและบรรลุเป้าหมาย", type: "likert", scoreType: "normal", section: "plan" },
+    { id: 9, q: "ฉันมีแผนประจำปี และเป้าหมายของฉัน สำเร็จ..... ต่อปี", type: "choice", scoreType: "normal", section: "plan", options: ["0", "1-2", "3-4", "มากกว่า 5", "เป้าหมายที่วางไว้ใช้เวลามากกว่า 1 ปี จึงจะสำเร็จได้"] },
+    { id: 10, q: "คุณคิดว่าจะมีลูกค้าซื้อประกันชีวิตกับคุณกี่คน", type: "choice", scoreType: "normal", section: "business", options: ["น้อยกว่า 10", "10-50", "50-100", "100-150", "มากกว่า 150"] },
+    { id: 11, q: "คุณคิดว่าจะมีลูกค้าจากตลาดธรรมชาติกี่เปอร์เซ็นต์จากลูกค้าทั้งหมด", type: "choice", scoreType: "normal", section: "business", options: ["1-20%", "20-40%", "40-60%", "60-80%", "80-100%"] },
+    { id: 12, q: "คนที่ฉันรู้จัก เห็นด้วยกับการตัดสินใจเป็นตัวแทนประกันชีวิต", type: "likert", scoreType: "normal", section: "business" },
+    { id: 13, q: "ฉันจะดำเนินการทุกอย่างตามแผนเสมอ", type: "likert", scoreType: "normal", section: "plan" },
+    { id: 14, q: "หากเผชิญปัญหา หรือไม่เป็นไปตามแผนที่วางไว้ ฉันจะหยุด และล้มเลิกการดำเนินการ", type: "likert", scoreType: "inverse", section: "plan" },
+    { id: 15, q: "คนที่ฉันรู้จักฉันเป็นอย่างดี มองว่า ฉันเป็นคนที่ :", type: "choice", scoreType: "normal", section: "self", options: ["ขับเคลื่อนด้วยเป้าหมายที่ชัดเจนและด้วยความทะเยอทะยาน", "กระตือรือร้นและมองหาความท้าทายใหม่ๆ", "เปิดรับความท้าทายใหม่ๆ แต่จะไม่เดินหน้าเข้าหาสิ่งนั้น", "มักนั่งรอให้อะไรบางอย่างเกิดขึ้น", "ความเปลี่ยนแปลงไม่มีผลกระทบกับฉัน"] },
+    { id: 16, q: "ฉันสามารถควบคุมอารมณ์ได้เป็นอย่างดีในสถานการณ์ต่าง ๆ", type: "likert", scoreType: "normal", section: "self" },
+    { id: 17, q: "ฉันมีแรงกระตุ้นในตนเอง และชอบความท้าทาย", type: "likert", scoreType: "normal", section: "self" },
+    { id: 18, q: "ฉันต้องการคำแนะนำในการทำสิ่งต่าง ๆ เพื่อความมั่นใจในตนเอง", type: "likert", scoreType: "inverse", section: "self" },
+    { id: 19, q: "ฉันชอบมีเพื่อนมาก และ พบปะผู้คนใหม่ ๆ", type: "likert", scoreType: "normal", section: "social" },
+    { id: 20, q: "ฉันคิดว่าฉันเป็นคนที่", type: "choice", scoreType: "normal", section: "social", options: ["ชอบออกสังคมและเข้ากับคนง่าย", "เป็นมิตร และ ช่างพูด ช่างคุย", "มีส่วนร่วมในการพูดคุยด้วย", "สุขุม และ หนักแน่น", "ทำงานได้อย่างยอดเยี่ยมเมื่ออยู่ลำพัง"] },
+    { id: 21, q: "ฉันชอบการมีส่วนร่วมในวงสนทนากับคนอื่น ๆ", type: "likert", scoreType: "normal", section: "social" },
+    { id: 22, q: "หากไปในที่ไม่รู้จักใคร ฉันมักจะรอให้คนอื่นเริ่มชวนคุยก่อน", type: "likert", scoreType: "inverse", section: "social" },
+    { id: 23, q: "ฉันไม่ยอมให้ใครมาทำให้ฉันรู้สึกด้อยกว่าได้", type: "likert", scoreType: "normal", section: "self" },
+    { id: 24, q: "ฉันต้องรู้ว่ามีความคาดหวังอะไรจากฉัน ฉันจึงจะรู้สึกสบายใจ", type: "likert", scoreType: "inverse", section: "self" },
+    { id: 25, q: "ความคุ้มครองของประกันชีวิต มีไว้สำหรับหัวหน้าครอบครัว หรือ คนที่หารายได้หลักเท่านั้น", type: "likert", scoreType: "inverse", section: "insurance" },
+    { id: 26, q: "การประกันชีวิตยังไม่ได้เป็นที่ยอมรับของคนส่วนใหญ่", type: "likert", scoreType: "inverse", section: "insurance" },
+    { id: 27, q: "ฉันไม่กล้านำเสนอประกันชีวิตให้กับคนรู้จัก การเริ่มต้นกับคนไม่รู้จักนั้นง่ายกว่า", type: "likert", scoreType: "inverse", section: "insurance" },
+    { id: 28, q: "อายุที่เหมาะสมในการวางแผนการเกษียณอายุคือ.....ปี", type: "choice", scoreType: "normal", section: "financial", options: ["25 ถึง 35", "35 ถึง 40", "40 ถึง 45", "45 ถึง 50", "50 ถึง 55"] },
+    { id: 29, q: "สิ่งสำคัญที่สุดในการวางแผนการเงินคือ การรวบรวมข้อมูลของลูกค้าก่อนให้คำแนะนำ", type: "likert", scoreType: "normal", section: "financial" },
+    { id: 30, q: "ผู้ที่มีความมั่งคั่งทางการเงินเท่านั้น ที่ควรวางแผนการเงิน", type: "likert", scoreType: "inverse", section: "financial" },
+  ];
+
+  const likertOptions = ["เห็นด้วยอย่างยิ่ง", "เห็นด้วย", "ไม่มีความคิดเห็น", "ไม่เห็นด้วย", "ไม่เห็นด้วยอย่างยิ่ง"];
+  const choiceLabels = ["ก.", "ข.", "ค.", "ง.", "จ."];
+
+  const personalFields = ['ชื่อ-นามสกุล', 'หมายเลขโทรศัพท์', 'อายุ', 'Email Address'];
+  const maritalStatuses = ["โสด", "โสดแต่มีผู้อยู่ในอุปการะ", "สมรส", "สมรสและมีบุตร", "อื่นๆ"];
+  const openEndedItems = [
+    { id: 'interest', q: "ความสนใจ / งานอดิเรก ของคุณคืออะไร?" },
+    { id: 'roleModel', q: "บุคคลที่คุณให้ความเคารพมากที่สุดคือใคร? เพราะอะไร?" },
+    { id: 'hardestDecision', q: "ในการทำงานที่ผ่านมา คุณเคยตัดสินใจเรื่องใดที่คุณคิดว่ายากที่สุด? และส่งผลอย่างไร?" },
+    { id: 'failure', q: "คุณเคยเผชิญกับความล้มเหลวร้ายแรงในชีวิตการทำงานหรือไม่? แล้วคุณรับมือกับเรื่องนั้นอย่างไร?" },
+    { id: 'honesty', q: "ในการทำงานที่ผ่านมา คุณเคยถูกทดสอบความซื่อสัตย์ สุจริต บ้างหรือไม่? แล้วคุณรับมืออย่างไร?" },
+    { id: 'protectClient', q: "คนทุกคนย่อมต้องได้รับการคุ้มครองดูแลผลประโยชน์ส่วนตัว คุณจะมีวิธีดูแลผลประโยชน์ให้ลูกค้าอย่างไร?" },
+    { id: 'relationship', q: "คุณจะสร้างความสัมพันธ์กับลูกค้าในระยะยาวได้อย่างไรบ้าง?" },
+  ];
+
+  /* ===================== ไอคอน (inline SVG แทน lucide-react) ===================== */
+  const icon = {
+    chevronRight: (c='w-5 h-5') => `<svg class="${c}" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>`,
+    user: (c='w-5 h-5') => `<svg class="${c}" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
+    fileText: (c='w-5 h-5') => `<svg class="${c}" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>`,
+    messageSquare: (c='w-5 h-5') => `<svg class="${c}" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`,
+    send: (c='w-5 h-5') => `<svg class="${c}" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></svg>`,
+  };
+
+  /* ===================== State ===================== */
+  const state = {
+    step: 0,
+    formData: { personal: {}, openEnded: {}, mcq: {}, supplementary: {} },
+  };
+
+  const esc = (s) => String(s ?? '')
+    .replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;').replaceAll("'", '&#39;');
+
+  function handleInputChange(section, field, value) {
+    state.formData[section] = { ...state.formData[section], [field]: value };
+  }
+
+  /* ===================== คิดคะแนน (ตรรกะเดิม) ===================== */
+  function calculateScore() {
+    const orderedIds = mcqSections.flatMap((s) =>
+      mcqQuestions.filter((q) => q.section === s.key).map((q) => q.id)
+    );
+    const displayOrderById = {};
+    orderedIds.forEach((id, i) => { displayOrderById[id] = i + 1; });
+
+    let total = 0;
+    const details = [];
+    const sectionTotals = {};
+    mcqSections.forEach((s) => { sectionTotals[s.key] = { label: s.label, total: 0, details: [] }; });
+
+    mcqQuestions.forEach((q) => {
+      const answer = state.formData.mcq[q.id];
+      const options = q.type === 'likert' ? likertOptions : q.options;
+      const index = options.indexOf(answer);
+
+      let score = 0;
+      if (answer) {
+        if (q.scoreType === 'normal') score = 5 - index; // ก=5, จ=1
+        else score = index + 1;                          // ก=1, จ=5
+        total += score;
+      }
+
+      const item = {
+        id: q.id,
+        displayOrder: displayOrderById[q.id] ?? q.id,
+        question: q.q,
+        score,
+        answer: answer || 'ไม่ได้ระบุ',
+        label: index !== -1 ? choiceLabels[index] : '-',
+        section: q.section,
+      };
+      details.push(item);
+      if (q.section && sectionTotals[q.section]) {
+        sectionTotals[q.section].total += score;
+        sectionTotals[q.section].details.push(item);
+      }
+    });
+
+    const bySection = mcqSections.map((s) => ({
+      key: s.key, label: s.label,
+      total: sectionTotals[s.key]?.total ?? 0,
+      details: sectionTotals[s.key]?.details ?? [],
+    }));
+
+    return { total, details, bySection };
+  }
+
+  function getScoreCategory(total) {
+    if (total >= 118) return { key: 'green', label: 'เขียว' };
+    if (total >= 80) return { key: 'orange', label: 'ส้ม' };
+    return { key: 'red', label: 'แดง' };
+  }
+
+  /* ===================== ส่ง + บันทึก ===================== */
+  let _supabase = null;
+  function getSupabase() {
+    if (_supabase) return _supabase;
+    if (CONFIG.SUPABASE_URL && CONFIG.SUPABASE_ANON_KEY && window.supabase) {
+      _supabase = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
+    }
+    return _supabase;
+  }
+
+  async function submitAndShowResults() {
+    const score = calculateScore();
+    const payload = { formData: state.formData, score };
+
+    Swal.fire({
+      title: 'กำลังบันทึกข้อมูล...',
+      text: 'กรุณารอสักครู่',
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      didOpen: () => Swal.showLoading(),
+    });
+
+    try {
+      // 1) บันทึกลง Supabase (ถ้าตั้งค่าไว้)
+      const sb = getSupabase();
+      if (sb) {
+        const { error } = await sb.from(CONFIG.SUPABASE_TABLE).insert({
+          created_at: new Date().toISOString(),
+          form_data: state.formData,
+          score,
+          total: score.total,
+          category: getScoreCategory(score.total).label,
+        });
+        if (error) throw new Error(error.message || 'บันทึกไม่สำเร็จ');
+      }
+
+      // 2) ส่งอีเมลผลลัพธ์ผ่าน Edge Function (ถ้าตั้งค่าไว้) — ไม่ขว้าง error
+      if (CONFIG.SEND_RESULTS_URL) {
+        try {
+          await fetch(CONFIG.SEND_RESULTS_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+        } catch { /* เงียบไว้ ให้แบบสอบถามสำเร็จต่อได้ */ }
+      }
+
+      Swal.close();
+    } catch (err) {
+      await Swal.fire({
+        icon: 'error',
+        title: 'บันทึกไม่สำเร็จ',
+        text: (err && err.message) || 'เกิดข้อผิดพลาด กรุณาลองใหม่',
+      });
+    }
+
+    state.step = 3;
+    render();
+  }
+
+  function shareSummaryToLine() {
+    const personal = state.formData.personal ?? {};
+    const openEnded = state.formData.openEnded ?? {};
+    const total = calculateScore().total;
+    const category = total >= 118 ? 'เขียว (118+)' : total >= 80 ? 'ส้ม (80–117)' : 'แดง (40–79 หรือต่ำกว่า)';
+    const messageLines = [
+      '📋 ผลแบบสอบถามความถนัดในอาชีพ',
+      `ชื่อ-นามสกุล: ${personal['ชื่อ-นามสกุล'] || '-'}`,
+      `โทรศัพท์: ${personal['หมายเลขโทรศัพท์'] || '-'}`,
+      `อายุ: ${personal['อายุ'] || '-'}`,
+      `คะแนนรวม: ${total} / 150`,
+      `ระดับ: ${category}`,
+      '',
+      '📝 ประสบการณ์และทัศนคติ',
+    ];
+    const openBlocks = [
+      ['ความสนใจ / งานอดิเรก', openEnded.interest],
+      ['บุคคลที่คุณเคารพมากที่สุด', openEnded.roleModel],
+      ['การตัดสินใจที่ยากที่สุด', openEnded.hardestDecision],
+      ['ความล้มเหลวและการรับมือ', openEnded.failure],
+      ['การทดสอบความซื่อสัตย์', openEnded.honesty],
+      ['การดูแลผลประโยชน์ลูกค้า', openEnded.protectClient],
+      ['การสร้างความสัมพันธ์ระยะยาว', openEnded.relationship],
+    ];
+    openBlocks.forEach(([label, ans]) => {
+      if (ans) messageLines.push(`• ${label}: ${String(ans).trim().slice(0, 180)}`);
+    });
+    const text = messageLines.join('\n');
+    window.open(`https://line.me/R/msg/text/?${encodeURIComponent(text)}`, '_blank', 'noopener,noreferrer');
+  }
+
+  /* ===================== Views (สร้าง HTML string) ===================== */
+  function renderWelcome() {
+    return `
+    <div class="text-center space-y-4 sm:space-y-6 py-4 sm:py-10 animate-fadeIn">
+      <div class="flex justify-center">
+        <img src="${esc(CONFIG.LOGO_URL)}" alt="Career Agent Question (CAQ)" class="w-24 h-24 sm:w-32 sm:h-32 object-contain" onerror="this.style.display='none'" />
+      </div>
+      <h1 class="text-xl sm:text-2xl md:text-3xl font-bold text-text-primary-light tracking-tight px-1">แบบสอบถามความถนัดในอาชีพ</h1>
+      <p class="text-text-secondary max-w-lg mx-auto italic leading-relaxed text-sm sm:text-base px-1">
+        " ท้ายที่สุดแล้ว เราคงต้องถามตัวเองว่าคนแบบไหนที่เราอยากจะเป็น "
+        <br />— Leo Babauta
+      </p>
+      <div class="bg-bubble-user-light p-4 sm:p-6 md:p-8 rounded-xl sm:rounded-2xl text-left max-w-2xl mx-auto space-y-3 sm:space-y-4 border border-border-light">
+        <h3 class="font-bold text-text-primary-light text-sm sm:text-base">คำชี้แจงก่อนเริ่ม</h3>
+        <p class="text-text-secondary text-xs sm:text-sm">แบบสอบถามนี้มีจุดมุ่งหมายที่จะช่วยให้บริษัททำความเข้าใจผู้สมัครได้ดีขึ้น เพื่อการเตรียมความพร้อมในบทบาทของการเป็นตัวแทนประกันชีวิต</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 pt-2">
+          <div class="p-3 bg-surface-light rounded-lg border border-border-light">
+            <span class="block text-[#D97757] font-bold text-sm">ส่วนที่ 1</span>
+            <span class="text-xs text-text-secondary">ข้อมูลส่วนตัวและทัศนคติ</span>
+          </div>
+          <div class="p-3 bg-surface-light rounded-lg border border-border-light">
+            <span class="block text-[#D97757] font-bold text-sm">ส่วนที่ 2</span>
+            <span class="text-xs text-text-secondary">ลักษณะบุคลิกภาพ — คำถามปรนัย 30 ข้อ (แบ่งเป็น 7 กลุ่มย่อย)</span>
+          </div>
+        </div>
+      </div>
+      <button data-action="next" class="min-h-[44px] px-6 sm:px-10 py-3 sm:py-4 bg-[#D97757] text-white rounded-xl font-bold hover:bg-[#E8845C] active:bg-[#C4623F] transition-all hover:shadow-lg active:scale-95 flex items-center mx-auto gap-2 text-sm sm:text-base">
+        เริ่มทำแบบสอบถาม ${icon.chevronRight('w-5 h-5 sm:w-6 sm:h-6 shrink-0')}
+      </button>
+    </div>`;
+  }
+
+  function renderPart1() {
+    const p = state.formData.personal;
+    const fields = personalFields.map((label) => {
+      if (label === 'อายุ') {
+        const opts = Array.from({ length: 31 }, (_, idx) => 20 + idx)
+          .map((age) => `<option value="${age}" ${String(p[label]) === String(age) ? 'selected' : ''}>${age}</option>`).join('');
+        return `
+          <div class="space-y-1.5">
+            <label class="text-sm font-semibold text-text-secondary">${esc(label)}</label>
+            <select data-personal="${esc(label)}" class="w-full min-h-[44px] p-3 bg-bubble-user-light border border-border-light rounded-xl focus:bg-surface-light focus:ring-2 focus:ring-[#D97757] outline-none transition-all text-base text-text-primary-light">
+              <option value="" ${!p[label] ? 'selected' : ''} disabled>กรุณาเลือกอายุ</option>
+              ${opts}
+            </select>
+          </div>`;
+      }
+      return `
+        <div class="space-y-1.5">
+          <label class="text-sm font-semibold text-text-secondary">${esc(label)}</label>
+          <input type="text" data-personal="${esc(label)}" value="${esc(p[label] || '')}" class="w-full min-h-[44px] p-3 bg-bubble-user-light border border-border-light rounded-xl focus:bg-surface-light focus:ring-2 focus:ring-[#D97757] outline-none transition-all text-base text-text-primary-light" />
+        </div>`;
+    }).join('');
+
+    const marital = maritalStatuses.map((status) => `
+      <button data-marital="${esc(status)}" class="min-h-[44px] px-3 sm:px-4 py-2.5 rounded-full border text-xs sm:text-sm transition-all touch-manipulation ${
+        p.maritalStatus === status ? 'bg-[#D97757] border-[#D97757] text-white hover:bg-[#E8845C] active:bg-[#C4623F]' : 'bg-surface-light border-border-light text-text-secondary hover:border-[#D97757]'
+      }">${esc(status)}</button>`).join('');
+
+    const openEnded = openEndedItems.map((item) => `
+      <div class="space-y-2">
+        <label class="block text-xs sm:text-sm font-semibold text-text-primary-light leading-snug">${esc(item.q)}</label>
+        <textarea data-openended="${esc(item.id)}" class="w-full p-3 sm:p-4 bg-bubble-user-light border border-border-light rounded-xl focus:bg-surface-light focus:ring-2 focus:ring-[#D97757] outline-none min-h-[88px] sm:min-h-[100px] transition-all text-base text-text-primary-light placeholder:text-text-secondary" placeholder="กรุณาระบุรายละเอียด...">${esc(state.formData.openEnded[item.id] || '')}</textarea>
+      </div>`).join('');
+
+    return `
+    <div class="space-y-6 sm:space-y-8 animate-fadeIn">
+      <div class="flex items-center gap-3 border-b border-border-light pb-3 sm:pb-4">
+        <div class="p-2 bg-[#D97757]/10 text-[#D97757] rounded-lg shrink-0">${icon.user('w-5 h-5 sm:w-6 sm:h-6')}</div>
+        <h2 class="text-lg sm:text-xl font-bold text-text-primary-light">ข้อมูลส่วนตัว</h2>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">${fields}</div>
+      <div class="space-y-3">
+        <label class="text-sm font-semibold text-text-secondary">สถานภาพสมรส</label>
+        <div class="flex flex-wrap gap-2 sm:gap-3">${marital}</div>
+      </div>
+      <div class="flex items-center gap-3 border-b border-border-light pb-3 sm:pb-4 pt-4 sm:pt-6">
+        <div class="p-2 bg-[#D97757]/10 text-[#D97757] rounded-lg shrink-0">${icon.fileText('w-5 h-5 sm:w-6 sm:h-6')}</div>
+        <h2 class="text-lg sm:text-xl font-bold text-text-primary-light">ประสบการณ์และทัศนคติ</h2>
+      </div>
+      <div class="space-y-4 sm:space-y-6">${openEnded}</div>
+      <div class="flex justify-between items-center pt-4 sm:pt-6 gap-3">
+        <button data-action="prev" class="min-h-[44px] px-4 sm:px-6 py-2.5 text-text-secondary hover:text-text-primary-light font-medium text-sm sm:text-base touch-manipulation">ย้อนกลับ</button>
+        <button data-action="next" class="min-h-[44px] px-6 sm:px-10 py-3 bg-[#D97757] text-white rounded-xl font-bold hover:bg-[#E8845C] active:bg-[#C4623F] shadow-lg text-sm sm:text-base touch-manipulation">ถัดไป</button>
+      </div>
+    </div>`;
+  }
+
+  function renderPart2() {
+    const orderedQuestions = mcqSections.flatMap((sec) => mcqQuestions.filter((q) => q.section === sec.key));
+    const sections = mcqSections.map((sec) => {
+      const sectionQuestions = mcqQuestions.filter((q) => q.section === sec.key);
+      if (sectionQuestions.length === 0) return '';
+      const startIndex = orderedQuestions.findIndex((q) => q.section === sec.key);
+      const questions = sectionQuestions.map((q, idx) => {
+        const opts = (q.type === 'likert' ? likertOptions : q.options).map((opt, optIdx) => {
+          const selected = state.formData.mcq[q.id] === opt;
+          return `
+            <label data-mcq="${q.id}" data-opt="${esc(opt)}" class="flex items-center gap-3 sm:gap-4 min-h-[48px] p-3 sm:p-4 rounded-xl sm:rounded-2xl border-2 cursor-pointer transition-all touch-manipulation ${
+              selected ? 'border-[#D97757] bg-[#D97757]/10 shadow-md' : 'border-border-light bg-surface-light hover:border-[#D97757]/50 hover:bg-bubble-user-light'
+            }">
+              <div class="w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 flex items-center justify-center shrink-0 ${selected ? 'border-[#D97757] bg-[#D97757]/10' : 'border-border-light'}">
+                ${selected ? '<div class="w-2 h-2 sm:w-2.5 sm:h-2.5 bg-[#D97757] rounded-full"></div>' : ''}
+              </div>
+              <span class="text-text-primary-light font-medium text-sm sm:text-base break-words">
+                <span class="text-[#D97757] mr-1.5 sm:mr-2 opacity-80 font-bold shrink-0">${choiceLabels[optIdx]}</span>${esc(opt)}
+              </span>
+            </label>`;
+        }).join('');
+        return `
+          <div class="space-y-3 sm:space-y-5">
+            <h3 class="text-base sm:text-lg font-bold text-text-primary-light leading-snug">
+              <span class="text-[#D97757] mr-1.5 sm:mr-2 shrink-0">${startIndex + idx + 1}.</span>
+              <span class="break-words">${esc(q.q)}</span>
+            </h3>
+            <div class="grid grid-cols-1 gap-2 sm:gap-3">${opts}</div>
+          </div>`;
+      }).join('');
+      return `
+        <div class="space-y-5 sm:space-y-8">
+          <div class="flex items-center gap-3 pb-2 border-b-2 border-border-light">
+            <span class="px-2.5 sm:px-3 py-1 bg-bubble-user-light text-text-primary-light rounded-lg text-xs sm:text-sm font-bold">ส่วน: ${esc(sec.label)}</span>
+          </div>
+          ${questions}
+        </div>`;
+    }).join('');
+
+    return `
+    <div class="space-y-6 sm:space-y-10 animate-fadeIn">
+      <div class="bg-[#D97757]/10 p-3 sm:p-5 rounded-xl sm:rounded-2xl border border-[#D97757]/20 flex gap-3 sm:gap-4 items-start">
+        <div class="p-2 bg-[#D97757]/20 text-[#D97757] rounded-full shrink-0">${icon.messageSquare('w-4 h-4 sm:w-5 sm:h-5')}</div>
+        <p class="text-text-primary-light text-xs sm:text-sm leading-relaxed">
+          <strong>คำแนะนำ:</strong> อย่าใช้เวลาทบทวนคำถามนานเกินไป คำตอบแรกที่คุณได้จะเป็นคำตอบที่แม่นยำที่สุด
+        </p>
+      </div>
+      <div class="space-y-8 sm:space-y-14">${sections}</div>
+      <div class="flex justify-between items-center gap-3 pt-6 sm:pt-10 border-t border-border-light">
+        <button data-action="prev" class="min-h-[44px] px-4 sm:px-6 py-2.5 text-text-secondary hover:text-text-primary-light font-medium text-sm sm:text-base touch-manipulation">ย้อนกลับ</button>
+        <button data-action="submit" class="min-h-[48px] px-6 sm:px-12 py-3 sm:py-4 bg-[#D97757] text-white rounded-xl sm:rounded-2xl font-black hover:bg-[#E8845C] active:bg-[#C4623F] flex items-center gap-2 sm:gap-3 shadow-xl transition-all hover:-translate-y-0.5 sm:hover:-translate-y-1 text-sm sm:text-base touch-manipulation">
+          ส่งแบบสอบถาม ${icon.send('w-5 h-5 sm:w-6 sm:h-6 shrink-0')}
+        </button>
+      </div>
+    </div>`;
+  }
+
+  function renderSuccess() {
+    const score = calculateScore();
+    const cat = getScoreCategory(score.total);
+    const p = state.formData.personal;
+
+    const bySection = score.bySection.map((sec) => `
+      <div class="flex items-center justify-between p-3 sm:p-4 bg-bubble-user-light rounded-lg sm:rounded-xl border border-border-light min-h-[44px]">
+        <span class="text-xs sm:text-sm font-medium text-text-primary-light truncate pr-2">${esc(sec.label)}</span>
+        <span class="text-base sm:text-lg font-bold text-text-primary-light tabular-nums shrink-0">${sec.total}</span>
+      </div>`).join('');
+
+    const personalRows = [
+      ['ชื่อ-นามสกุล', p['ชื่อ-นามสกุล']],
+      ['หมายเลขโทรศัพท์', p['หมายเลขโทรศัพท์']],
+      ['อายุ', p['อายุ']],
+      ['Email', p['Email Address']],
+      ['สถานภาพสมรส', p.maritalStatus],
+    ].map(([dt, dd]) => `
+      <div class="flex justify-between gap-2 sm:gap-4">
+        <dt class="text-text-secondary shrink-0">${esc(dt)}</dt>
+        <dd class="font-semibold text-text-primary-light text-right break-all">${esc(dd || '-')}</dd>
+      </div>`).join('');
+
+    const openAnswers = openEndedItems.map((item) => `
+      <div class="space-y-1 sm:space-y-1.5">
+        <div class="font-semibold text-text-primary-light text-xs sm:text-sm leading-snug">${esc(item.q)}</div>
+        <div class="rounded-lg sm:rounded-xl bg-bubble-user-light border border-border-light px-2.5 sm:px-3 py-2 text-text-primary-light min-h-[44px] whitespace-pre-wrap break-words">${esc(state.formData.openEnded[item.id] || 'ยังไม่ได้ระบุคำตอบ')}</div>
+      </div>`).join('');
+
+    const yourBadge = cat.key === 'red' ? 'bg-red-500' : cat.key === 'orange' ? 'bg-[#D97757]' : 'bg-green-500';
+
+    return `
+    <div id="results-top" class="space-y-6 sm:space-y-10 animate-scaleUp">
+      <div class="text-center py-4 sm:py-6">
+        <div class="flex justify-center mb-4 sm:mb-6">
+          <div class="flex justify-center">
+            <img src="${esc(CONFIG.LOGO_URL)}" alt="Career Agent Question (CAQ)" class="w-20 h-20 sm:w-24 sm:h-24 object-contain" onerror="this.style.display='none'" />
+          </div>
+        </div>
+        <h1 class="text-2xl sm:text-3xl md:text-4xl font-black text-text-primary-light tracking-tight px-1">ส่งแบบสอบถามเรียบร้อย</h1>
+        <p class="text-text-secondary font-medium text-sm sm:text-base mt-1 px-1">สรุปคะแนนและคำตอบทั้งหมดของคุณปรากฏด้านล่าง</p>
+      </div>
+
+      <div class="space-y-4 sm:space-y-8">
+        <h2 class="text-lg sm:text-2xl font-bold text-text-primary-light text-right">ผลการทำแบบสอบถาม</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+          <div class="p-4 sm:p-6 rounded-xl sm:rounded-2xl border-2 ${cat.key === 'red' ? 'border-red-500 ring-2 ring-red-200' : 'border-red-100'} bg-red-50">
+            <h3 class="font-bold text-red-800 mb-2 sm:mb-3 text-sm sm:text-base">แดง (คะแนน 40-79 หรือต่ำกว่า)</h3>
+            <p class="text-xs sm:text-sm text-red-900/90 leading-relaxed">ผู้สมัครในกลุ่มนี้จะต้องใช้เวลาจากผู้จัดการค่อนข้างมาก ในการให้คำแนะนำ ฝึกอบรม พัฒนา และลงพื้นที่ทำงานร่วมกันเพื่อให้บรรลุความสำเร็จ ผู้จัดการต้องพร้อมที่จะทุ่มเทและใช้เวลาอย่างมากในการพัฒนาศักยภาพและสร้างแรงจูงใจให้พวกเขาบรรลุความสำเร็จในบทบาทนี้</p>
+          </div>
+          <div class="p-4 sm:p-6 rounded-xl sm:rounded-2xl border-2 ${cat.key === 'orange' ? 'border-orange-500 ring-2 ring-orange-200' : 'border-orange-100'} bg-orange-50">
+            <h3 class="font-bold text-orange-800 mb-2 sm:mb-3 text-sm sm:text-base">ส้ม (คะแนน 80 ถึง 117)</h3>
+            <p class="text-xs sm:text-sm text-orange-900/90 leading-relaxed">ผู้สมัครมีความเหมาะสมกับงานนี้ และจำเป็นต้องเรียนรู้อย่างเป็นระบบ จะต้องใช้เวลาจากผู้จัดการบ้างในการให้คำแนะนำและชี้แนะ รวมถึงการกำหนดทิศทางให้บรรลุความสำเร็จในงาน หลังจากนั้นผู้จัดการจะได้รับผลตอบแทนจากการทำงานของพวกเขา</p>
+            <p class="mt-2 sm:mt-3 text-[10px] sm:text-xs font-semibold text-orange-700">KTAXA Advisor X · KTAXA Advisor</p>
+          </div>
+          <div class="p-4 sm:p-6 rounded-xl sm:rounded-2xl border-2 ${cat.key === 'green' ? 'border-green-500 ring-2 ring-green-200' : 'border-green-100'} bg-green-50">
+            <h3 class="font-bold text-green-800 mb-2 sm:mb-3 text-sm sm:text-base">เขียว (คะแนน 118 ขึ้นไป)</h3>
+            <p class="text-xs sm:text-sm text-green-900/90 leading-relaxed">ผู้สมัครมีความมั่นใจในธุรกิจประกันชีวิตสูง มีแรงจูงใจในตนเองแข็งแกร่ง สามารถฝึกฝนได้ และมีแนวโน้มความสำเร็จในธุรกิจนี้สูงมาก ผู้จัดการควรใช้เวลากับกลุ่มนี้เพื่อสร้างแรงบันดาลใจและกระตุ้นให้พวกเขาบรรลุมาตรฐานสูงสุดเท่าที่จะเป็นไปได้</p>
+            <p class="mt-2 sm:mt-3 text-[10px] sm:text-xs font-semibold text-green-700">AXA Prime</p>
+          </div>
+        </div>
+
+        <div class="space-y-4 sm:space-y-5">
+          <div class="relative h-14 sm:h-16 w-full">
+            <div class="absolute bottom-0 top-0 w-px border-l-2 border-dashed border-blue-500 opacity-80" style="left:53.33%;transform:translateX(-50%)" aria-hidden></div>
+            <div class="absolute bottom-0 top-0 w-px border-l-2 border-dashed border-red-500 opacity-80" style="left:78.67%;transform:translateX(-50%)" aria-hidden></div>
+            <div class="absolute text-center whitespace-nowrap" style="left:53.33%;transform:translateX(-50%);bottom:0">
+              <div class="text-[10px] sm:text-xs font-bold text-blue-600 leading-tight">KTAXA Advisor X</div>
+              <div class="text-[10px] sm:text-xs font-bold text-blue-600 leading-tight">KTAXA Advisor</div>
+            </div>
+            <div class="absolute text-center whitespace-nowrap" style="left:78.67%;transform:translateX(-50%);bottom:0">
+              <div class="text-[10px] sm:text-xs font-bold text-red-600 leading-tight">AXA Prime</div>
+            </div>
+          </div>
+          <div class="relative w-full" style="height:2.5rem">
+            <div class="absolute inset-0 rounded-xl" style="background:linear-gradient(to right,#dc2626 0%,#ea580c 35%,#ca8a04 55%,#16a34a 100%)"></div>
+            <div class="absolute top-1/2 left-[53.33%] -translate-x-1/2 -translate-y-1/2" title="คะแนน 80">
+              <span class="inline-block px-3 py-1 rounded-full bg-gray-200 text-blue-600 font-bold text-sm shadow-sm whitespace-nowrap">80</span>
+            </div>
+            <div class="absolute top-1/2 left-[78.67%] -translate-x-1/2 -translate-y-1/2" title="คะแนน 118">
+              <span class="inline-block px-3 py-1 rounded-full bg-[#D97757] text-white font-bold text-sm shadow-sm whitespace-nowrap">118</span>
+            </div>
+          </div>
+          <div class="flex justify-between text-[10px] sm:text-xs font-bold text-text-secondary px-0.5">
+            <span>0</span><span>150</span>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-center gap-3 sm:gap-5 py-3 sm:py-4">
+          <span class="text-text-secondary font-medium text-sm sm:text-base shrink-0">คะแนนรวมของคุณ</span>
+          <span class="text-3xl sm:text-4xl font-black tabular-nums tracking-wider text-text-primary-light whitespace-nowrap px-1">${score.total}</span>
+          <span class="px-2.5 sm:px-3 py-1 rounded-full font-bold text-xs sm:text-sm text-white shrink-0 ${yourBadge}">${cat.label}</span>
+        </div>
+
+        <div class="pt-4 sm:pt-6 border-t border-border-light">
+          <h3 class="font-bold text-base sm:text-lg text-text-primary-light mb-3 sm:mb-4">คะแนนแยกตามส่วน (ลักษณะบุคลิกภาพ)</h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3">${bySection}</div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+        <div class="p-4 sm:p-6 bg-surface-light rounded-xl sm:rounded-2xl border border-border-light space-y-3 sm:space-y-4">
+          <h3 class="font-bold text-lg sm:text-xl text-text-primary-light flex items-center gap-2">${icon.user('w-4 h-4 sm:w-5 sm:h-5 text-[#D97757] shrink-0')}ข้อมูลส่วนตัว</h3>
+          <dl class="space-y-2 sm:space-y-3 text-xs sm:text-sm">${personalRows}</dl>
+        </div>
+        <div class="p-4 sm:p-6 bg-surface-light rounded-xl sm:rounded-2xl border border-border-light space-y-3 sm:space-y-4">
+          <h3 class="font-bold text-lg sm:text-xl text-text-primary-light flex items-center gap-2">${icon.fileText('w-4 h-4 sm:w-5 sm:h-5 text-[#D97757] shrink-0')}ประสบการณ์และทัศนคติ</h3>
+          <div class="space-y-3 sm:space-y-4 text-xs sm:text-sm">${openAnswers}</div>
+        </div>
+      </div>
+
+      <div class="flex flex-col items-center gap-2">
+        <button data-action="share-line" type="button" class="min-h-[44px] mt-2 px-5 sm:px-6 py-2.5 rounded-full text-xs sm:text-sm font-bold flex items-center gap-2 shadow-md touch-manipulation bg-[#D97757] text-white hover:bg-[#E8845C] active:bg-[#C4623F]" title="เปิด LINE เพื่อแชร์สรุปคำตอบ (ไม่ต้องตั้งค่า token)">
+          แชร์ส่งคำตอบไปที่ LINE
+        </button>
+        <p class="text-[10px] text-text-secondary text-center max-w-xs">กดแล้วจะเปิด LINE ให้เลือกผู้รับส่งได้ทันที</p>
+      </div>
+
+      <div class="bg-bg-dark p-4 sm:p-6 md:p-8 rounded-xl sm:rounded-2xl text-center text-text-primary-dark space-y-3 sm:space-y-4">
+        <h4 class="text-base sm:text-lg font-bold">บันทึกข้อมูลเรียบร้อยแล้ว</h4>
+        <p class="text-text-secondary text-xs sm:text-sm max-w-md mx-auto italic">ข้อมูลทัศนคติเบื้องต้นนี้จะถูกส่งไปยังฝ่ายบริหารงานบุคคล เพื่อใช้ประกอบการพิจารณาคัดเลือกพนักงานใหม่ในลำดับต่อไป</p>
+        <button data-action="restart" class="min-h-[44px] mt-3 sm:mt-4 px-6 sm:px-8 py-2.5 sm:py-3 bg-surface-light text-text-primary-light rounded-xl font-bold hover:bg-bubble-user-light transition-all active:scale-95 shadow-xl text-sm sm:text-base touch-manipulation">กลับไปเริ่มต้นใหม่</button>
+      </div>
+    </div>`;
+  }
+
+  /* ===================== Render + Events ===================== */
+  function render() {
+    const progress = (state.step > 0 && state.step < 3)
+      ? `<div class="w-full bg-[#D97757]/20 h-1.5 sm:h-2 flex"><div class="bg-[#D97757] h-full transition-all duration-1000 ease-in-out" style="width:${(state.step / 2) * 100}%"></div></div>`
+      : '';
+
+    let body = '';
+    if (state.step === 0) body = renderWelcome();
+    else if (state.step === 1) body = renderPart1();
+    else if (state.step === 2) body = renderPart2();
+    else if (state.step === 3) body = renderSuccess();
+
+    document.getElementById('root').innerHTML = `
+      <div class="min-h-screen bg-surface-light py-4 px-3 sm:py-6 sm:px-4 md:py-10 md:px-4">
+        <div class="max-w-4xl mx-auto bg-surface-light rounded-2xl sm:rounded-3xl shadow-2xl shadow-border-light/50 border border-border-light overflow-hidden">
+          ${progress}
+          <div class="p-4 sm:p-6 md:p-8 lg:p-16">${body}</div>
+        </div>
+      </div>`;
+
+    if (state.step === 3) {
+      const el = document.getElementById('results-top');
+      if (el && 'scrollIntoView' in el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      else window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  // Event delegation
+  document.addEventListener('click', (e) => {
+    const actionEl = e.target.closest('[data-action]');
+    if (actionEl) {
+      const a = actionEl.getAttribute('data-action');
+      if (a === 'next') { state.step += 1; render(); }
+      else if (a === 'prev') { state.step -= 1; render(); }
+      else if (a === 'submit') { submitAndShowResults(); }
+      else if (a === 'restart') { window.location.reload(); }
+      else if (a === 'share-line') { shareSummaryToLine(); }
+      return;
+    }
+    const maritalEl = e.target.closest('[data-marital]');
+    if (maritalEl) {
+      handleInputChange('personal', 'maritalStatus', maritalEl.getAttribute('data-marital'));
+      render();
+      return;
+    }
+    const mcqEl = e.target.closest('[data-mcq]');
+    if (mcqEl) {
+      handleInputChange('mcq', Number(mcqEl.getAttribute('data-mcq')), mcqEl.getAttribute('data-opt'));
+      render();
+      return;
+    }
+  });
+
+  // Inputs ที่ไม่ต้อง re-render (เก็บค่า + คงโฟกัส)
+  document.addEventListener('input', (e) => {
+    const pf = e.target.getAttribute && e.target.getAttribute('data-personal');
+    if (pf) { handleInputChange('personal', pf, e.target.value); return; }
+    const oe = e.target.getAttribute && e.target.getAttribute('data-openended');
+    if (oe) { handleInputChange('openEnded', oe, e.target.value); return; }
+  });
+  document.addEventListener('change', (e) => {
+    const pf = e.target.getAttribute && e.target.getAttribute('data-personal');
+    if (pf) { handleInputChange('personal', pf, e.target.value); }
+  });
+
+  render();
+  </script>
+</body>
+</html>

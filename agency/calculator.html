@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>เครื่องคำนวณค่าบริหาร — Agency Blueprint</title>
+  <link rel="icon" href="icon.png" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: { extend: {
+        colors: {
+          background: 'hsl(var(--background))', foreground: 'hsl(var(--foreground))',
+          card: { DEFAULT: 'hsl(var(--card))', foreground: 'hsl(var(--card-foreground))' },
+          primary: { DEFAULT: 'hsl(var(--primary))', foreground: 'hsl(var(--primary-foreground))' },
+          secondary: { DEFAULT: 'hsl(var(--secondary))', foreground: 'hsl(var(--secondary-foreground))' },
+          muted: { DEFAULT: 'hsl(var(--muted))', foreground: 'hsl(var(--muted-foreground))' },
+          accent: { DEFAULT: 'hsl(var(--accent))', foreground: 'hsl(var(--accent-foreground))' },
+          destructive: { DEFAULT: 'hsl(var(--destructive))', foreground: 'hsl(var(--destructive-foreground))' },
+          border: 'hsl(var(--border))', ring: 'hsl(var(--ring))',
+        },
+        borderRadius: { lg: 'var(--radius)', md: 'calc(var(--radius) - 2px)', sm: 'calc(var(--radius) - 4px)' },
+        fontFamily: { sans: ['IBM Plex Sans Thai', 'system-ui', 'sans-serif'] },
+      } },
+    };
+  </script>
+  <style>
+    :root {
+      --background: 42 25% 89%; --foreground: 216 29% 27%;
+      --card: 36 50% 98%; --card-foreground: 216 29% 27%;
+      --primary: 36 45% 50%; --primary-foreground: 36 50% 98%;
+      --secondary: 180 18% 43%; --secondary-foreground: 36 50% 98%;
+      --muted: 42 25% 89%; --muted-foreground: 216 29% 45%;
+      --accent: 172 22% 65%; --accent-foreground: 216 29% 27%;
+      --destructive: 0 84.2% 60.2%; --destructive-foreground: 0 0% 98%;
+      --border: 42 20% 80%; --ring: 36 45% 50%; --radius: 0.75rem;
+    }
+    body { font-family: 'IBM Plex Sans Thai', system-ui, sans-serif; background-color: hsl(var(--background)); color: hsl(var(--foreground)); }
+    * { border-color: hsl(var(--border)); }
+    input[type="range"] { -webkit-appearance: none; appearance: none; height: 6px; border-radius: 9999px; background: hsl(var(--secondary)); }
+    input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; border-radius: 9999px; background: hsl(var(--primary)); border: 2px solid hsl(var(--card)); cursor: pointer; }
+    input[type="range"]::-moz-range-thumb { width: 18px; height: 18px; border-radius: 9999px; background: hsl(var(--primary)); border: 2px solid hsl(var(--card)); cursor: pointer; }
+    .tab-btn[data-active="true"] { background: hsl(var(--card)); color: hsl(var(--foreground)); box-shadow: 0 1px 2px rgba(0,0,0,.1); }
+    /* simple switch */
+    .switch { width: 44px; height: 24px; border-radius: 9999px; background: hsl(var(--border)); position: relative; cursor: pointer; transition: background .2s; flex: none; }
+    .switch[data-on="true"] { background: hsl(var(--primary)); }
+    .switch .knob { position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; border-radius: 9999px; background: #fff; transition: transform .2s; }
+    .switch[data-on="true"] .knob { transform: translateX(20px); }
+  </style>
+</head>
+<body class="min-h-screen">
+  <div class="flex flex-col min-h-screen">
+    <main class="flex-grow container mx-auto px-4 py-8 md:py-12">
+      <div class="relative mb-8 text-center">
+        <a href="index.html" class="inline-block">
+          <img src="logo.png" alt="Agency Blueprint" width="64" height="64" class="mx-auto mb-4 rounded-lg object-cover hover:opacity-90 transition-opacity" />
+        </a>
+        <div class="absolute top-1/2 -translate-y-1/2 left-0">
+          <a href="index.html" class="inline-flex items-center rounded-md px-4 py-2 text-sm font-medium hover:bg-secondary/20 transition-colors">
+            <svg class="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+            กลับหน้าแรก
+          </a>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start max-w-6xl mx-auto">
+        <!-- FORM -->
+        <div class="w-full bg-card text-card-foreground shadow-md rounded-lg border">
+          <div class="p-6 pb-4">
+            <h2 class="text-2xl font-bold text-primary">เครื่องคำนวณค่าบริหาร</h2>
+            <p class="text-sm text-muted-foreground mt-1">กรอกข้อมูล NBC ของแต่ละหน่วยเพื่อคำนวณค่าบริหารรวม</p>
+          </div>
+          <div class="p-6 pt-0">
+            <form id="calc-form" class="space-y-6">
+              <!-- Tabs -->
+              <div>
+                <div class="grid w-full grid-cols-3 rounded-md bg-muted p-1 gap-1">
+                  <button type="button" class="tab-btn rounded-sm py-1.5 text-sm font-medium transition" data-tab="direct" data-active="true">หน่วยตรง</button>
+                  <button type="button" class="tab-btn rounded-sm py-1.5 text-sm font-medium transition" data-tab="child">หน่วยลูก</button>
+                  <button type="button" class="tab-btn rounded-sm py-1.5 text-sm font-medium transition" data-tab="grandchild">หน่วยหลาน</button>
+                </div>
+
+                <!-- Direct -->
+                <div class="tab-pane mt-6 space-y-6" data-pane="direct">
+                  <div>
+                    <label class="text-sm font-medium">คอมมิชชั่นของธุรกิจใหม่ (NBC)</label>
+                    <input id="direct-nbc" type="text" inputmode="numeric" placeholder="เช่น 50,000"
+                      class="mt-2 flex h-10 w-full rounded-md border bg-card px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring" />
+                  </div>
+                  <div>
+                    <label class="text-sm font-medium">อายุงานผู้จัดการ</label>
+                    <select id="direct-tenure" class="mt-2 flex h-10 w-full rounded-md border bg-card px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring">
+                      <option value="1">น้อยกว่าหรือเท่ากับ 12 เดือน</option>
+                      <option value="2">มากกว่า 12 เดือน</option>
+                    </select>
+                  </div>
+                  <div>
+                    <div class="flex justify-between items-center">
+                      <label class="text-sm font-medium">19-Month Persistency Rate (%)</label>
+                      <span id="persist-label" class="text-sm font-medium text-primary">80%</span>
+                    </div>
+                    <input id="direct-persist" type="range" min="0" max="100" step="1" value="80" class="w-full py-2 mt-2" />
+                    <p class="text-xs text-muted-foreground">อัตราความคงอยู่ของกรมธรรม์ 19 เดือน</p>
+                  </div>
+                  <div class="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm bg-background">
+                    <div class="space-y-0.5">
+                      <label class="text-sm font-medium">เปิดใช้งาน ADOR</label>
+                      <p class="text-xs text-muted-foreground">สำหรับตัวแทนอายุงานไม่เกิน 2 ปี ที่ผู้จัดการเป็นคนชวน</p>
+                    </div>
+                    <div id="direct-ador" class="switch" data-on="false"><div class="knob"></div></div>
+                  </div>
+                </div>
+
+                <!-- Child -->
+                <div class="tab-pane mt-6 space-y-4 hidden" data-pane="child">
+                  <div id="child-list" class="space-y-4"></div>
+                  <button type="button" id="add-child" class="w-full inline-flex items-center justify-center rounded-md border px-4 py-2 text-sm font-medium hover:bg-secondary/20 transition-colors">
+                    <svg class="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/></svg>
+                    เพิ่มหน่วยลูก
+                  </button>
+                </div>
+
+                <!-- Grandchild -->
+                <div class="tab-pane mt-6 space-y-4 hidden" data-pane="grandchild">
+                  <div id="grandchild-list" class="space-y-4"></div>
+                  <button type="button" id="add-grandchild" class="w-full inline-flex items-center justify-center rounded-md border px-4 py-2 text-sm font-medium hover:bg-secondary/20 transition-colors">
+                    <svg class="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/></svg>
+                    เพิ่มหน่วยหลาน
+                  </button>
+                </div>
+              </div>
+
+              <div class="flex gap-2 mt-8">
+                <button type="button" id="reset-btn" class="w-1/4 inline-flex items-center justify-center rounded-md border px-4 py-2 text-sm font-medium hover:bg-secondary/20 transition-colors">
+                  <svg class="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                  ล้างข้อมูล
+                </button>
+                <button type="submit" class="w-3/4 inline-flex items-center justify-center rounded-md bg-accent hover:bg-accent/90 text-accent-foreground text-lg py-6 font-medium transition-colors">
+                  คำนวณค่าบริหารทั้งหมด
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- RESULTS -->
+        <div class="lg:sticky top-24">
+          <div id="results-placeholder" class="w-full bg-card shadow-md border-dashed border rounded-lg">
+            <div class="p-6 h-[400px] flex items-center justify-center">
+              <div class="text-center text-muted-foreground">
+                <svg class="mx-auto h-12 w-12 mb-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" x2="12" y1="20" y2="10"/><line x1="18" x2="18" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="16"/></svg>
+                <h3 class="text-xl font-semibold text-foreground mb-2">ผลลัพธ์จะแสดงที่นี่</h3>
+                <p>กรอกข้อมูลในฟอร์มเพื่อคำนวณค่าบริหาร</p>
+              </div>
+            </div>
+          </div>
+          <div id="results" class="space-y-6 hidden"></div>
+        </div>
+      </div>
+    </main>
+    <footer class="py-4 text-center text-muted-foreground text-sm">
+      <p>Application by Pheerapatpisit Thongsrithong</p>
+    </footer>
+  </div>
+
+  <script src="agency.js"></script>
+  <script>
+    /* ---- helpers ---- */
+    function parseNbc(str) {
+      const raw = String(str).replace(/,/g, '');
+      const n = Number(raw);
+      return isNaN(n) ? 0 : n;
+    }
+    function formatNbcInput(el) {
+      const n = parseNbc(el.value);
+      el.value = n === 0 ? '' : n.toLocaleString('en-US');
+    }
+    document.getElementById('direct-nbc').addEventListener('blur', e => formatNbcInput(e.target));
+
+    /* ---- tabs ---- */
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.dataset.active = 'false');
+        btn.dataset.active = 'true';
+        const t = btn.dataset.tab;
+        document.querySelectorAll('.tab-pane').forEach(p => p.classList.toggle('hidden', p.dataset.pane !== t));
+      });
+    });
+
+    /* ---- persistency slider ---- */
+    const persist = document.getElementById('direct-persist');
+    persist.addEventListener('input', () => document.getElementById('persist-label').textContent = persist.value + '%');
+
+    /* ---- ADOR switch ---- */
+    const adorSwitch = document.getElementById('direct-ador');
+    adorSwitch.addEventListener('click', () => adorSwitch.dataset.on = adorSwitch.dataset.on === 'true' ? 'false' : 'true');
+
+    /* ---- child/grandchild dynamic rows ---- */
+    let childCount = 0, grandCount = 0;
+    function nbcInputHtml(cls, ph) {
+      return `<input type="text" inputmode="numeric" placeholder="${ph}" class="${cls} mt-2 flex h-10 w-full rounded-md border bg-card px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring" />`;
+    }
+    const delBtn = `<svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>`;
+
+    function addChild() {
+      childCount++;
+      const idx = childCount;
+      const div = document.createElement('div');
+      div.className = 'p-4 border rounded-lg space-y-4 relative child-row';
+      div.innerHTML = `
+        <h4 class="font-semibold child-title">หน่วยลูก</h4>
+        <div>
+          <label class="text-sm font-medium">คอมมิชชั่นของธุรกิจใหม่ (NBC)</label>
+          ${nbcInputHtml('child-nbc', 'เช่น 30,000')}
+        </div>
+        <div>
+          <label class="text-sm font-medium">อายุของหน่วยลูก (ปี)</label>
+          <select class="child-age mt-2 flex h-10 w-full rounded-md border bg-card px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring">
+            <option value="1">ไม่เกิน 1 ปี</option>
+            <option value="2">1-2 ปี</option>
+            <option value="3">2 ปีขึ้นไป</option>
+          </select>
+          <p class="text-xs text-muted-foreground mt-1">MDOR จะคำนวณสำหรับหน่วยลูกอายุไม่เกิน 2 ปี</p>
+        </div>
+        <button type="button" class="del-row absolute top-2 right-2 h-7 w-7 inline-flex items-center justify-center rounded-md bg-destructive text-destructive-foreground hover:bg-destructive/90">${delBtn}</button>`;
+      document.getElementById('child-list').appendChild(div);
+      div.querySelector('.del-row').addEventListener('click', () => { div.remove(); renumber(); });
+      div.querySelector('.child-nbc').addEventListener('blur', e => formatNbcInput(e.target));
+      renumber();
+    }
+    function addGrandchild() {
+      grandCount++;
+      const div = document.createElement('div');
+      div.className = 'p-4 border rounded-lg space-y-4 relative grand-row';
+      div.innerHTML = `
+        <h4 class="font-semibold grand-title">หน่วยหลาน</h4>
+        <div>
+          <label class="text-sm font-medium">คอมมิชชั่นของธุรกิจใหม่ (NBC)</label>
+          ${nbcInputHtml('grand-nbc', 'เช่น 20,000')}
+        </div>
+        <button type="button" class="del-row absolute top-2 right-2 h-7 w-7 inline-flex items-center justify-center rounded-md bg-destructive text-destructive-foreground hover:bg-destructive/90">${delBtn}</button>`;
+      document.getElementById('grandchild-list').appendChild(div);
+      div.querySelector('.del-row').addEventListener('click', () => { div.remove(); renumber(); });
+      div.querySelector('.grand-nbc').addEventListener('blur', e => formatNbcInput(e.target));
+      renumber();
+    }
+    function renumber() {
+      document.querySelectorAll('.child-title').forEach((el, i) => el.textContent = 'หน่วยลูก ' + (i + 1));
+      document.querySelectorAll('.grand-title').forEach((el, i) => el.textContent = 'หน่วยหลาน ' + (i + 1));
+    }
+    document.getElementById('add-child').addEventListener('click', addChild);
+    document.getElementById('add-grandchild').addEventListener('click', addGrandchild);
+
+    /* ---- gather + submit ---- */
+    function gather() {
+      const direct = {
+        nbc: parseNbc(document.getElementById('direct-nbc').value),
+        applyAdor: adorSwitch.dataset.on === 'true',
+        managerTenure: Number(document.getElementById('direct-tenure').value),
+        persistencyRate: Number(persist.value),
+      };
+      const child = [...document.querySelectorAll('.child-row')].map(r => ({
+        nbc: parseNbc(r.querySelector('.child-nbc').value),
+        unitAgeYear: Number(r.querySelector('.child-age').value),
+      }));
+      const grandchild = [...document.querySelectorAll('.grand-row')].map(r => ({
+        nbc: parseNbc(r.querySelector('.grand-nbc').value),
+      }));
+      return { direct, child, grandchild };
+    }
+
+    document.getElementById('calc-form').addEventListener('submit', e => {
+      e.preventDefault();
+      const results = commissionCalculator(gather());
+      renderResults(results);
+    });
+
+    document.getElementById('reset-btn').addEventListener('click', () => {
+      document.getElementById('direct-nbc').value = '';
+      document.getElementById('direct-tenure').value = '1';
+      persist.value = 80; document.getElementById('persist-label').textContent = '80%';
+      adorSwitch.dataset.on = 'false';
+      document.getElementById('child-list').innerHTML = '';
+      document.getElementById('grandchild-list').innerHTML = '';
+      document.getElementById('results').classList.add('hidden');
+      document.getElementById('results').innerHTML = '';
+      document.getElementById('results-placeholder').classList.remove('hidden');
+    });
+
+    /* ---- icons (inline) ---- */
+    const IC = {
+      target: '<svg class="h-5 w-5 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>',
+      star: '<svg class="h-5 w-5 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
+      building: '<svg class="h-5 w-5 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="20" x="4" y="2" rx="2" ry="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M12 6h.01"/><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/></svg>',
+      buildingP: '<svg class="h-6 w-6 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="20" x="4" y="2" rx="2" ry="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M12 6h.01"/><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/></svg>',
+      users: '<svg class="h-6 w-6 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+      network: '<svg class="h-6 w-6 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="16" y="16" width="6" height="6" rx="1"/><rect x="2" y="16" width="6" height="6" rx="1"/><rect x="9" y="2" width="6" height="6" rx="1"/><path d="M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3"/><path d="M12 12V8"/></svg>',
+      user: '<svg class="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
+      copy: '<svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>',
+      msg: '<svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>',
+    };
+
+    /* ---- hierarchy chart node ---- */
+    function nodeCard(title, icon, items, isRoot) {
+      const total = items.reduce((s, i) => s + i.value, 0);
+      if (total === 0) return '';
+      const rows = items.filter(i => i.value > 0).map(i =>
+        `<div><span>${i.label}: </span><span class="font-medium">${formatCurrency(i.value)}</span></div>`).join('');
+      return `<div class="text-center shadow-md border border-primary/20 w-full bg-card rounded-lg">
+        <div class="p-4 flex flex-col items-center">
+          <div class="p-3 rounded-full ${isRoot ? 'bg-primary text-primary-foreground' : 'bg-secondary'}">${icon}</div>
+          <div class="text-base font-semibold mt-2">${title}</div>
+        </div>
+        <div class="p-4 pt-0 space-y-2">
+          <p class="text-xl font-bold text-primary">${formatCurrency(total)}</p>
+          <div class="text-xs text-muted-foreground">${rows}</div>
+        </div>
+      </div>`;
+    }
+
+    function hierarchyChart(details) {
+      const directItems = [
+        { label: '1TOR', value: details?.direct?.tor ?? 0 },
+        { label: 'ADOR', value: details?.direct?.ador ?? 0 },
+      ];
+      const directTotal = directItems.reduce((s, i) => s + i.value, 0);
+      const hasChild = details?.child && details.child.length > 0 && details.child.some(c => c.tor > 0);
+      const hasGrand = details?.grandchild && details.grandchild.length > 0 && details.grandchild.some(g => g.tor > 0);
+      if (!details || (directTotal === 0 && !hasChild && !hasGrand)) return '';
+
+      let directHtml = '';
+      if (directTotal > 0) {
+        directHtml = `<div class="relative flex flex-col items-center flex-1 max-w-48">
+          <div class="absolute top-[-16px] h-4 w-px bg-border"></div>
+          ${nodeCard('หน่วยตรง', IC.buildingP, directItems, false)}
+        </div>`;
+      }
+
+      let childHtml = '';
+      if (hasChild) {
+        const childNodes = details.child.map((u, i) => {
+          const items = [{ label: '2TOR', value: u.tor ?? 0 }, { label: 'MDOR', value: u.mdor ?? 0 }];
+          if (items.reduce((s, x) => s + x.value, 0) === 0) return '';
+          return `<div class="w-full">${nodeCard('หน่วยลูก ' + (i + 1), IC.users, items, false)}</div>`;
+        }).join('');
+        let grandSection = '';
+        if (hasGrand) {
+          const grandNodes = details.grandchild.map((u, i) => {
+            const items = [{ label: '3TOR', value: u.tor ?? 0 }];
+            if (items.reduce((s, x) => s + x.value, 0) === 0) return '';
+            return `<div class="w-full">${nodeCard('หน่วยหลาน ' + (i + 1), IC.network, items, false)}</div>`;
+          }).join('');
+          grandSection = `<div class="h-6 w-px bg-border"></div><div class="w-full space-y-4">${grandNodes}</div>`;
+        }
+        childHtml = `<div class="relative flex flex-col items-center flex-1 max-w-48 space-y-4">
+          <div class="absolute top-[-16px] h-4 w-px bg-border"></div>
+          ${childNodes}${grandSection}
+        </div>`;
+      }
+
+      const vline = (directTotal > 0 || hasChild) ? '<div class="absolute top-[70px] h-8 w-px bg-border z-0"></div>' : '';
+      const hline = (directTotal > 0 && hasChild) ? '<div class="absolute top-[-16px] left-1/2 -translate-x-1/2 h-px bg-border w-[calc(100%-200px)]"></div>' : '';
+
+      return `<div class="bg-card rounded-lg border shadow-sm">
+        <div class="p-6 pb-2"><h3 class="text-lg font-semibold">แผนภูมิโครงสร้าง</h3></div>
+        <div class="p-6 pt-2">
+          <div class="relative flex flex-col items-center">
+            <div class="w-48 z-10">
+              <div class="text-center bg-primary text-primary-foreground shadow-lg rounded-lg">
+                <div class="p-4 flex flex-col items-center">${IC.user}<div class="text-lg mt-1">ผู้จัดการ</div></div>
+              </div>
+            </div>
+            ${vline}
+            <div class="relative mt-8 flex justify-center items-start gap-4 w-full">
+              ${hline}${directHtml}${childHtml}
+            </div>
+          </div>
+        </div>
+      </div>`;
+    }
+
+    /* ---- share text ---- */
+    function generateShareText(r) {
+      let text = `📊 *สรุปค่าบริหารหน่วย KTAXA*\n--------------------------------\n💰 *รายได้รวมสุทธิ*\n• ต่อเดือน: ${formatCurrency(r.monthlyIncome)}\n• ต่อปี (ประมาณ): ${formatCurrency(r.totalAnnualIncome)}\n--------------------------------\n📈 *รายละเอียดรายได้*\n• ค่าตอบแทน (TOR): ${formatCurrency(r.breakdown.tor)}\n• พัฒนาตัวแทน (ADOR): ${formatCurrency(r.breakdown.ador)}\n• พัฒนาผู้จัดการ (MDOR): ${formatCurrency(r.breakdown.mdor)}\n`;
+      if (r.detailsByLevel) {
+        text += `--------------------------------\n🏢 *แยกตามหน่วยงาน*\n`;
+        if (r.detailsByLevel.direct) {
+          const d = r.detailsByLevel.direct.tor + (r.detailsByLevel.direct.ador ?? 0);
+          if (d > 0) text += `• หน่วยตรง: ${formatCurrency(d)}\n`;
+        }
+        if (r.detailsByLevel.child && r.detailsByLevel.child.length > 0) {
+          const c = r.detailsByLevel.child.reduce((s, u) => s + u.tor + (u.mdor ?? 0), 0);
+          if (c > 0) text += `• หน่วยลูก (${r.detailsByLevel.child.length} หน่วย): ${formatCurrency(c)}\n`;
+        }
+        if (r.detailsByLevel.grandchild && r.detailsByLevel.grandchild.length > 0) {
+          const g = r.detailsByLevel.grandchild.reduce((s, u) => s + u.tor, 0);
+          if (g > 0) text += `• หน่วยหลาน (${r.detailsByLevel.grandchild.length} หน่วย): ${formatCurrency(g)}\n`;
+        }
+      }
+      text += `--------------------------------\nApplication by Pheerapatpisit Thongsrithong`;
+      return text;
+    }
+
+    /* ---- render results ---- */
+    function renderResults(r) {
+      const hasBreakdown = Object.values(r.breakdown).some(v => v > 0);
+      const d = r.detailsByLevel;
+      const hasDetails = d && (
+        (d.direct && (d.direct.tor > 0 || (d.direct.ador ?? 0) > 0)) ||
+        (d.child && d.child.some(c => c.tor > 0 || (c.mdor ?? 0) > 0)) ||
+        (d.grandchild && d.grandchild.some(g => g.tor > 0))
+      );
+
+      const totalItems = [
+        { key: 'tor', label: 'ค่าตอบแทน (TOR)', icon: IC.target },
+        { key: 'ador', label: 'ค่าตอบแทนการพัฒนาตัวแทน (ADOR)', icon: IC.star },
+        { key: 'mdor', label: 'ค่าตอบแทนการพัฒนาผู้จัดการ (MDOR)', icon: IC.building },
+      ];
+
+      let html = `
+      <div class="w-full bg-card shadow-lg border border-primary/20 rounded-lg">
+        <div class="p-6 pb-2">
+          <h3 class="text-xl text-primary font-semibold">ภาพรวมรายได้ทั้งหมด</h3>
+          <p class="text-sm text-muted-foreground">รายได้โดยประมาณจากทุกหน่วยงานรวมกัน</p>
+        </div>
+        <div class="p-6 pt-2 space-y-6">
+          <div class="flex items-center justify-between text-center p-4 bg-accent/10 rounded-lg">
+            <div><p class="text-sm text-muted-foreground">รายได้ต่อเดือน</p><p class="text-3xl font-bold text-accent">${formatCurrency(r.monthlyIncome)}</p></div>
+            <div class="h-16 w-px bg-border mx-4"></div>
+            <div><p class="text-sm text-muted-foreground">รายได้รวมต่อปี (โดยประมาณ)</p><p class="text-3xl font-bold text-accent">${formatCurrency(r.totalAnnualIncome)}</p></div>
+          </div>
+          <div class="flex flex-wrap gap-2 justify-center pt-2">
+            <button id="copy-btn" class="inline-flex items-center gap-2 rounded-md border px-3 py-1.5 text-sm hover:bg-secondary/20 transition-colors">${IC.copy}คัดลอกข้อความ</button>
+            <button id="line-btn" class="inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-sm text-white" style="background:#06C755">${IC.msg}แชร์ผ่าน LINE</button>
+          </div>
+        </div>
+      </div>`;
+
+      if (hasDetails) html += hierarchyChart(d);
+
+      if (hasBreakdown) {
+        const rows = totalItems.map(it => {
+          const v = r.breakdown[it.key];
+          if (v <= 0) return '';
+          return `<li class="flex items-center justify-between"><div class="flex items-center gap-3">${it.icon}<span class="text-sm font-medium">${it.label}</span></div><span class="font-semibold text-foreground">${formatCurrency(v)}</span></li>`;
+        }).join('');
+        html += `<div class="bg-card rounded-lg border shadow-sm">
+          <div class="p-6 pb-2"><h3 class="text-lg font-semibold">แจกแจงรายได้รวม</h3><p class="text-sm text-muted-foreground">รายละเอียดองค์ประกอบคอมมิชชั่นรวมทุกส่วน</p></div>
+          <div class="p-6 pt-2"><ul class="space-y-4">${rows}</ul></div></div>`;
+      }
+
+      if (hasDetails) {
+        let detailHtml = '';
+        if (d.direct && (d.direct.tor > 0 || (d.direct.ador ?? 0) > 0)) {
+          let items = '';
+          if (d.direct.tor > 0) items += `<li class="flex items-center justify-between"><span class="text-sm">ค่าตอบแทนหน่วยตรง (1TOR)</span><span class="font-medium">${formatCurrency(d.direct.tor)}</span></li>`;
+          if ((d.direct.ador ?? 0) > 0) items += `<li class="flex items-center justify-between"><span class="text-sm">ค่าตอบแทนการพัฒนาตัวแทน ADOR</span><span class="font-medium">${formatCurrency(d.direct.ador ?? 0)}</span></li>`;
+          detailHtml += `<div class="space-y-3"><div class="flex items-center gap-3">${IC.buildingP}<h4 class="font-semibold text-lg text-primary">หน่วยตรง</h4></div><ul class="space-y-2 pl-4">${items}</ul><div class="h-px bg-border"></div></div>`;
+        }
+        (d.child || []).forEach((u, i) => {
+          if (!(u.tor > 0 || (u.mdor ?? 0) > 0)) return;
+          let items = '';
+          if (u.tor > 0) items += `<li class="flex items-center justify-between"><span class="text-sm">ค่าตอบแทนหน่วยลูก (2TOR)</span><span class="font-medium">${formatCurrency(u.tor)}</span></li>`;
+          if ((u.mdor ?? 0) > 0) items += `<li class="flex items-center justify-between"><span class="text-sm">ค่าตอบแทนการพัฒนาผู้จัดการ (MDOR)</span><span class="font-medium">${formatCurrency(u.mdor ?? 0)}</span></li>`;
+          detailHtml += `<div class="space-y-3"><div class="flex items-center gap-3">${IC.users}<h4 class="font-semibold text-lg text-primary">หน่วยลูก ${i + 1}</h4></div><ul class="space-y-2 pl-4">${items}</ul><div class="h-px bg-border"></div></div>`;
+        });
+        (d.grandchild || []).forEach((u, i) => {
+          if (!(u.tor > 0)) return;
+          detailHtml += `<div class="space-y-3"><div class="flex items-center gap-3">${IC.network}<h4 class="font-semibold text-lg text-primary">หน่วยหลาน ${i + 1}</h4></div><ul class="space-y-2 pl-4"><li class="flex items-center justify-between"><span class="text-sm">ค่าตอบแทนหน่วยหลาน (3TOR)</span><span class="font-medium">${formatCurrency(u.tor)}</span></li></ul></div>`;
+        });
+        html += `<div class="bg-card rounded-lg border shadow-sm">
+          <div class="p-6 pb-2"><h3 class="text-lg font-semibold">รายละเอียดตามหน่วยงาน</h3><p class="text-sm text-muted-foreground">แจกแจงรายได้ของแต่ละประเภทหน่วย</p></div>
+          <div class="p-6 pt-2 space-y-6">${detailHtml}</div></div>`;
+      }
+
+      const box = document.getElementById('results');
+      box.innerHTML = html;
+      box.classList.remove('hidden');
+      document.getElementById('results-placeholder').classList.add('hidden');
+
+      const shareText = generateShareText(r);
+      const copyBtn = document.getElementById('copy-btn');
+      if (copyBtn) copyBtn.addEventListener('click', async () => {
+        try { await navigator.clipboard.writeText(shareText); copyBtn.innerHTML = IC.copy + 'คัดลอกแล้ว'; }
+        catch (e) { alert('ไม่สามารถคัดลอกได้'); }
+      });
+      const lineBtn = document.getElementById('line-btn');
+      if (lineBtn) lineBtn.addEventListener('click', () =>
+        window.open('https://line.me/R/share?text=' + encodeURIComponent(shareText), '_blank', 'width=600,height=500'));
+    }
+  </script>
+</body>
+</html>

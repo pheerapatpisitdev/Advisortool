@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ประกันโรคร้ายแรง CI 123</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    html { scroll-behavior: smooth; }
+    body { font-family: system-ui, -apple-system, "Segoe UI", "IBM Plex Sans Thai", sans-serif; }
+
+    @keyframes ci-fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fadeIn { animation: ci-fadeIn 0.4s ease-out forwards; }
+
+    /* CI123 disease list — numbered rows */
+    .ci123-scope .disease-list {
+      list-style: none; margin: 0; padding: 0.5rem 0.75rem 0.75rem; counter-reset: disease;
+    }
+    @media (min-width: 640px) { .ci123-scope .disease-list { padding: 0.75rem 1.5rem 1.25rem; } }
+    .ci123-scope .disease-list > li {
+      counter-increment: disease; display: flex; gap: 0.625rem; padding: 0.375rem 0;
+      line-height: 1.5; border-bottom: 1px solid #eef2f6;
+    }
+    .ci123-scope .disease-list > li:last-child { border-bottom: 0; }
+    .ci123-scope .disease-list > li::before {
+      content: counter(disease) "."; flex-shrink: 0; min-width: 1.75rem; text-align: right;
+      font-weight: 600; color: #1d4ed8; font-variant-numeric: tabular-nums;
+    }
+  </style>
+</head>
+<body>
+<main class="ci123-scope min-h-dvh bg-white px-3 py-6 sm:px-10 sm:py-10 md:px-16 lg:px-24 overflow-x-hidden">
+  <div class="mx-auto flex max-w-7xl flex-col items-center w-full min-w-0 gap-8 sm:gap-16">
+
+    <!-- Hero -->
+    <header class="w-full flex flex-col items-center">
+      <h1 class="text-xl sm:text-3xl md:text-4xl font-bold text-[#1b2b7a] text-center break-words leading-snug">
+        ทำไมต้องทำประกันโรคร้ายแรง
+      </h1>
+    </header>
+
+    <!-- Causes (stats) -->
+    <img src="cause-stats.png" alt="สาเหตุที่โรคร้าย...เข้าใกล้เรามากขึ้น" class="w-full max-w-[1000px] h-auto" onerror="this.style.display='none'" />
+
+    <!-- Primary CTA -->
+    <a href="#calculator" class="inline-flex items-center justify-center rounded-full bg-[#1b2b7a] px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-[#1b2b7a]/25 transition-all hover:bg-[#152466] hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1d4ed8] focus-visible:ring-offset-2">
+      คำนวณเบี้ยประกันของคุณ
+    </a>
+
+    <!-- Benefit payout table -->
+    <section class="w-full max-w-[1000px] mx-auto" aria-labelledby="benefit-table-heading">
+      <h2 id="benefit-table-heading" class="mb-4 sm:mb-8 text-center text-lg sm:text-2xl md:text-3xl font-bold text-[#1d4ed8] break-words">ตารางการจ่ายผลประโยชน์ CI 123</h2>
+      <div class="overflow-hidden rounded-xl border border-gray-200">
+        <table class="w-full table-fixed border-collapse text-left">
+          <colgroup><col class="w-[52%]" /><col class="w-[22%]" /><col class="w-[26%]" /></colgroup>
+          <thead>
+            <tr class="bg-[#eef2f6] text-[#1e3a8a]">
+              <th scope="col" class="px-3 py-3 sm:px-5 sm:py-4 text-sm sm:text-base font-bold">ความคุ้มครอง</th>
+              <th scope="col" class="px-2 py-3 sm:px-4 sm:py-4 text-center text-xs sm:text-base font-bold">จำนวนโรคที่คุ้มครอง</th>
+              <th scope="col" class="px-2 py-3 sm:px-4 sm:py-4 text-center text-xs sm:text-base font-bold">ผลประโยชน์</th>
+            </tr>
+          </thead>
+          <tbody id="benefit-rows"></tbody>
+        </table>
+      </div>
+      <p class="mt-2 text-xs text-gray-400 text-center">ผลประโยชน์เทียบกับจำนวนเงินเอาประกันภัยเริ่มต้นของโรคร้ายแรงระยะรุนแรง</p>
+    </section>
+
+    <!-- Covered critical illnesses -->
+    <section class="w-full min-w-0 max-w-[1000px]" aria-labelledby="disease-heading">
+      <h2 id="disease-heading" class="mb-4 sm:mb-8 text-center text-lg sm:text-2xl md:text-3xl font-bold text-[#1d4ed8] break-words">รายชื่อโรคร้ายแรงที่คุ้มครองของประกันโรคร้ายแรง CI 123</h2>
+      <div id="disease-lists" class="flex flex-col gap-3 sm:gap-4"></div>
+    </section>
+
+    <!-- Critical condition coverage -->
+    <section class="w-full max-w-[1000px]">
+      <div class="rounded-lg sm:rounded-xl bg-gray-50/50 overflow-hidden border border-gray-100">
+        <h3 class="bg-[#eef2f6] px-3 py-3 sm:px-6 sm:py-4 flex flex-wrap items-center gap-x-3 gap-y-1">
+          <span class="text-base sm:text-xl font-bold text-[#1e3a8a]">ความคุ้มครองกรณีภาวะวิกฤต</span>
+          <span class="inline-flex items-center rounded-full bg-[#dbeafe] px-2.5 py-0.5 text-xs sm:text-sm font-semibold text-[#1e3a8a]">25%</span>
+        </h3>
+        <div class="p-3 sm:p-6 text-left text-[#1f2937] text-sm sm:text-base">
+          <p class="mb-3 sm:mb-4">หากผู้เอาประกันภัยมีการป่วย หรือบาดเจ็บจนทำให้เกิดเหตุการณ์ใดเหตุการณ์หนึ่ง ดังต่อไปนี้</p>
+          <ul class="list-disc space-y-2 sm:space-y-3 pl-4 sm:pl-6">
+            <li>การเข้ารับการรักษาในหอผู้ป่วยหนัก (ICU) ที่ต้องใช้เครื่องแบบสอดท่อหรือเจาะคอ (MV) หรือเครื่องพยุงการทำงานของหัวใจและปอด (ECMO) อย่างน้อย 5 วันติดต่อกัน</li>
+            <li>การไม่สามารถปฏิบัติกิจวัตรประจำวันได้ด้วยตนเองอย่างถาวรตั้งแต่ 2 อย่างขึ้นไป</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Conditions / Examples -->
+    <div class="w-full max-w-[1200px] mt-10 sm:mt-16 md:mt-20 mb-10 sm:mb-20">
+      <div class="mx-auto flex justify-center gap-3 sm:gap-6 flex-wrap w-full max-w-[913px] py-2">
+        <button type="button" id="btn-conditions" class="inline-flex min-h-[48px] min-w-[160px] sm:min-w-[220px] items-center justify-center rounded-full border px-6 py-3 text-sm sm:text-base font-semibold transition-colors border-[#1d4ed8] bg-white text-[#1d4ed8] hover:bg-[#eff4ff]">ดูเงื่อนไขและข้อยกเว้น</button>
+        <button type="button" id="btn-examples" class="inline-flex min-h-[48px] min-w-[160px] sm:min-w-[220px] items-center justify-center rounded-full border px-6 py-3 text-sm sm:text-base font-semibold transition-colors border-[#1b2b7a] bg-white text-[#1b2b7a] hover:bg-[#eef0f9]">ตัวอย่างการเคลม</button>
+      </div>
+
+      <div id="conditions-content" style="display:none" class="mt-4 sm:mt-6 rounded-xl sm:rounded-2xl border border-gray-200 bg-white p-4 sm:p-6 md:p-10 text-left text-[#1f2937] shadow-lg animate-fadeIn">
+        <h2 class="text-lg sm:text-2xl font-bold text-[#1b2b7a] mb-4 sm:mb-6">เงื่อนไขและข้อยกเว้นบางส่วนของประกันโรคร้ายแรง CI 123</h2>
+        <div class="space-y-4 sm:space-y-8">
+          <section>
+            <h3 class="text-base sm:text-lg font-bold text-[#1d4ed8] mb-3 sm:mb-4">ประกันโรคร้ายแรง CI 123 ฉบับนี้ไม่คุ้มครองกรณี ดังต่อไปนี้</h3>
+            <div class="space-y-3 sm:space-y-4 text-xs sm:text-sm md:text-base leading-relaxed">
+              <div>
+                <p class="font-semibold mb-2">1. กรณีเจ็บป่วยด้วยโรคร้ายแรง เว้นแต่การสูญเสียการดำรงชีพอย่างอิสระ ซึ่งเกิดขึ้นโดยทางตรง หรือทางอ้อม ทั้งหมดหรือแต่บางส่วนอันเนื่องมาจากสาเหตุดังต่อไปนี้</p>
+                <ul class="list-disc pl-5 space-y-1 text-gray-600">
+                  <li>ความผิดปกติซึ่งแพทย์ยืนยันและมีหลักฐานชัดเจนว่าเกี่ยวข้องกับโรคร้ายแรง หรือโรคร้ายแรงที่เกิดขึ้นก่อนวันเริ่มมีผลคุ้มครองตามสัญญาเพิ่มเติมนี้ หรือก่อนวันที่มีการต่ออายุสัญญาเมื่อสัญญาเพิ่มเติมสิ้นผลบังคับ (Reinstatement) หรือก่อนวันที่บริษัทอนุมัติให้เพิ่มจำนวนเงินเอาประกันภัยของสัญญาเพิ่มเติมนี้ แล้วแต่วันใดจะเกิดขึ้นภายหลัง ทั้งนี้ ในกรณีที่บริษัทอนุมัติให้เพิ่มจำนวนเงินเอาประกันภัย บริษัทจะไม่คุ้มครองเฉพาะในส่วนของจำนวนเงินเอาประกันภัยที่เพิ่มขึ้นเท่านั้น เว้นแต่ ผู้เอาประกันภัยได้แถลงให้บริษัททราบและบริษัทยินยอมรับความเสี่ยงภัย โดยไม่มีเงื่อนไขยกเว้นความคุ้มครองดังกล่าว</li>
+                  <li>การฆ่าตัวตาย หรือการทำร้ายร่างกายตนเอง หรือพยายามกระทำเช่นว่านั้น</li>
+                  <li>สูดดม กิน ดื่ม ฉีด หรือนำสารพิษเข้าร่างกายไม่ว่าด้วยวิธีใด ในขณะที่รู้สึกผิดชอบ หรือวิกลจริต หรือไม่ก็ตาม</li>
+                  <li>ผู้เอาประกันภัยปฏิเสธไม่ยอมรับการรักษา แนะนำ หรือ ปฏิบัติตามคำแนะนำของแพทย์</li>
+                </ul>
+              </div>
+              <div>
+                <p class="font-semibold mb-2">2. กรณีการสูญเสียการดำรงชีพอย่างอิสระ อันเนื่องมาจากสาเหตุดังต่อไปนี้</p>
+                <ul class="list-disc pl-5 space-y-1 text-gray-600">
+                  <li>การฆ่าตัวตาย พยายามฆ่าตัวตาย หรือการทำร้ายร่างกายตนเอง</li>
+                  <li>การบาดเจ็บขณะที่ผู้เอาประกันภัยก่ออาชญากรรมที่มีความผิดสถานหนัก หรือขณะถูกจับกุม หรือหลบหนีการจับกุม</li>
+                </ul>
+              </div>
+              <div>
+                <p class="font-semibold mb-2">3. กรณีภาวะวิกฤต จะไม่คุ้มครองกลุ่มถึงภาวะหรือโรคใดๆ ที่เกิดขึ้นโดยตรงหรือโดยอ้อม ทั้งหมดหรือบางส่วน จากเหตุการณ์ใดเหตุการณ์หนึ่งดังต่อไปนี้</p>
+                <ul class="list-disc pl-5 space-y-1 text-gray-600">
+                  <li>การฆ่าตัวตาย การพยายามฆ่าตัวตาย การทำร้ายร่างกายตนเอง</li>
+                  <li>การรักษาหรือการบำบัดการติดยาเสพติดให้โทษ บุหรี่ สุรา หรือสารออกฤทธิ์ต่อจิตประสาท</li>
+                  <li>การตรวจรักษาหรือการผ่าตัดเพื่อเสริมสวย</li>
+                </ul>
+              </div>
+            </div>
+          </section>
+          <section>
+            <h3 class="text-base sm:text-lg font-bold text-[#1d4ed8] mb-3 sm:mb-4">ระยะเวลาที่ไม่คุ้มครอง (Waiting Period)</h3>
+            <p class="text-xs sm:text-sm md:text-base text-gray-600">90 วันนับแต่วันเริ่มมีผลคุ้มครองตามสัญญาเพิ่มเติมนี้ หรือหากมีการต่ออายุสัญญาเมื่อสัญญาเพิ่มเติมสิ้นผลบังคับ (Reinstatement) ให้นับแต่วันเริ่มมีผลคุ้มครองตามการต่ออายุครั้งสุดท้าย หรือวันที่บริษัทอนุมัติให้เพิ่มจำนวนเงินเอาประกันภัยของสัญญาเพิ่มเติมนี้ แล้วแต่วันใดจะเกิดขึ้นภายหลัง ยกเว้นกรณีอุบัติเหตุภายใต้ความคุ้มครองกรณีภาวะวิกฤต</p>
+          </section>
+        </div>
+      </div>
+
+      <div id="examples-content" style="display:none" class="mt-4 sm:mt-6 rounded-xl sm:rounded-2xl border border-gray-200 bg-white p-4 sm:p-6 md:p-10 text-left text-[#1f2937] shadow-lg animate-fadeIn">
+        <h2 class="text-lg sm:text-2xl font-bold text-[#059669] mb-4 sm:mb-6">ตัวอย่างการเคลมสินไหม</h2>
+        <div class="flex flex-col gap-3 sm:gap-6">
+          <div class="rounded-xl overflow-hidden shadow-sm border border-gray-100"><img src="Ex/EX1.png" alt="ตัวอย่างการเคลม 1" class="w-full h-auto object-contain" onerror="this.style.display='none'" /></div>
+          <div class="rounded-xl overflow-hidden shadow-sm border border-gray-100"><img src="Ex/EX2.png" alt="ตัวอย่างการเคลม 2" class="w-full h-auto object-contain" onerror="this.style.display='none'" /></div>
+          <div class="rounded-xl overflow-hidden shadow-sm border border-gray-100"><img src="Ex/EX3.png" alt="ตัวอย่างการเคลม 3" class="w-full h-auto object-contain" onerror="this.style.display='none'" /></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Premium Calculator -->
+    <section id="calculator" class="w-full max-w-full min-w-0 overflow-x-hidden scroll-mt-6">
+      <div class="mx-auto w-full max-w-[800px] min-w-0 overflow-x-hidden px-4 py-5 sm:px-5">
+        <div class="mb-6 sm:mb-8 text-center">
+          <h2 class="text-xl sm:text-2xl font-bold text-[#1b2b7a]">คำนวณเบี้ย</h2>
+          <p class="mt-1.5 text-xs sm:text-sm text-gray-500 leading-relaxed">เลือกเพศและอายุเพื่อดูเบี้ยประกัน<br />ของทุกแผนความคุ้มครอง</p>
+        </div>
+        <div class="mx-auto mb-4 sm:mb-6 max-w-[400px]">
+          <label class="mb-3 block text-xs sm:text-sm font-semibold text-gray-700">เพศตามกำเนิด</label>
+          <div role="group" aria-label="เพศตามกำเนิด" class="flex overflow-hidden rounded-[10px] border-2 border-[#1b2b7a]">
+            <button type="button" id="g-male" class="flex-1 px-6 py-3 text-sm sm:text-[15px] font-semibold transition-colors bg-[#1b2b7a] text-white">ชาย</button>
+            <button type="button" id="g-female" class="flex-1 px-6 py-3 text-sm sm:text-[15px] font-semibold transition-colors bg-white text-[#1b2b7a]">หญิง</button>
+          </div>
+        </div>
+        <div class="mx-auto mb-5 sm:mb-6 max-w-[400px]">
+          <label for="age-select" class="mb-3 block text-xs sm:text-sm font-semibold text-gray-700">อายุ (กรณีอายุต่ำกว่า 1 ปี ระบุ 0)</label>
+          <div class="relative">
+            <select id="age-select" class="w-full appearance-none rounded-[10px] border-[1.5px] border-slate-300 bg-white py-3 pl-4 pr-11 text-sm sm:text-[15px] font-medium text-gray-800 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1d4ed8] focus-visible:border-[#1d4ed8]"></select>
+            <svg class="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
+          </div>
+        </div>
+        <button type="button" id="calc-btn" class="mx-auto block w-full max-w-[400px] rounded-xl bg-[linear-gradient(135deg,#1b2b7a_0%,#2d3d9a_50%,#4cb5f5_100%)] px-6 py-3.5 text-sm sm:text-base font-semibold text-white shadow-lg shadow-[#1b2b7a]/25 transition-all hover:-translate-y-0.5 hover:shadow-xl">คำนวณเบี้ย</button>
+
+        <div id="calc-results" style="display:none" class="mt-8 scroll-mt-6 animate-fadeIn">
+          <h3 class="mb-3 sm:mb-4 text-center text-base sm:text-lg font-semibold text-[#1b2b7a]">ตารางเบี้ยประกัน</h3>
+          <div class="overflow-x-auto">
+            <table class="w-full border-collapse overflow-hidden rounded-xl border border-slate-200">
+              <thead>
+                <tr class="bg-slate-100 text-slate-600">
+                  <th scope="col" class="border-b border-slate-200 px-3 py-3 text-left text-xs sm:text-sm font-semibold whitespace-nowrap">ทุนประกัน</th>
+                  <th scope="col" class="border-b border-slate-200 px-3 py-3 text-right text-xs sm:text-sm font-semibold whitespace-nowrap">รายปี</th>
+                  <th scope="col" class="border-b border-slate-200 px-3 py-3 text-right text-xs sm:text-sm font-semibold whitespace-nowrap text-gray-500">ราย 6 เดือน</th>
+                  <th scope="col" class="border-b border-slate-200 px-3 py-3 text-right text-xs sm:text-sm font-semibold whitespace-nowrap text-gray-500">รายเดือน</th>
+                </tr>
+              </thead>
+              <tbody id="calc-rows"></tbody>
+            </table>
+          </div>
+          <button type="button" id="share-btn" class="mx-auto mt-6 flex h-12 min-w-[220px] items-center justify-center gap-2.5 rounded-full bg-[#06c755] px-7 text-base font-semibold text-white transition-colors hover:bg-[#05b64d]">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 5.69 2 10.23c0 4.07 3.55 7.48 8.35 8.12.32.07.77.21.88.49.1.25.06.64.03.89l-.14.85c-.04.25-.2.99.86.54 1.06-.45 5.72-3.37 7.8-5.77C21.1 13.7 22 12.05 22 10.23 22 5.69 17.52 2 12 2z" /></svg>
+            แชร์ไป LINE
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<script src="data.js"></script>
+<script>
+const fmtTH = (val) => new Intl.NumberFormat('th-TH', { maximumFractionDigits: 0 }).format(val);
+
+/* ===== Benefit table ===== */
+const benefitRows = [
+  { coverage: 'โรคร้ายแรงระยะก่อนเริ่มต้น', count: 6, benefit: '20%', benefitNote: 'จ่ายสูงสุดไม่เกิน 100,000 บาท' },
+  { coverage: 'โรคร้ายแรงระยะเริ่มต้นถึงปานกลาง', count: 42, benefit: '25%' },
+  { coverage: 'โรคร้ายแรงสำหรับเด็ก', note: 'สำหรับผู้เอาประกันภัยอายุ 1 เดือน – 18 ปี คุ้มครองต่อเนื่องถึงอายุ 19 ปี', count: 17, benefit: '25%' },
+  { coverage: 'โรคร้ายแรงภายใต้เงื่อนไขพิเศษ', count: 4, benefit: '10%' },
+  { coverage: 'โรคร้ายแรงระยะรุนแรง', count: 53, benefit: '100%', emphasize: true },
+  { coverage: 'กรณีภาวะวิกฤต', note: 'หากผู้เอาประกันภัยมีการป่วยหรือบาดเจ็บ จนทำให้เกิดเหตุการณ์ใดเหตุการณ์หนึ่งดังต่อไปนี้ • การเข้ารับการรักษาในหอผู้ป่วยหนัก (ICU) ที่ต้องใช้เครื่องช่วยหายใจแบบสอดท่อหรือเจาะคอ (MV) หรือเครื่องพยุงการทำงานของหัวใจและปอด (ECMO) อย่างน้อย 5 วันติดต่อกัน • การไม่สามารถปฏิบัติกิจวัตรประจำวันได้ด้วยตนเองอย่างถาวร ตั้งแต่ 2 อย่างขึ้นไป', count: 1, benefit: '25%' },
+];
+const esc = (s) => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+document.getElementById('benefit-rows').innerHTML = benefitRows.map((row, i) => `
+  <tr class="align-top border-t border-gray-200 ${row.emphasize ? 'bg-[#dbeafe]' : i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}">
+    <th scope="row" class="px-3 py-3 sm:px-5 sm:py-4 font-normal break-words">
+      <span class="block text-sm sm:text-base ${row.emphasize ? 'font-bold text-[#1b2b7a]' : 'font-semibold text-[#1f2937]'}">${esc(row.coverage)}</span>
+      ${row.note ? `<span class="mt-1 block text-xs sm:text-sm font-normal text-gray-500 leading-snug">${esc(row.note)}</span>` : ''}
+    </th>
+    <td class="px-2 py-3 sm:px-4 sm:py-4 text-center align-middle"><span class="text-base sm:text-lg font-bold tabular-nums ${row.emphasize ? 'text-[#1b2b7a]' : 'text-[#1e3a8a]'}">${row.count}</span></td>
+    <td class="px-2 py-3 sm:px-4 sm:py-4 text-center align-middle">
+      <span class="block text-base sm:text-lg font-bold tabular-nums ${row.emphasize ? 'text-[#1b2b7a]' : 'text-[#1d4ed8]'}">${esc(row.benefit)}</span>
+      ${row.benefitNote ? `<span class="mt-0.5 block text-[11px] sm:text-xs font-normal text-gray-500 leading-snug">(${esc(row.benefitNote)})</span>` : ''}
+    </td>
+  </tr>`).join('');
+
+/* ===== Disease lists (collapsible) ===== */
+const D = window.CI123_DISEASES;
+const diseaseSections = [
+  { title: 'โรคร้ายแรงระยะก่อนเริ่มต้น', badge: '20%', badgeNote: 'จ่ายสูงสุดไม่เกิน 100,000 บาท', diseases: D.preEarlyStage },
+  { title: 'โรคร้ายแรงระยะเริ่มต้นถึงปานกลาง', badge: '25%', diseases: D.earlyToModerate },
+  { title: 'โรคร้ายแรงระยะรุนแรง', badge: '100%', diseases: D.severeStage },
+  { title: 'โรคร้ายแรงสำหรับเด็ก', badge: '25%', diseases: D.childrenDiseases },
+  { title: 'โรคร้ายแรงภายใต้เงื่อนไขพิเศษ', badge: '10%', diseases: D.specialConditions },
+];
+document.getElementById('disease-lists').innerHTML = diseaseSections.map((sec, idx) => `
+  <div class="bg-gray-50/50 rounded-lg sm:rounded-xl overflow-hidden border border-gray-100">
+    <button type="button" data-toggle="dl-${idx}" aria-expanded="false" class="w-full bg-[#eef2f6] px-3 py-3 sm:px-6 sm:py-4 flex items-center justify-between gap-3 text-left transition-colors hover:bg-[#e4ebf2]">
+      <span class="flex flex-wrap items-center gap-x-3 gap-y-1 min-w-0">
+        <h3 class="text-base sm:text-xl font-bold text-[#1e3a8a] break-words min-w-0">${esc(sec.title)}</h3>
+        ${sec.badge ? `<span class="inline-flex items-center rounded-full bg-[#dbeafe] px-2.5 py-0.5 text-xs sm:text-sm font-semibold text-[#1e3a8a]">${esc(sec.badge)}</span>` : ''}
+        ${sec.badgeNote ? `<span class="text-xs sm:text-sm font-normal text-gray-500">(${esc(sec.badgeNote)})</span>` : ''}
+      </span>
+      <span class="flex items-center gap-2 flex-shrink-0">
+        <span class="text-xs sm:text-sm text-[#1d4ed8] font-medium whitespace-nowrap">${sec.diseases.length} โรค</span>
+        <svg data-chevron="dl-${idx}" class="w-5 h-5 text-[#1e3a8a] transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" /></svg>
+      </span>
+    </button>
+    <div id="dl-${idx}" class="grid transition-all duration-300 ease-in-out grid-rows-[0fr] opacity-0">
+      <div class="overflow-hidden">
+        <ol class="disease-list text-[#1f2937]">${sec.diseases.map((d) => `<li>${esc(d)}</li>`).join('')}</ol>
+      </div>
+    </div>
+  </div>`).join('');
+
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest('[data-toggle]');
+  if (!btn) return;
+  const id = btn.getAttribute('data-toggle');
+  const panel = document.getElementById(id);
+  const chevron = document.querySelector(`[data-chevron="${id}"]`);
+  const open = panel.classList.contains('grid-rows-[1fr]');
+  if (open) {
+    panel.classList.remove('grid-rows-[1fr]', 'opacity-100');
+    panel.classList.add('grid-rows-[0fr]', 'opacity-0');
+    btn.setAttribute('aria-expanded', 'false');
+    chevron && chevron.classList.remove('rotate-180');
+  } else {
+    panel.classList.remove('grid-rows-[0fr]', 'opacity-0');
+    panel.classList.add('grid-rows-[1fr]', 'opacity-100');
+    btn.setAttribute('aria-expanded', 'true');
+    chevron && chevron.classList.add('rotate-180');
+  }
+});
+
+/* ===== Conditions / Examples toggles ===== */
+(function () {
+  let active = null;
+  const cContent = document.getElementById('conditions-content');
+  const eContent = document.getElementById('examples-content');
+  const cBtn = document.getElementById('btn-conditions');
+  const eBtn = document.getElementById('btn-examples');
+  const setC = (on) => {
+    cBtn.className = `inline-flex min-h-[48px] min-w-[160px] sm:min-w-[220px] items-center justify-center rounded-full border px-6 py-3 text-sm sm:text-base font-semibold transition-colors ${on ? 'border-[#1d4ed8] bg-[#1d4ed8] text-white shadow-md shadow-[#1d4ed8]/25' : 'border-[#1d4ed8] bg-white text-[#1d4ed8] hover:bg-[#eff4ff]'}`;
+    cBtn.textContent = on ? 'ซ่อนเงื่อนไข' : 'ดูเงื่อนไขและข้อยกเว้น';
+    cContent.style.display = on ? 'block' : 'none';
+  };
+  const setE = (on) => {
+    eBtn.className = `inline-flex min-h-[48px] min-w-[160px] sm:min-w-[220px] items-center justify-center rounded-full border px-6 py-3 text-sm sm:text-base font-semibold transition-colors ${on ? 'border-[#1b2b7a] bg-[#1b2b7a] text-white shadow-md shadow-[#1b2b7a]/25' : 'border-[#1b2b7a] bg-white text-[#1b2b7a] hover:bg-[#eef0f9]'}`;
+    eBtn.textContent = on ? 'ซ่อนตัวอย่างการเคลม' : 'ตัวอย่างการเคลม';
+    eContent.style.display = on ? 'block' : 'none';
+  };
+  const toggle = (s) => { active = active === s ? null : s; setC(active === 'conditions'); setE(active === 'examples'); };
+  cBtn.addEventListener('click', () => toggle('conditions'));
+  eBtn.addEventListener('click', () => toggle('examples'));
+})();
+
+/* ===== Premium calculator ===== */
+(function () {
+  const premiums = window.CI123_PREMIUMS;
+  const sumOptions = Object.keys(premiums).filter((k) => premiums[k].length > 0).sort((a, b) => parseFloat(a) - parseFloat(b));
+  const ages = (premiums[sumOptions[0]] || []).map((e) => e.age).sort((a, b) => a - b);
+
+  let gender = 'male';
+  let age = 30;
+
+  const ageSel = document.getElementById('age-select');
+  ageSel.innerHTML = ages.map((a) => `<option value="${a}" ${a === 30 ? 'selected' : ''}>${a} ปี</option>`).join('');
+  ageSel.addEventListener('change', (e) => { age = parseInt(e.target.value); });
+
+  const gMale = document.getElementById('g-male'), gFemale = document.getElementById('g-female');
+  const setGender = (g) => {
+    gender = g;
+    gMale.className = `flex-1 px-6 py-3 text-sm sm:text-[15px] font-semibold transition-colors ${g === 'male' ? 'bg-[#1b2b7a] text-white' : 'bg-white text-[#1b2b7a]'}`;
+    gFemale.className = `flex-1 px-6 py-3 text-sm sm:text-[15px] font-semibold transition-colors ${g === 'female' ? 'bg-[#1b2b7a] text-white' : 'bg-white text-[#1b2b7a]'}`;
+  };
+  gMale.addEventListener('click', () => setGender('male'));
+  gFemale.addEventListener('click', () => setGender('female'));
+
+  let results = [];
+  const compute = () => sumOptions.map((sum) => {
+    const entry = premiums[sum].find((e) => e.age === age);
+    if (!entry) return null;
+    const annual = gender === 'male' ? entry.male : entry.female;
+    return { sumInsured: sum, premiumYearly: annual, premium6Month: Math.round(annual * 0.52), premiumMonthly: Math.round(annual * 0.09) };
+  }).filter(Boolean);
+
+  document.getElementById('calc-btn').addEventListener('click', () => {
+    results = compute();
+    document.getElementById('calc-rows').innerHTML = results.map((item, i) => `
+      <tr class="${i % 2 === 0 ? 'bg-white' : 'bg-slate-50'}">
+        <td class="border-b border-slate-200 px-3 py-3 text-left text-sm sm:text-[15px] text-slate-800 tabular-nums">${fmtTH(parseFloat(item.sumInsured))}</td>
+        <td class="border-b border-slate-200 px-3 py-3 text-right text-sm sm:text-[15px] tabular-nums"><span class="font-bold text-[#1b2b7a]">${fmtTH(item.premiumYearly)}</span></td>
+        <td class="border-b border-slate-200 px-3 py-3 text-right text-sm sm:text-[15px] text-gray-600 tabular-nums">${fmtTH(item.premium6Month)}</td>
+        <td class="border-b border-slate-200 px-3 py-3 text-right text-sm sm:text-[15px] text-gray-600 tabular-nums">${fmtTH(item.premiumMonthly)}</td>
+      </tr>`).join('');
+    document.getElementById('calc-results').style.display = 'block';
+    setTimeout(() => document.getElementById('calc-results').scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+  });
+
+  document.getElementById('share-btn').addEventListener('click', () => {
+    if (!results.length) return;
+    let m = `สรุปเบี้ยประกัน CI123\n`;
+    m += `เพศตามกำเนิด: ${gender === 'male' ? 'ชาย' : 'หญิง'} อายุ: ${age} ปี\n\n`;
+    m += `📋 ความคุ้มครอง:\n`;
+    m += `• โรคร้ายแรงระยะก่อนเริ่มต้น 20% (จ่ายสูงสุดไม่เกิน 100,000 บาท)\n`;
+    m += `• โรคร้ายแรงระยะรุนแรง 100%\n`;
+    m += `• โรคร้ายแรงระยะเริ่มต้นถึงปานกลาง 25%\n`;
+    m += `• โรคร้ายแรงสำหรับเด็ก 25%\n`;
+    m += `• โรคร้ายแรงภายใต้เงื่อนไขพิเศษ 10%\n`;
+    m += `• ความคุ้มครองกรณีภาวะวิกฤต 25%\n\n`;
+    m += `💰 ตารางเบี้ยประกัน:\n`;
+    results.forEach((item) => {
+      m += `ทุน ${fmtTH(parseFloat(item.sumInsured))}:\n`;
+      m += `- รายปี: ${fmtTH(item.premiumYearly)}\n`;
+      m += `- ราย 6 เดือน: ${fmtTH(item.premium6Month)}\n`;
+      m += `- รายเดือน: ${fmtTH(item.premiumMonthly)}\n\n`;
+    });
+    window.open(`https://line.me/R/msg/text/?${encodeURIComponent(m)}`, '_blank');
+  });
+})();
+</script>
+</body>
+</html>

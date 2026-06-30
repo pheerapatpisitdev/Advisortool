@@ -1,0 +1,503 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>แบบสอบถามคุณภาพชีวิต (ที่ดี)</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
+
+    .fhc-scope {
+      font-family: 'Sarabun', system-ui, sans-serif;
+      background: #F0EBE3; min-height: 100vh; padding: 1.5rem 1rem 3rem; color: #1A1A1A;
+    }
+    .fhc-scope * { box-sizing: border-box; margin: 0; padding: 0; }
+    .fhc-scope .wrap { max-width: 980px; margin: 0 auto; }
+    .fhc-scope .page-title {
+      text-align: center; font-size: 22px; font-weight: 700; color: #1A1A1A;
+      margin-bottom: 1.75rem; letter-spacing: -0.3px;
+    }
+    .fhc-scope .page-title span { display: inline-block; border-bottom: 2.5px solid #D97757; padding-bottom: 3px; }
+    .fhc-scope .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .fhc-scope .row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
+
+    .fhc-scope .card {
+      background: #FFFFFF; border-radius: 16px; padding: 1.1rem 1.2rem; margin-bottom: 1rem;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.07), 0 0 0 1px rgba(0,0,0,0.04); transition: box-shadow 0.2s;
+    }
+    .fhc-scope .card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.09), 0 0 0 1px rgba(0,0,0,0.04); }
+
+    .fhc-scope .badge {
+      display: inline-flex; align-items: center; font-size: 11.5px; font-weight: 600;
+      padding: 4px 12px; border-radius: 20px; margin-bottom: 12px; letter-spacing: 0.1px;
+    }
+    .fhc-scope .bg-yellow { background: #FEF3C7; color: #92400E; }
+    .fhc-scope .bg-pink   { background: #FCE7F3; color: #9D174D; }
+    .fhc-scope .bg-green  { background: #D1FAE5; color: #065F46; }
+    .fhc-scope .bg-blue   { background: #DBEAFE; color: #1E40AF; }
+    .fhc-scope .bg-orange { background: #FFEDD5; color: #9A3412; }
+    .fhc-scope .bg-purple { background: #EDE9FE; color: #4C1D95; }
+    .fhc-scope .bg-red    { background: #FEE2E2; color: #991B1B; }
+    .fhc-scope .bg-teal   { background: #CCFBF1; color: #134E4A; }
+
+    .fhc-scope .fg { display: flex; flex-direction: column; gap: 5px; margin-bottom: 10px; }
+    .fhc-scope .fg label { font-size: 12px; font-weight: 500; color: #6B6B6B; }
+    .fhc-scope .fg input, .fhc-scope .fg select, .fhc-scope .fg textarea {
+      padding: 8px 12px; border-radius: 10px; border: 1.5px solid #E8E3DC; font-size: 13px;
+      background: #FAFAF8; color: #1A1A1A; width: 100%; font-family: 'Sarabun', sans-serif;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .fhc-scope .fg textarea { resize: vertical; min-height: 48px; line-height: 1.6; }
+    .fhc-scope .fg input:focus, .fhc-scope .fg select:focus, .fhc-scope .fg textarea:focus {
+      outline: none; border-color: #D97757; background: #FFFFFF; box-shadow: 0 0 0 3px rgba(217,119,87,0.12);
+    }
+
+    .fhc-scope .calc {
+      display: flex; align-items: center; gap: 10px; background: #FAF7F4;
+      border: 1px solid #EDE8E1; border-radius: 10px; padding: 8px 12px; margin-top: 6px;
+    }
+    .fhc-scope .calc-lbl { font-size: 12px; color: #8A8A8A; flex: 1; font-weight: 500; }
+    .fhc-scope .calc-val { font-size: 14px; font-weight: 700; color: #D97757; }
+    .fhc-scope .calc-unit { font-size: 11px; color: #ABABAB; font-weight: 500; }
+
+    .fhc-scope .av-lbl { font-size: 10px; color: #9A9A9A; text-align: center; max-width: 64px; font-weight: 500; }
+    .fhc-scope .circ {
+      border-radius: 50%; background: #FDDCCC; display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; color: #7A3520; border: 2.5px solid transparent; cursor: pointer;
+      transition: border-color 0.15s, transform 0.15s;
+    }
+    .fhc-scope .circ:hover { border-color: #D97757; transform: scale(1.05); }
+    .fhc-scope .circ.lg { width: 56px; height: 56px; font-size: 13px; }
+    .fhc-scope .circ.md { width: 56px; height: 56px; font-size: 13px; }
+    .fhc-scope .circ.filled { background: #D97757; color: #fff; border-color: #C0663F; }
+    .fhc-scope .hline { width: 20px; height: 2.5px; background: #D97757; border-radius: 2px; }
+    .fhc-scope .vline { width: 2.5px; height: 20px; background: #D97757; border-radius: 2px; margin: 0 auto; }
+    .fhc-scope .age-grid { display: grid; grid-template-columns: 1fr 28px 1fr 28px 1fr; padding: 8px 0 14px; text-align: center; }
+    .fhc-scope .age-center { display: flex; justify-content: center; }
+    .fhc-scope .age-connector { display: flex; align-items: center; justify-content: center; }
+
+    .fhc-scope .person-row { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
+    .fhc-scope .pnum {
+      width: 24px; height: 24px; border-radius: 50%; background: #FFEDD5; color: #9A3412;
+      font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .fhc-scope .person-row input {
+      flex: 1; padding: 7px 10px; border-radius: 10px; border: 1.5px solid #E8E3DC;
+      font-size: 12.5px; background: #FAFAF8; color: #1A1A1A; font-family: 'Sarabun', sans-serif;
+      transition: border-color 0.15s;
+    }
+    .fhc-scope .person-row input:focus { outline: none; border-color: #D97757; background: #fff; box-shadow: 0 0 0 3px rgba(217,119,87,0.1); }
+
+    .fhc-scope .event-row { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; }
+    .fhc-scope .enum {
+      width: 28px; height: 28px; border-radius: 50%; background: #FEE2E2; color: #991B1B;
+      font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+
+    .fhc-scope .sum-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 1rem; }
+    .fhc-scope .sum-card { background: #FAF7F4; border: 1px solid #EDE8E1; border-radius: 12px; padding: 12px 10px; text-align: center; }
+    .fhc-scope .sum-lbl { font-size: 11px; color: #8A8A8A; margin-bottom: 4px; font-weight: 500; }
+    .fhc-scope .sum-val { font-size: 16px; font-weight: 700; color: #1A1A1A; }
+
+    .fhc-scope .footer-row { display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; border-top: 1.5px solid #EDE8E1; padding-top: 14px; margin-top: 8px; }
+    .fhc-scope .footer-field { display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 140px; }
+    .fhc-scope .footer-field label { font-size: 11.5px; color: #6B6B6B; font-weight: 500; }
+    .fhc-scope .footer-field input {
+      padding: 8px 12px; border-radius: 10px; border: 1.5px solid #E8E3DC; font-size: 13px;
+      background: #FAFAF8; color: #1A1A1A; font-family: 'Sarabun', sans-serif; transition: border-color 0.15s;
+    }
+    .fhc-scope .footer-field input:focus { outline: none; border-color: #D97757; background: #fff; box-shadow: 0 0 0 3px rgba(217,119,87,0.1); }
+
+    .fhc-scope .analyze-btn {
+      padding: 12px 24px; border-radius: 12px; border: none; background: #D97757; color: #fff;
+      font-size: 14.5px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 1rem;
+      font-family: 'Sarabun', sans-serif; letter-spacing: 0.2px;
+      transition: background 0.2s, transform 0.1s, box-shadow 0.2s; box-shadow: 0 2px 8px rgba(217,119,87,0.35);
+    }
+    .fhc-scope .analyze-btn:hover { background: #C0663F; box-shadow: 0 4px 14px rgba(217,119,87,0.4); }
+    .fhc-scope .analyze-btn:active { transform: scale(0.99); }
+    .fhc-scope .btn-row { display: flex; gap: 10px; margin-top: 1rem; }
+    .fhc-scope .btn-row .analyze-btn { flex: 1; margin-top: 0; }
+    .fhc-scope .line-btn {
+      display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 20px;
+      border-radius: 12px; border: none; background: #06C755; color: #fff; font-size: 14.5px; font-weight: 700;
+      cursor: pointer; font-family: 'Sarabun', sans-serif; transition: background 0.2s, box-shadow 0.2s;
+      box-shadow: 0 2px 8px rgba(6,199,85,0.35); white-space: nowrap;
+    }
+    .fhc-scope .line-btn:hover { background: #05A847; box-shadow: 0 4px 14px rgba(6,199,85,0.4); }
+    .fhc-scope .line-btn:active { transform: scale(0.99); }
+    .fhc-scope .ev-btn {
+      padding: 5px 16px; border-radius: 20px; border: 1.5px solid #D97757; background: #FFF7F4; color: #C0663F;
+      font-size: 12px; font-weight: 600; cursor: pointer; font-family: 'Sarabun', sans-serif; transition: background 0.15s, color 0.15s;
+    }
+    .fhc-scope .ev-btn:hover { background: #D97757; color: #fff; }
+
+    .fhc-scope .result-box {
+      background: #F0FDF4; border: 1.5px solid #86EFAC; border-radius: 14px; padding: 1.1rem 1.2rem;
+      margin-top: 1rem; white-space: pre-wrap; font-size: 13px; color: #14532D; line-height: 1.8;
+    }
+
+    @media (max-width: 620px) {
+      .fhc-scope .row2, .fhc-scope .row3 { grid-template-columns: 1fr; }
+      .fhc-scope .sum-grid { grid-template-columns: 1fr 1fr; }
+      .fhc-scope { padding: 1rem 0.75rem 2rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="fhc-scope">
+  <div class="wrap">
+    <div class="page-title"><span>แบบสอบถามคุณภาพชีวิต (ที่ดี)</span></div>
+
+    <div class="row2">
+      <!-- LEFT -->
+      <div>
+        <!-- Age -->
+        <div class="card">
+          <span class="badge bg-yellow">ข้อมูลอายุ</span>
+          <div class="age-grid">
+            <div class="av-lbl" style="margin-bottom:6px">อายุปัจจุบัน</div><div></div>
+            <div class="av-lbl" style="margin-bottom:6px">อายุเกษียณ</div><div></div>
+            <div class="av-lbl" style="margin-bottom:6px">อายุเฉลี่ย</div>
+
+            <div class="age-center"><div class="circ lg"><span id="c-cur">?</span></div></div>
+            <div class="age-connector"><div class="hline" style="width:100%"></div></div>
+            <div class="age-center"><div class="circ lg filled"><span id="c-ret">?</span></div></div>
+            <div class="age-connector"><div class="hline" style="width:100%"></div></div>
+            <div class="age-center"><div class="circ lg"><span id="c-exp">?</span></div></div>
+
+            <div></div><div></div>
+            <div class="age-center"><div class="vline"></div></div><div></div>
+            <div class="age-center"><div class="vline"></div></div>
+
+            <div></div><div></div>
+            <div class="age-center"><div class="circ md"><span id="c-wy">?</span></div></div><div></div>
+            <div class="age-center"><div class="circ md"><span id="c-my">?</span></div></div>
+
+            <div></div><div></div>
+            <div class="av-lbl" style="margin-top:6px">จำนวนปีที่ทำงาน</div><div></div>
+            <div class="av-lbl" style="margin-top:6px">อายุที่ต้องใช้เงิน</div>
+          </div>
+          <div class="row2">
+            <div class="fg"><label>อายุปัจจุบัน (ปี)</label>
+              <select id="ac"><option value="">-- เลือก --</option></select>
+            </div>
+            <div class="fg"><label>อายุเกษียณ (ปี)</label>
+              <select id="ar"><option value="">-- เลือก --</option></select>
+            </div>
+            <div class="fg"><label>อายุเฉลี่ย (ปี)</label>
+              <select id="ae"><option value="">-- เลือก --</option></select>
+            </div>
+            <div class="fg"><label>ความสามารถทำงาน</label>
+              <select id="wa">
+                <option value="">-- เลือก --</option>
+                <option value="full">ทำงานได้เต็มที่</option>
+                <option value="partial">ทำงานได้บางส่วน</option>
+                <option value="none">ทำงานไม่ได้</option>
+              </select>
+            </div>
+          </div>
+          <div class="calc"><span class="calc-lbl">จำนวนปีที่ทำงาน</span><span class="calc-val" id="v-wy">—</span><span class="calc-unit">ปี</span></div>
+          <div class="calc" style="margin-top:4px"><span class="calc-lbl">ปีที่ต้องใช้เงิน</span><span class="calc-val" id="v-my">—</span><span class="calc-unit">ปี</span></div>
+        </div>
+
+        <!-- Expenses & Income -->
+        <div class="card">
+          <span class="badge bg-pink">ค่าใช้จ่าย &amp; รายได้</span>
+          <div class="fg"><label>ค่าใช้จ่ายต่อเดือน (บาท)</label><input type="text" inputmode="numeric" id="exp" placeholder="20,000" /></div>
+          <div class="fg"><label>รายได้ต่อเดือน (บาท)</label><input type="text" inputmode="numeric" id="im" placeholder="50,000" /></div>
+          <div class="calc"><span class="calc-lbl">รายได้ต่อปี</span><span class="calc-val" id="v-iy">—</span><span class="calc-unit">บาท</span></div>
+          <div class="calc" style="margin-top:4px"><span class="calc-lbl">รายได้รวมตลอดชีวิตการทำงาน</span><span class="calc-val" id="v-ti">—</span><span class="calc-unit">บาท</span></div>
+          <div class="calc" style="margin-top:4px"><span class="calc-lbl">เงินเหลือสุทธิต่อเดือน</span><span class="calc-val" id="v-net-month">—</span><span class="calc-unit">บาท</span></div>
+        </div>
+
+        <!-- Work ability value -->
+        <div class="card">
+          <span class="badge bg-teal">ค่าความสามารถในการทำงาน</span>
+          <div class="calc"><span class="calc-lbl">= รายได้รวมตลอดชีวิตการทำงาน</span><span class="calc-val" id="v-ti2">—</span><span class="calc-unit">บาท</span></div>
+        </div>
+      </div>
+
+      <!-- RIGHT -->
+      <div>
+        <!-- Savings & Debt -->
+        <div class="card">
+          <div class="row2">
+            <div>
+              <span class="badge bg-blue">เงินเก็บ</span>
+              <div class="fg"><label>เงินสด / ออมทรัพย์ (บาท)</label><input type="text" inputmode="numeric" id="s1" placeholder="0" /></div>
+              <div class="fg"><label>เงินฝากประจำ (บาท)</label><input type="text" inputmode="numeric" id="s2" placeholder="0" /></div>
+              <div class="fg"><label>อื่นๆ (บาท)</label><input type="text" inputmode="numeric" id="s3" placeholder="0" /></div>
+              <div class="calc"><span class="calc-lbl">รวม</span><span class="calc-val" id="v-sav">—</span><span class="calc-unit">บาท</span></div>
+            </div>
+            <div>
+              <span class="badge bg-pink">หนี้สิน</span>
+              <div class="fg"><label>สินเชื่อบ้าน (บาท)</label><input type="text" inputmode="numeric" id="d1" placeholder="0" /></div>
+              <div class="fg"><label>สินเชื่อรถ (บาท)</label><input type="text" inputmode="numeric" id="d2" placeholder="0" /></div>
+              <div class="fg"><label>บัตรเครดิต / อื่นๆ (บาท)</label><input type="text" inputmode="numeric" id="d3" placeholder="0" /></div>
+              <div class="calc"><span class="calc-lbl">รวม</span><span class="calc-val" id="v-dbt">—</span><span class="calc-unit">บาท</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Investment -->
+        <div class="card">
+          <span class="badge bg-purple">กองทุน / การลงทุน</span>
+          <div class="row2">
+            <div class="fg"><label>กองทุน LTF/RMF (บาท)</label><input type="text" inputmode="numeric" id="f1" placeholder="0" /></div>
+            <div class="fg"><label>หุ้น / สินทรัพย์อื่นๆ (บาท)</label><input type="text" inputmode="numeric" id="f2" placeholder="0" /></div>
+          </div>
+          <div class="calc"><span class="calc-lbl">รวมการลงทุน</span><span class="calc-val" id="v-inv">—</span><span class="calc-unit">บาท</span></div>
+        </div>
+
+        <!-- Assets -->
+        <div class="card">
+          <span class="badge bg-green">ทรัพย์สินมี 2 ประเภท</span>
+          <button class="ev-btn" id="asset-btn" style="display:block;margin-top:6px">เฉลย</button>
+          <div id="asset-body" style="display:none">
+            <div class="row2">
+              <div>
+                <div style="font-size:12px;font-weight:600;color:#2E7D32;margin-bottom:6px">ทรัพย์สินที่มองเห็น</div>
+                <div style="font-size:13px;color:#2E7D32;padding:8px 0;line-height:1.8">บ้าน<br />รถ<br />ที่ดิน</div>
+              </div>
+              <div>
+                <div style="font-size:12px;font-weight:600;color:#6A1B9A;margin-bottom:6px">ทรัพย์สินที่มองไม่เห็น</div>
+                <div style="font-size:13px;color:#6A1B9A;padding:4px 0">ค่าความสามารถ</div>
+                <div class="calc" style="margin-top:4px"><span class="calc-val" id="v-ti3" style="color:#6A1B9A">—</span><span class="calc-unit">บาท</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dependents & Events -->
+    <div class="row2">
+      <div class="card">
+        <span class="badge bg-orange">บุคคลที่อยู่ภายใต้การดูแล</span>
+        <div id="persons"></div>
+      </div>
+      <div class="card">
+        <span class="badge bg-red">5 เหตุการณ์ควบคุมไม่ได้</span>
+        <div id="events"></div>
+      </div>
+    </div>
+
+    <!-- Summary -->
+    <div class="card">
+      <span class="badge bg-teal">สรุปภาพรวม</span>
+      <div class="sum-grid">
+        <div class="sum-card"><div class="sum-lbl">ปีที่ทำงาน</div><div class="sum-val" id="s-wy">—</div></div>
+        <div class="sum-card"><div class="sum-lbl">ปีที่ต้องใช้เงิน</div><div class="sum-val" id="s-my">—</div></div>
+        <div class="sum-card"><div class="sum-lbl">รายได้รวม (ประมาณ)</div><div class="sum-val" id="s-ti">—</div></div>
+        <div class="sum-card"><div class="sum-lbl">เงินเก็บ</div><div class="sum-val" id="s-sav">0 บาท</div></div>
+        <div class="sum-card"><div class="sum-lbl">หนี้สิน</div><div class="sum-val" id="s-dbt">0 บาท</div></div>
+        <div class="sum-card"><div class="sum-lbl">สินทรัพย์สุทธิ</div><div class="sum-val" id="s-net">0 บาท</div></div>
+      </div>
+      <div class="footer-row">
+        <div class="footer-field"><label>ผู้ทำแบบสอบถาม</label><input type="text" id="interviewer" placeholder="ชื่อ-นามสกุล" /></div>
+        <div class="footer-field"><label>วันที่</label><input type="date" id="idate" /></div>
+      </div>
+      <div class="btn-row">
+        <button class="analyze-btn" id="analyze">สรุปข้อมูลทั้งหมด</button>
+        <button class="line-btn" id="share">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63h2.386c.349 0 .63.285.63.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.131.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63.349 0 .631.285.631.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.281.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314" /></svg>
+          ส่งไป LINE
+        </button>
+      </div>
+      <div class="result-box" id="result-box" style="display:none"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ===== CONFIG (Supabase: โปรเจกต์ AdvisorTool, ตาราง fhc_responses) ===== */
+const CONFIG = {
+  SUPA_URL: "https://jkobdgurhxfmscloduhw.supabase.co/rest/v1/fhc_responses",
+  SUPA_KEY: "sb_publishable_ACfHyPhgcrKCM72m4bkv3A_--cEb0yV", // publishable key
+};
+
+/* ===== helpers (เหมือนต้นฉบับ) ===== */
+const range = (a, b) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
+const num = (s) => parseFloat((s || "").replace(/,/g, "")) || 0;
+const formatInput = (s) => {
+  const raw = s.replace(/,/g, "").replace(/[^0-9]/g, "");
+  return raw ? Number(raw).toLocaleString("th-TH") : "";
+};
+const fmt = (v) => (!v && v !== 0 ? "—" : Math.round(v).toLocaleString("th-TH"));
+const fmtM = (v) => {
+  if (v >= 1_000_000) return (v / 1_000_000).toFixed(1) + "M";
+  if (v >= 1000) return (v / 1000).toFixed(0) + "K";
+  return Math.round(v).toLocaleString("th-TH");
+};
+const todayStr = () => {
+  const d = new Date();
+  const p = (n) => (n < 10 ? "0" : "") + n;
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
+};
+const WA_LABELS = { full: "ทำงานได้เต็มที่", partial: "ทำงานได้บางส่วน", none: "ทำงานไม่ได้" };
+const EVENTS = ["การเจ็บป่วย", "อุบัติเหตุ", "ทุพพลภาพถาวร", "การจากไปโดยไม่ทันตั้งตัว", "การตกงาน"];
+
+const $ = (id) => document.getElementById(id);
+const setText = (id, v) => { const el = $(id); if (el) el.textContent = v; };
+
+/* ===== populate selects + persons + events ===== */
+(function init() {
+  const ac = $("ac"); range(20, 55).forEach((i) => ac.add(new Option(i + " ปี", i)));
+  const ar = $("ar"); [45, 50, 55, 60, 65].forEach((i) => ar.add(new Option(i + " ปี", i)));
+  const ae = $("ae"); range(80, 100).forEach((i) => ae.add(new Option(i + " ปี", i)));
+
+  const personsEl = $("persons");
+  for (let i = 0; i < 4; i++) {
+    const row = document.createElement("div");
+    row.className = "person-row";
+    row.innerHTML = `<div class="pnum">${i + 1}</div><input type="text" placeholder="ชื่อ - ความสัมพันธ์ - อายุ" data-person="${i}" />`;
+    personsEl.appendChild(row);
+  }
+
+  const eventsEl = $("events");
+  EVENTS.forEach((e, i) => {
+    const row = document.createElement("div");
+    row.className = "event-row";
+    row.style.alignItems = "center";
+    row.innerHTML = `<div class="enum">${i + 1}</div><div style="flex:1"><button class="ev-btn" data-event="${i}">เฉลย</button></div>`;
+    eventsEl.appendChild(row);
+  });
+
+  $("idate").value = todayStr();
+})();
+
+/* ===== live recalc ===== */
+function recalc() {
+  const cur = num($("ac").value), ret = num($("ar").value), expAge = num($("ae").value);
+  const wy = ret > cur ? ret - cur : 0;
+  const my = expAge > ret ? expAge - ret : 0;
+  const imN = num($("im").value), exN = num($("exp").value);
+  const iy = imN * 12;
+  const ti = iy * wy;
+  const sav = num($("s1").value) + num($("s2").value) + num($("s3").value);
+  const dbt = num($("d1").value) + num($("d2").value) + num($("d3").value);
+  const inv = num($("f1").value) + num($("f2").value);
+  const net = sav + inv - dbt;
+
+  setText("c-cur", cur || "?"); setText("c-ret", ret || "?"); setText("c-exp", expAge || "?");
+  setText("c-wy", wy || "?"); setText("c-my", my || "?");
+  setText("v-wy", wy || "—"); setText("v-my", my || "—");
+  setText("v-iy", fmt(iy)); setText("v-ti", fmt(ti)); setText("v-ti2", ti ? fmt(ti) : "—"); setText("v-ti3", ti ? fmt(ti) : "—");
+  setText("v-net-month", imN > 0 ? fmt(imN - exN) : "—");
+  setText("v-sav", fmt(sav)); setText("v-dbt", fmt(dbt)); setText("v-inv", fmt(inv));
+  setText("s-wy", wy ? wy + " ปี" : "—"); setText("s-my", my ? my + " ปี" : "—");
+  setText("s-ti", ti ? fmtM(ti) + " บาท" : "—");
+  setText("s-sav", fmtM(sav) + " บาท"); setText("s-dbt", fmtM(dbt) + " บาท"); setText("s-net", fmtM(net) + " บาท");
+
+  return { cur, ret, expAge, wy, my, imN, exN, iy, ti, sav, dbt, inv, net };
+}
+
+/* ===== events ===== */
+// number inputs: format + recalc
+["exp","im","s1","s2","s3","d1","d2","d3","f1","f2"].forEach((id) => {
+  $(id).addEventListener("input", (e) => { e.target.value = formatInput(e.target.value); recalc(); });
+});
+["ac","ar","ae","wa"].forEach((id) => $(id).addEventListener("change", recalc));
+
+$("asset-btn").addEventListener("click", () => { $("asset-btn").style.display = "none"; $("asset-body").style.display = "block"; recalc(); });
+document.addEventListener("click", (e) => {
+  const ev = e.target.closest("[data-event]");
+  if (ev) {
+    const i = ev.getAttribute("data-event");
+    ev.parentElement.innerHTML = `<div style="font-size:13px;color:#212121;padding:4px 0">${EVENTS[i]}</div>`;
+  }
+});
+
+function getPersons() {
+  return Array.from(document.querySelectorAll("[data-person]")).map((el) => el.value.trim()).filter(Boolean);
+}
+
+function buildSummary() {
+  const c = recalc();
+  const waVal = WA_LABELS[$("wa").value] || "";
+  const lines = [];
+  lines.push("📋 สรุปข้อมูลคุณภาพชีวิต");
+  const interviewer = $("interviewer").value, idate = $("idate").value;
+  if (interviewer) lines.push("👤 " + interviewer + (idate ? "  |  " + idate : ""));
+  lines.push("");
+  lines.push("━━ ข้อมูลอายุ ━━");
+  lines.push("• อายุปัจจุบัน: " + ($("ac").value || "—") + " ปี");
+  lines.push("• อายุเกษียณ: " + ($("ar").value || "—") + " ปี  |  ปีที่ทำงาน: " + (c.wy || "—") + " ปี");
+  lines.push("• อายุเฉลี่ย: " + ($("ae").value || "—") + " ปี  |  ปีที่ต้องใช้เงิน: " + (c.my || "—") + " ปี");
+  lines.push("• ความสามารถทำงาน: " + (waVal || "—"));
+  lines.push("");
+  lines.push("━━ รายได้ & ค่าใช้จ่าย ━━");
+  lines.push("• รายได้/เดือน: " + fmt(c.imN) + " บาท");
+  lines.push("• ค่าใช้จ่าย/เดือน: " + fmt(c.exN) + " บาท");
+  lines.push("• เงินเหลือสุทธิ/เดือน: " + fmt(c.imN - c.exN) + " บาท");
+  lines.push("• รายได้รวมตลอดชีวิต: " + fmt(c.ti) + " บาท");
+  lines.push("");
+  lines.push("━━ การเงิน ━━");
+  lines.push("• เงินเก็บรวม: " + fmt(c.sav) + " บาท");
+  lines.push("• หนี้สินรวม: " + fmt(c.dbt) + " บาท");
+  lines.push("• การลงทุน: " + fmt(c.inv) + " บาท");
+  lines.push("• สินทรัพย์สุทธิ: " + fmt(c.net) + " บาท");
+  lines.push("");
+  lines.push("━━ ทรัพย์สิน ━━");
+  lines.push("• ที่มองเห็น: บ้าน, รถ, ที่ดิน");
+  lines.push("• ค่าความสามารถ: " + fmt(c.ti) + " บาท");
+  const ps = getPersons();
+  if (ps.length) {
+    lines.push(""); lines.push("━━ บุคคลในการดูแล ━━");
+    ps.forEach((p, i) => lines.push(i + 1 + ". " + p));
+  }
+  lines.push(""); lines.push("━━ 5 เหตุการณ์ควบคุมไม่ได้ ━━");
+  EVENTS.forEach((e, i) => lines.push(i + 1 + ". " + e));
+  return { text: lines.join("\n"), c, ps };
+}
+
+function saveToSupabase(c, ps) {
+  const payload = {
+    interviewer: $("interviewer").value || null,
+    interview_date: $("idate").value || null,
+    cur_age: $("ac").value ? parseInt($("ac").value) : null,
+    ret_age: $("ar").value ? parseInt($("ar").value) : null,
+    exp_age: $("ae").value ? parseInt($("ae").value) : null,
+    work_ability: WA_LABELS[$("wa").value] || null,
+    work_years: c.wy || null,
+    money_years: c.my || null,
+    income: c.imN || null,
+    expense: c.exN || null,
+    total_income: c.ti || null,
+    savings: c.sav || null,
+    debt: c.dbt || null,
+    investment: c.inv || null,
+    net_asset: c.net || null,
+    dependents: ps.length ? ps.join(", ") : null,
+  };
+  const box = $("result-box");
+  fetch(CONFIG.SUPA_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", apikey: CONFIG.SUPA_KEY, Authorization: "Bearer " + CONFIG.SUPA_KEY, Prefer: "return=minimal" },
+    body: JSON.stringify(payload),
+  })
+    .then((res) => { if (res.ok) box.textContent += "\n\n✅ บันทึกข้อมูลลง Supabase เรียบร้อยแล้ว"; else res.text().then((t) => box.textContent += "\n\n⚠️ บันทึกไม่สำเร็จ: " + t); })
+    .catch((err) => box.textContent += "\n\n⚠️ เชื่อมต่อ Supabase ไม่ได้: " + err.message);
+}
+
+let lastSummary = "";
+$("analyze").addEventListener("click", () => {
+  const { text, c, ps } = buildSummary();
+  lastSummary = text;
+  const box = $("result-box");
+  box.style.display = "block";
+  box.textContent = text;
+  setTimeout(() => box.scrollIntoView({ behavior: "smooth" }), 0);
+  saveToSupabase(c, ps);
+});
+
+$("share").addEventListener("click", () => {
+  const text = (lastSummary || buildSummary().text).trim();
+  window.open("https://line.me/R/msg/text/?" + encodeURIComponent(text), "_blank");
+});
+
+recalc();
+</script>
+</body>
+</html>

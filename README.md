@@ -1,48 +1,38 @@
-# AdvisorKu
+# Advisortool — HTML + CSS + JS วานิลลา
 
-รวมเว็บแอป 4 ตัวเข้าเป็นแอปเดียวด้วย **Next.js 15 (App Router) + React 19 + TypeScript + Tailwind CSS** โดยมีหน้า Hub สไตล์ AdvisorZone เป็นหน้าแรกสำหรับเลือกเข้าแต่ละแอป
+เว็บ static ล้วน (เดิมเป็น Next.js/React — แปลงครบและลบ Next.js ออกแล้ว) ไม่ต้อง build / ไม่ต้องมี Node server — วางที่ไหนก็รันได้
 
-## Routes
+## หน้า Hub
 
-| Route | แอป | รายละเอียด |
-|-------|-----|-----------|
-| `/` | **Hub** | หน้าแรกสไตล์ AdvisorZone — การ์ดผลิตภัณฑ์ |
-| `/global-saving` | Global Saving Plus | เครื่องคำนวณเงินออม (Vite → client-only) |
-| `/ihealthy` | iHealthy Ultra | เปรียบเทียบแผนประกันสุขภาพ (shadcn/ui) |
-| `/ci123` | CI 123 | ประกันโรคร้ายแรง + เครื่องคำนวณเบี้ย |
-| `/group-insurance` | Group Insurance | ใบเสนอราคาประกันกลุ่ม (Vite → client-only, PDF) |
-| `/fhc` | แบบสอบถามคุณภาพชีวิต | ฟอร์มประเมินการเงิน + บันทึก Supabase (แปลงจาก static HTML) |
+`index.html` (รากของ repo) = หน้ารวมเครื่องมือทั้ง 7 ตัว กดการ์ดเพื่อเข้าใช้งานแต่ละตัว
 
-## เริ่มใช้งาน
+## รัน
 
-ต้องมี Node.js 20+ (พัฒนาบน v22)
+เสิร์ฟ root ของ repo ด้วย static server แล้วเปิดหน้า Hub:
 
 ```bash
-npm install      # ติดตั้ง dependencies
-npm run dev      # รัน dev server → http://localhost:3000
-npm run build    # build production
-npm run start    # รัน production server
+python3 -m http.server 8000
+# เปิด http://localhost:8000  → กดการ์ดเข้าแต่ละเครื่องมือได้เลย
 ```
 
-## โครงสร้าง
+> ต้องเปิดผ่าน http (ไม่ใช่ `file://`) เพราะลิงก์/CDN/Supabase บางตัวต้องการ
 
-```
-app/
-├─ layout.tsx              # shell + AdvisorHeader (ทุกหน้า)
-├─ globals.css             # Tailwind + ธีม + สไตล์ Hub (.az-*)
-├─ page.tsx                # Hub (หน้าแรก)
-├─ <app>/page.tsx          # route ของแต่ละแอป
-└─ <app>/_src/             # โค้ดของแต่ละแอป (private, ไม่เป็น route)
-components/
-├─ AdvisorHeader.tsx       # header ร่วม
-├─ ProductCard.tsx         # การ์ดผลิตภัณฑ์ใน Hub
-└─ hubData.tsx             # ข้อมูลการ์ด
-public/hub/                # วางรูปจริงของการ์ดที่นี่ (ดู README ข้างใน)
-```
+## สถานะการแปลง — ครบทั้ง 7 เครื่องมือแล้ว ✅
 
-## หมายเหตุ
+| เครื่องมือ | โฟลเดอร์ | จุดเด่น | บันทึกข้อมูล |
+|---|---|---|---|
+| CI 123 | `ci123/` | ตารางผลประโยชน์ + เครื่องคำนวณเบี้ย | — |
+| FHC | `fhc/` | ฟอร์มคำนวณสด + แชร์ LINE | Supabase `fhc_responses` |
+| Career-Agent | `career-agent/` | แบบสอบถามให้คะแนน + จัดระดับ | Supabase `career_responses` |
+| Global Saving | `global-saving/` | เครื่องคำนวณผลประโยชน์ + factsheet (กราฟ Chart.js) | — |
+| iHealthy Ultra | `ihealthy/` | เปรียบเทียบ 3 แผน + premium calc + i18n 5 ภาษา | — |
+| Group Insurance | `group-insurance/` | คำนวณเบี้ยกลุ่มหลายกลุ่ม + ใบเสนอราคา PDF + TH/EN | — |
+| Agency Blueprint | `agency/` | 3 เครื่องมือ: ค่าบริหาร / รายได้ตัวแทน / แบบทดสอบผู้จัดการ | — |
 
-- **รูปการ์ดใน Hub** ตอนนี้เป็น gradient placeholder — วางไฟล์จริงใน `public/hub/`
-  (`global-saving.jpg`, `ihealthy.jpg`, `ci123.jpg`, `group-insurance.jpg`) รูปจะขึ้นทับเอง
-- สองแอปที่มาจาก Vite (Global Saving, Group Insurance) โหลดแบบ client-only (`ssr: false`)
-  เพราะใช้ browser API (chart.js / jspdf / html2canvas / `window`)
+แต่ละโฟลเดอร์ย่อยมี `README.md` อธิบายรายละเอียดของเครื่องมือนั้น
+
+CDN ที่ใช้: Tailwind Play (ci123, ihealthy, agency, career-agent), Chart.js (global-saving), jsPDF + html2canvas (group-insurance, ihealthy), SweetAlert2 (career-agent), Supabase JS (career-agent, fhc) — ที่เหลือเป็น HTML/CSS/JS ล้วน
+
+## Deploy
+
+อัปโหลดทั้ง repo (root) ขึ้น host static ที่ไหนก็ได้ (Netlify, GitHub Pages, Cloudflare Pages, cPanel, S3) — หน้า Hub และเครื่องมือทั้งหมดทำงานได้ทันที ส่วนการบันทึกข้อมูลใช้ Supabase (publishable key ฝังในหน้าเว็บได้, ตารางเปิด RLS แบบ insert-only)

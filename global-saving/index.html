@@ -1,0 +1,856 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Global Savings Plus 15/8 · เครื่องคำนวณ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Sarabun:wght@400;600;700;800&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"></script>
+<style>
+/* ===== index.css (ported verbatim) ===== */
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+ --navy:#0C1E30;--navy2:#15324B;--ink:#16242F;--muted:#5F6E7B;--muted2:#697682;
+ --red:#C7503E;--reddk:#A23E2F;--gold:#C7A24E;--golddk:#876A24;--greendk:#0B6B54;
+ --line:#E5E9EE;--bg:#EDF0F3;--softblue:#EFF3F7;--softgold:#FBF6E9;--softgreen:#E3F6F0;--softgrey:#F5F7F9;
+ --num:'IBM Plex Sans Thai','IBM Plex Sans',sans-serif;
+}
+html,body{font-family:'IBM Plex Sans Thai','Sarabun',sans-serif;color:var(--ink);background:var(--bg);-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+#root{min-height:100vh;}
+.wrap{max-width:1080px;margin:0 auto;padding:18px 16px 40px;}
+.tnum{font-variant-numeric:tabular-nums;}
+
+.header{background:radial-gradient(900px 220px at 88% -40%,rgba(199,162,78,.18),transparent 60%),linear-gradient(150deg,#0C1E30,#15324B);border-radius:14px;padding:18px 24px;color:#EAF0F5;position:relative;overflow:hidden;border-bottom:3px solid var(--golddk);display:flex;align-items:flex-start;justify-content:space-between;gap:16px;}
+.header-main{min-width:0;}
+.header-logo{flex:0 0 auto;width:78px;height:78px;object-fit:contain;background:#fff;border-radius:14px;padding:6px;box-shadow:0 6px 18px rgba(0,0,0,.22);}
+.badge{display:inline-block;background:rgba(199,162,78,.15);color:var(--gold);border:1px solid rgba(199,162,78,.42);font-weight:600;font-size:10px;letter-spacing:.16em;text-transform:uppercase;padding:4px 12px;border-radius:20px;margin-bottom:9px;}
+.h1{font-size:25px;font-weight:800;line-height:1.12;color:#FCFBF7;letter-spacing:-.01em;}
+.h1 .lk{color:var(--gold);font-weight:700;}
+.hsub{font-size:12.5px;font-weight:500;color:#A6B7C6;margin-top:5px;}
+
+.panel{background:#fff;border:1px solid var(--line);border-radius:13px;padding:12px 14px;margin-top:12px;box-shadow:0 1px 3px rgba(12,30,48,.04),0 8px 28px rgba(12,30,48,.05);}
+.prow{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-start;}
+.field{flex:1;min-width:200px;}
+.flabel{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.02em;margin-bottom:4px;display:block;}
+.autotag{display:inline-block;margin-left:6px;background:var(--softblue);color:var(--muted2);border:1px solid var(--line);font-size:9px;font-weight:700;letter-spacing:.02em;padding:1px 7px;border-radius:9px;vertical-align:middle;}
+.amtbox{display:flex;align-items:center;border:1.5px solid var(--line);border-radius:11px;overflow:hidden;background:#fff;transition:border-color .15s,box-shadow .15s,background .15s;}
+.amtbox:focus-within{border-color:var(--gold);box-shadow:0 0 0 3px rgba(199,162,78,.35);}
+.amtbox.computed{background:var(--softgrey);border-style:dashed;}
+.amtbox.computed input{color:var(--muted2);background:transparent;}
+.amtbox input{flex:1;border:none;outline:none;font-family:var(--num);font-variant-numeric:tabular-nums;font-size:19px;font-weight:500;color:var(--navy);padding:7px 11px;width:100%;text-align:right;}
+.amtbox .unit{background:var(--softblue);color:var(--muted);font-weight:700;font-size:11px;padding:0 12px;align-self:stretch;display:flex;align-items:center;}
+.agesel{width:100%;border:1.5px solid var(--line);border-radius:11px;background:#fff;font-family:var(--num);font-variant-numeric:tabular-nums;font-size:18px;font-weight:500;color:var(--navy);padding:7px 11px;cursor:pointer;outline:none;transition:border-color .15s,box-shadow .15s;}
+.agesel:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(199,162,78,.35);}
+.hint{font-size:10.5px;color:var(--muted);margin-top:5px;font-weight:500;}
+.hint b{color:var(--navy);font-weight:700;}
+.warn{display:flex;align-items:flex-start;gap:8px;margin-top:9px;background:#FBF1EE;border:1px solid #E6B7AE;color:var(--reddk);font-size:11.5px;font-weight:700;padding:9px 13px;border-radius:9px;line-height:1.45;}
+.warn b{color:var(--reddk);}
+.warn .wicon{flex:0 0 auto;margin-top:1px;}
+.scen{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;}
+.scenbox{flex:1;min-width:150px;border:1px solid var(--line);border-radius:10px;padding:8px 11px;}
+.scenbox label{font-size:10.5px;font-weight:700;display:block;margin-bottom:4px;}
+.scenin{display:flex;align-items:center;border:1px solid var(--line);border-radius:8px;background:#fff;overflow:hidden;}
+.scenin input{flex:1;border:none;outline:none;font-family:var(--num);font-size:16px;font-weight:500;text-align:right;padding:5px 8px;width:60px;color:var(--ink);}
+.scenin .scenval{flex:1;font-family:var(--num);font-size:16px;font-weight:500;text-align:right;padding:5px 8px;color:var(--ink);}
+.scenin .pct{padding:0 9px;color:var(--muted);font-weight:700;font-size:13px;background:var(--softgrey);align-self:stretch;display:flex;align-items:center;}
+.actions{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;align-items:center;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:38px;border:none;font-family:inherit;font-weight:700;font-size:13px;padding:8px 16px;border-radius:10px;cursor:pointer;transition:background .15s,border-color .15s,color .15s,box-shadow .15s;}
+.btn .bicon{flex:0 0 auto;}
+.btn.print{background:var(--navy);color:#fff;}
+.btn.print:hover{background:var(--navy2);box-shadow:0 4px 14px rgba(12,30,48,.18);}
+.btn.reset{background:#fff;border:1.5px solid var(--line);color:var(--muted);}
+.btn.reset:hover{border-color:var(--gold);color:var(--golddk);}
+.noteinfo{font-size:10.5px;color:var(--muted);font-weight:500;flex:1;min-width:200px;}
+
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px;}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px;box-shadow:0 1px 3px rgba(12,30,48,.03);}
+.kpi .kl{font-size:10.5px;color:var(--muted);font-weight:600;}
+.kpi .kv{font-family:var(--num);font-variant-numeric:tabular-nums;font-size:21px;font-weight:500;color:var(--navy);line-height:1.05;margin-top:4px;}
+.kpi .ks{font-size:10.5px;color:var(--muted2);font-weight:500;margin-top:2px;}
+.kpi.hl{background:radial-gradient(600px 160px at 90% -60%,rgba(199,162,78,.22),transparent 60%),linear-gradient(150deg,#0C1E30,#15324B);border-color:var(--navy);border-top:2px solid var(--gold);}
+.kpi.hl .kl,.kpi.hl .ks{color:#A6B7C6;}.kpi.hl .kv{color:var(--gold);}
+
+.sect{display:flex;align-items:center;gap:9px;margin:22px 0 10px;}
+.sect .bar{width:4px;height:18px;background:linear-gradient(var(--gold),var(--golddk));border-radius:3px;}
+.sect h2{font-size:16px;font-weight:800;color:var(--navy);letter-spacing:-.01em;}
+.sect .tagm{font-size:10.5px;color:var(--muted);font-weight:500;}
+
+.tblwrap{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff;box-shadow:0 1px 3px rgba(12,30,48,.03);}
+.scroll{overflow-x:auto;
+ background:
+  linear-gradient(to right,#fff 30%,rgba(255,255,255,0)) 0 0,
+  linear-gradient(to left,#fff 30%,rgba(255,255,255,0)) 100% 0,
+  radial-gradient(farthest-side at 0 50%,rgba(12,30,48,.16),rgba(12,30,48,0)) 0 0,
+  radial-gradient(farthest-side at 100% 50%,rgba(12,30,48,.16),rgba(12,30,48,0)) 100% 0;
+ background-repeat:no-repeat;
+ background-size:36px 100%,36px 100%,12px 100%,12px 100%;
+ background-attachment:local,local,scroll,scroll;}
+table{width:100%;border-collapse:collapse;}
+.ta th,.ta td{padding:8px 11px;font-size:12.5px;}
+.ta th{font-size:11px;font-weight:700;text-align:right;border-bottom:1px solid var(--line);background:#FAFBFC;color:var(--navy);}
+.ta th:first-child,.ta td:first-child{text-align:left;}
+.ta td{text-align:right;border-bottom:1px solid #EFF2F5;font-weight:600;}
+.ta td:not(:first-child){font-family:var(--num);font-variant-numeric:tabular-nums;font-weight:500;}
+.ta td:first-child{font-weight:600;color:var(--ink);}
+.ta .gtag{font-size:10px;font-weight:700;padding:1px 7px;border-radius:9px;margin-left:5px;white-space:nowrap;}
+.tg-g{background:var(--navy);color:#fff;}.tg-n{background:var(--gold);color:#3a2c00;}
+.ta tr.rowtot td{background:var(--navy);color:#fff!important;font-weight:600;font-size:13px;border:none;}
+.ta tr.rowirr td{background:var(--softgold);font-weight:600;border:none;}
+.ta tr.rowirr td:first-child{color:var(--golddk);}
+.ta th.bankcol{color:#5A6B7A;background:#EEF1F4;border-left:2px solid #D4DBE2;}
+.ta td.bankcol{color:#5A6B7A;background:#F6F8FA;border-left:2px solid #D4DBE2;font-weight:600;}
+.ta tr.rowtot td.bankcol{background:#5A6B7A;color:#fff!important;border-left:2px solid #D4DBE2;}
+.ta tr.rowirr td.bankcol{background:#EEF1F4;color:#5A6B7A;border-left:2px solid #D4DBE2;}
+
+.chartwrap{display:flex;gap:14px;align-items:flex-end;padding:16px 18px 6px;}
+.chcol{flex:1;text-align:center;min-width:0;}
+.chbar{max-width:150px;margin:0 auto;display:flex;flex-direction:column;justify-content:flex-end;height:150px;}
+.seg{width:100%;}.seg.g{background:var(--navy);border-radius:0 0 5px 5px;}
+.segtxt{font-size:9.5px;color:#fff;font-weight:700;padding-top:4px;}
+.chtot{font-family:var(--num);font-variant-numeric:tabular-nums;font-size:14px;font-weight:500;color:var(--navy);margin-top:7px;}
+.chlbl{font-size:11px;color:var(--muted);font-weight:600;}
+.leg{display:flex;gap:16px;justify-content:center;padding:4px 0 12px;font-size:11px;font-weight:600;color:var(--muted);flex-wrap:wrap;}
+.leg span{display:inline-flex;align-items:center;gap:5px;}.sw{width:12px;height:12px;border-radius:3px;}
+
+.tb table{table-layout:auto;}
+.tb th{font-size:10.5px;font-weight:700;text-align:right;border-bottom:1px solid var(--line);line-height:1.15;padding:5px 12px;white-space:nowrap;color:var(--navy);}
+.tb .ghg{background:var(--navy);color:#fff;text-align:center;font-size:10.5px;padding:4px;}
+.tb .ghn{background:var(--golddk);color:#fff;text-align:center;font-size:10.5px;padding:4px;}
+.tb tr.subhead th{background:#FAFBFC;}
+.tb td{text-align:right;border-bottom:1px solid #EFF2F5;font-weight:600;font-size:11.5px;padding:4px 12px;white-space:nowrap;font-variant-numeric:tabular-nums;}
+.tb td.yr{text-align:center;font-weight:700;color:var(--navy);font-family:var(--num);}
+.tb td.prem{color:var(--muted);font-weight:500;}.tb td.pay{color:var(--navy);}.tb td.dth{color:var(--red);}
+.tb td.age{text-align:center;font-weight:600;color:#46566B;}
+.tb th.agehdr,.tb td.age{border-left:2px solid #D8E0EA;}
+.tb .dv{border-left:2px solid #D8E0EA;}
+.tb tr.rpaid td{background:#FBF6E9;}
+.mile{display:block;font-size:8px;font-weight:600;color:var(--golddk);}
+.tb tr.rtot td{background:#EEF2F6;font-weight:700;color:var(--navy);border-top:2px solid var(--navy);border-bottom:none;font-size:11.5px;font-family:var(--num);font-variant-numeric:tabular-nums;}
+.tb tr.rtot td.yr{color:var(--navy);text-align:left;padding-left:10px;font-family:'IBM Plex Sans Thai','Sarabun',sans-serif;}
+.tb th.ghtax{background:var(--greendk);color:#fff;text-align:center;font-size:10.5px;padding:4px;border-left:2px solid #BFE3D8;}
+.tb td.taxcol{color:var(--greendk);background:var(--softgreen);font-weight:700;border-left:2px solid #BFE3D8;}
+.tb tr.rtot td.taxcol{background:#CDEBE1;color:var(--greendk);border-top:2px solid var(--navy);}
+
+.disc{background:var(--softgold);border:1px solid #EADFC2;border-radius:11px;padding:12px 16px;margin-top:16px;}
+.disc .dh{font-size:12.5px;font-weight:800;color:var(--golddk);margin-bottom:6px;}
+.disc ul{list-style:none;}
+.disc li{font-size:12px;color:#5A4B30;line-height:1.5;padding-left:15px;position:relative;margin-bottom:4px;font-weight:500;}
+.disc li:before{content:"";position:absolute;left:2px;top:6px;width:5px;height:5px;border-radius:50%;background:var(--gold);}
+.disc li b{color:var(--navy);}
+.foot{font-size:10.5px;color:var(--muted);margin-top:12px;line-height:1.5;text-align:center;}
+
+.tabbar{position:sticky;top:0;z-index:20;background:rgba(237,240,243,.9);backdrop-filter:saturate(140%) blur(8px);border-bottom:1px solid var(--line);}
+.tabbar-inner{max-width:1080px;margin:0 auto;padding:9px 16px;display:flex;gap:8px;align-items:center;}
+.brand-logo{height:36px;width:36px;object-fit:contain;border-radius:8px;background:#fff;border:1px solid var(--line);padding:2px;margin-right:6px;flex:0 0 auto;}
+.tab{display:inline-flex;align-items:center;min-height:44px;font-family:inherit;font-weight:700;font-size:13px;color:var(--muted);background:transparent;border:1.5px solid transparent;padding:8px 16px;border-radius:10px;cursor:pointer;transition:background .15s,color .15s,border-color .15s;}
+.tab:hover{background:#fff;color:var(--navy);border-color:var(--line);}
+.tab.on{background:var(--navy);color:#fff;border-color:var(--navy);}
+
+.doclist{display:flex;flex-direction:column;gap:10px;margin-top:14px;}
+.doccard{display:flex;align-items:center;gap:14px;background:#fff;border:1px solid var(--line);border-radius:13px;padding:14px 18px;box-shadow:0 1px 3px rgba(12,30,48,.04);}
+.doc-ic{flex:0 0 auto;width:46px;height:46px;border-radius:11px;background:var(--softblue);display:flex;align-items:center;justify-content:center;font-size:22px;}
+.doc-meta{flex:1;min-width:0;}
+.doc-title{font-size:15px;font-weight:800;color:var(--navy);}
+.doc-desc{font-size:11.5px;font-weight:500;color:var(--muted);margin-top:2px;}
+.doc-actions{flex:0 0 auto;display:flex;gap:8px;}
+.doc-actions .btn{text-decoration:none;display:inline-flex;align-items:center;}
+
+@media print{
+ body{background:#fff;}.wrap{max-width:100%;padding:0;}.noprint{display:none!important;}.panel{box-shadow:none;}
+ .tb td,.tb tr.rtot td{font-size:10px;}
+ .tb th,.tb .ghg,.tb .ghn,.tb th.ghtax{font-size:9.5px;}
+ .ta .gtag{font-size:8.5px;}.kpi .ks{font-size:9.5px;}.chlbl{font-size:10px;}
+ .disc li{font-size:10.6px;}.foot{font-size:9px;}
+ .scroll{background:none;}
+ .pgbreak{break-before:page;page-break-before:always;}
+ .cards,.tblwrap,.chartwrap,.disc,.kpi,.ta,.tb,table tr{break-inside:avoid;page-break-inside:avoid;}
+ .sect{break-after:avoid;page-break-after:avoid;}
+ .header{padding:12px 18px;}
+ .cards{margin-top:10px;gap:8px;}
+ .sect{margin:12px 0 7px;}
+ .chartwrap{padding:10px 14px 4px;}
+ @page{size:A4 landscape;margin:9mm;}
+}
+@media(max-width:640px){
+ .cards{grid-template-columns:repeat(2,1fr);}.h1{font-size:21px;}.amtbox input{font-size:20px;}
+ .header-logo{width:56px;height:56px;}
+ .doccard{flex-wrap:wrap;}.doc-actions{flex:1 1 100%;}.doc-actions .btn{flex:1;justify-content:center;}
+}
+
+/* ===== Factsheet.css (ported verbatim, scoped under .factsheet) ===== */
+.factsheet{
+  --ink:#0C1E30; --paper:#EDF0F3; --surface:#FFFFFF;
+  --line:#E5E9EE; --text:#16242F; --muted:#5F6E7B; --muted-2:#697682;
+  --gold:#C7A24E; --gold-deep:#876A24; --pos:#1F8A6B; --neg:#C7503E;
+  --eq-1:#1E4E79; --eq-2:#2E6CA4; --eq-3:#5C9BD1;
+  --gb-1:#1F6F5C; --gb-2:#2E9179; --gb-3:#6BBFA3;
+  --cc-1:#6B5B95; --co-1:#C8772E; --co-2:#C7A24E;
+  --serif:'IBM Plex Sans Thai','IBM Plex Sans',sans-serif;
+  --sans:'IBM Plex Sans Thai','IBM Plex Sans',-apple-system,BlinkMacSystemFont,'Segoe UI','Sarabun',sans-serif;
+  --num:'IBM Plex Sans Thai','IBM Plex Sans',sans-serif;
+  font-family:var(--sans);color:var(--text);line-height:1.45;font-size:13px;
+  -webkit-font-smoothing:antialiased;
+}
+.factsheet .tnum{font-variant-numeric:tabular-nums}
+.factsheet .sheet{max-width:1180px;margin:16px auto;background:var(--surface);
+       border-radius:14px;box-shadow:0 2px 6px rgba(12,30,48,.06),0 18px 50px rgba(12,30,48,.10);overflow:hidden}
+.factsheet .head{
+  background:radial-gradient(900px 220px at 88% -40%,rgba(199,162,78,.18),transparent 60%),
+             linear-gradient(150deg,#0C1E30,#11293E);
+  color:#EAF0F5;padding:15px 26px;display:flex;align-items:center;justify-content:space-between;
+  gap:20px;flex-wrap:wrap;border-bottom:3px solid var(--gold-deep);
+}
+.factsheet .head-brand{display:flex;align-items:center;gap:14px;min-width:0}
+.factsheet .head-logo{flex:0 0 auto;width:58px;height:58px;object-fit:contain;background:#fff;
+           border-radius:12px;padding:5px;box-shadow:0 4px 14px rgba(0,0,0,.2)}
+.factsheet .h-eyebrow{font-size:10px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;
+           color:var(--gold);margin:0 0 3px}
+.factsheet .h-title{font-family:var(--serif);font-weight:500;font-size:clamp(20px,2.6vw,27px);
+         line-height:1;letter-spacing:-.01em;margin:0;color:#FCFBF7}
+.factsheet .h-metrics{display:flex;gap:22px}
+.factsheet .hm{text-align:right}
+.factsheet .hm .v{font-family:var(--num);font-weight:600;font-size:22px;line-height:1;color:#FCFBF7}
+.factsheet .hm .v .u{font-size:.55em;color:var(--gold);vertical-align:.18em;margin-left:1px}
+.factsheet .hm.gold .v{color:var(--gold)}
+.factsheet .hm .l{font-size:10px;color:#A6B7C6;margin-top:4px;white-space:nowrap}
+@media(max-width:680px){
+  .factsheet .head{flex-direction:column;align-items:flex-start;gap:14px}
+  .factsheet .h-metrics{gap:26px}.factsheet .hm{text-align:left}
+}
+.factsheet .body{padding:16px 26px 20px}
+.factsheet .panel-title{display:flex;align-items:baseline;gap:8px;margin:0 0 10px}
+.factsheet .panel-title .n{font-family:var(--serif);font-style:italic;font-size:13px;color:var(--gold-deep)}
+.factsheet .panel-title h2{font-size:15px;font-weight:600;letter-spacing:-.01em;margin:0;color:var(--ink)}
+.factsheet .note{font-size:10.5px;color:var(--muted-2);margin:8px 0 0;line-height:1.4}
+.factsheet .main-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:22px}
+.factsheet .v-divider{position:relative}
+.factsheet .panel-index{padding-top:18px;border-top:1px solid var(--line)}
+.factsheet .alloc-summary{display:flex;flex-wrap:wrap;gap:4px 14px;margin:0 0 10px;font-size:11px;color:var(--muted)}
+.factsheet .alloc-summary b{font-family:var(--serif);font-weight:500;color:var(--ink);font-size:12px}
+.factsheet .alloc-row{display:grid;grid-template-columns:185px minmax(0,1fr);gap:14px;align-items:center}
+@media(max-width:840px){.factsheet .alloc-row{grid-template-columns:170px minmax(0,1fr)}}
+@media(max-width:460px){.factsheet .alloc-row{grid-template-columns:1fr}}
+.factsheet .donut-wrap{position:relative;height:185px}
+.factsheet .donut-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
+              justify-content:center;pointer-events:none;text-align:center;padding:0 22%}
+.factsheet .donut-center .dc-top{font-size:10px;color:var(--muted-2);margin-bottom:2px}
+.factsheet .donut-center .dc-val{font-family:var(--num);font-weight:600;font-size:28px;line-height:1;color:var(--ink)}
+.factsheet .donut-center .dc-val .u{font-size:.5em;color:var(--gold-deep);vertical-align:.2em}
+.factsheet .donut-center .dc-name{font-size:10.5px;color:var(--muted);margin-top:3px;min-height:1.2em;line-height:1.2}
+.factsheet .legend{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:2px 14px;align-content:center}
+@media(max-width:460px){.factsheet .legend{grid-template-columns:1fr 1fr;gap:2px 14px}}
+.factsheet .lg-item{display:grid;grid-template-columns:11px 1fr auto;align-items:center;gap:8px;
+         padding:4px 6px;border-radius:7px;cursor:pointer;border:1px solid transparent;
+         transition:background .14s}
+.factsheet .lg-item:hover{background:#F5F8FA}
+.factsheet .lg-item:focus-visible{outline:2px solid var(--gold);outline-offset:1px}
+.factsheet .lg-item.active{background:#F1F5F8;border-color:var(--line)}
+.factsheet .lg-item.dim{opacity:.4}
+.factsheet .lg-swatch{width:11px;height:11px;border-radius:3px}
+.factsheet .lg-name{font-size:12px;color:var(--text);line-height:1.2}
+.factsheet .lg-pct{font-family:var(--num);font-size:13px;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums}
+.factsheet .chart-line-wrap{position:relative;height:240px}
+.factsheet .ev-labels{position:absolute;inset:0;pointer-events:none;z-index:2}
+.factsheet .ev-label{position:absolute;top:0;left:0;width:max-content;max-width:140px;
+           text-align:center;font-size:11px;line-height:1.3;font-weight:600;color:var(--ink);
+           opacity:0;transition:opacity .2s,left .12s,top .12s}
+.factsheet .annual{margin-top:16px;padding-top:16px;border-top:1px solid var(--line)}
+.factsheet .chart-bar-wrap{position:relative;height:160px}
+@media(max-width:680px){.factsheet .chart-bar-wrap{height:200px}}
+.factsheet .table-scroll{overflow-x:auto;margin-top:12px;border:1px solid var(--line);border-radius:9px;-webkit-overflow-scrolling:touch}
+.factsheet table.perf{border-collapse:collapse;width:100%;min-width:720px;font-variant-numeric:tabular-nums}
+.factsheet table.perf th,.factsheet table.perf td{padding:6px 8px;text-align:center;font-size:11px;border-bottom:1px solid var(--line)}
+.factsheet table.perf tr:last-child td{border-bottom:none}
+.factsheet table.perf .rowlabel{text-align:left;font-weight:600;color:var(--muted);white-space:nowrap;font-size:10.5px;
+                     position:sticky;left:0;background:var(--surface);z-index:2;border-right:1px solid var(--line)}
+.factsheet table.perf thead th{background:#FAFBFC;color:var(--ink);font-weight:600;font-family:var(--num);font-size:11px}
+.factsheet table.perf thead .rowlabel{background:#FAFBFC}
+.factsheet table.perf td.val{font-family:var(--num);font-weight:600;font-size:12px}
+.factsheet table.perf td.neg{color:var(--neg)} .factsheet table.perf td.pos{color:var(--pos)}
+.factsheet table.perf td.hl,.factsheet table.perf th.hl{background:#FBF6E9}
+.factsheet .foot{margin-top:14px;padding-top:12px;border-top:1px solid var(--line);
+      display:flex;justify-content:space-between;gap:18px;align-items:flex-start;text-align:left}
+.factsheet .foot .notes{font-size:10px;color:var(--muted-2);line-height:1.5;max-width:900px}
+.factsheet .foot .src{font-size:10px;color:var(--muted-2);margin-top:6px}
+.factsheet .foot .src-link{display:inline-block;margin-top:6px;font-size:10px;font-weight:600;
+       color:var(--gold-deep,#876A24);text-decoration:none;border-bottom:1px solid rgba(135,106,36,.35);transition:color .15s,border-color .15s}
+.factsheet .foot .src-link:hover{color:#0C1E30;border-color:#0C1E30}
+.factsheet .qr-ph{width:56px;height:56px;flex:none;border:1.3px dashed #C8D0D8;border-radius:8px;
+       display:flex;align-items:center;justify-content:center;color:var(--muted-2);font-size:8px;text-align:center;padding:5px;
+       text-decoration:none;line-height:1.35;cursor:pointer;transition:border-color .15s,color .15s,background .15s}
+.factsheet .qr-ph:hover{border-color:var(--gold-deep,#876A24);color:var(--gold-deep,#876A24);background:rgba(199,162,78,.08)}
+#chartjs-tooltip{position:absolute;pointer-events:none;z-index:50;transition:opacity .12s,transform .12s;
+  background:#0C1E30;color:#fff;border-radius:9px;padding:8px 11px;
+  font-family:'IBM Plex Sans Thai','IBM Plex Sans',-apple-system,'Sarabun',sans-serif;
+  box-shadow:0 10px 28px rgba(12,30,48,.25);opacity:0;transform:translateY(4px);min-width:108px}
+#chartjs-tooltip .tt-title{font-size:10px;color:#9FB2C1;letter-spacing:.04em;margin-bottom:3px}
+#chartjs-tooltip .tt-main{font-family:'IBM Plex Sans Thai','IBM Plex Sans',sans-serif;font-size:18px;font-weight:600;line-height:1.1}
+#chartjs-tooltip .tt-sub{font-size:11px;margin-top:2px;color:#C9D6E1}
+#chartjs-tooltip .tt-sub b{font-weight:600}
+#chartjs-tooltip .pos{color:#7FD8BC} #chartjs-tooltip .neg{color:#F0A99B}
+@media(prefers-reduced-motion:reduce){.factsheet *{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div id="root">
+  <nav class="tabbar noprint">
+    <div class="tabbar-inner">
+      <img class="brand-logo" src="logo.png" alt="Global Savings Plus 15/8" width="36" height="36" />
+      <button class="tab on" id="tab-calc">เครื่องคำนวณ</button>
+      <button class="tab" id="tab-docs">เอกสารการลงทุน</button>
+    </div>
+  </nav>
+  <div id="view"></div>
+</div>
+
+<script src="data.js"></script>
+<script>
+/* ============================================================
+   Calculator (ported from Calculator.tsx)
+   ============================================================ */
+var numVal = function (s) { return parseFloat(s.replace(/[^0-9.]/g, '')) || 0; };
+function fmtDecimal(raw) {
+  var v = raw.replace(/[^0-9.]/g, '');
+  var i = v.indexOf('.');
+  if (i >= 0) v = v.slice(0, i + 1) + v.slice(i + 1).replace(/\./g, '').slice(0, 2);
+  var parts = v.split('.'); var a = parts[0], b = parts[1];
+  a = (a || '').replace(/^0+(?=\d)/, '');
+  var ip = a ? Number(a).toLocaleString('en-US') : (i >= 0 ? '0' : '');
+  return i >= 0 ? ip + '.' + (b || '') : ip;
+}
+function fmtInt(raw) {
+  var v = raw.split('.')[0].replace(/[^0-9]/g, '').replace(/^0+(?=\d)/, '');
+  return v ? Number(v).toLocaleString('en-US') : '';
+}
+var MAX_PREM = 20000000;
+var capPrem = function (formatted) { return numVal(formatted) > MAX_PREM ? MAX_PREM.toLocaleString('en-US') : formatted; };
+var label = function (r) { var p = +(r * 100).toFixed(2); return (p >= 0 ? '+' : '') + p + '%'; };
+var esc = function (s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); };
+
+var PRINTER_SVG = '<svg class="bicon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8" rx="1"/></svg>';
+var WARN_SVG = '<svg class="wicon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';
+
+// calculator state
+var state;
+function resetState() {
+  return { src: 'prem', prem: PRODUCTS['15-8'].defPrem, sa: '', age: 35 };
+}
+
+function renderCalculatorShell() {
+  var prod = PRODUCTS['15-8'];
+  var ageOpts = '';
+  for (var a = 0; a < 76; a++) ageOpts += '<option value="' + a + '">' + a + '</option>';
+  return ''
+    + '<div class="wrap">'
+    + '<div class="header"><div class="header-main">'
+    + '<span class="badge">เครื่องคำนวณผลประโยชน์</span>'
+    + '<h1 class="h1">Global Savings Plus 15/8 <span class="lk">(Index Linked)</span></h1>'
+    + '<div class="hsub">คุ้มครอง ' + prod.term + ' ปี · จ่ายเบี้ย ' + prod.premYears + ' ปี · รหัส ' + prod.code + ' · กรุงไทย-แอกซา</div>'
+    + '</div><img class="header-logo" src="logo.png" alt="Global Savings Plus 15/8" width="78" height="78" /></div>'
+
+    + '<div class="panel noprint"><div class="prow">'
+    + '<div class="field"><label class="flabel" for="f-sa">จำนวนเงินเอาประกันภัย / ทุนประกัน (บาท)<span class="autotag" id="tag-sa">คำนวณให้</span></label>'
+    + '<div class="amtbox" id="box-sa"><input id="f-sa" type="text" inputmode="numeric" /><span class="unit">บาท</span></div></div>'
+    + '<div class="field"><label class="flabel" for="f-prem">เบี้ยประกันภัยต่อปี (บาท)<span class="autotag" id="tag-prem" style="display:none">คำนวณให้</span></label>'
+    + '<div class="amtbox computed" id="box-prem"><input id="f-prem" type="text" inputmode="decimal" /><span class="unit">บาท</span></div></div>'
+    + '<div class="field" style="flex:0 0 150px"><label class="flabel" for="f-age">อายุลูกค้า (ปี)</label>'
+    + '<select id="f-age" class="agesel">' + ageOpts + '</select>'
+    + '<div class="hint">' + (prod.ageDep ? 'มีผลกับเบี้ย+มูลค่าเวนคืน' : 'ไม่กระทบเบี้ย/ผลประโยชน์') + '</div></div>'
+    + '</div><div id="warns"></div>'
+    + '<div class="actions">'
+    + '<button class="btn print" id="btn-print">' + PRINTER_SVG + ' พิมพ์ / บันทึก PDF</button>'
+    + '<button class="btn reset" id="btn-reset">ตั้งค่าเริ่มต้น</button>'
+    + '</div></div>'
+
+    + '<div id="results"></div>'
+    + '</div>';
+}
+
+function recalc() {
+  var prod = PRODUCTS['15-8'];
+  var age = state.age;
+  var SA, P;
+  if (state.src === 'prem') { var p = numVal(state.prem); SA = Math.ceil(prod.saFromPrem(p, age)); P = p; }
+  else { var s = numVal(state.sa); SA = s; P = s * prod.premRate(s, age) / 1000; }
+
+  var rates = SCEN.map(function (sc) { return String(sc.r); });
+  var R = rates.map(function (rt) { return calc(prod, SA, P, (parseFloat(rt) || 0) / 100, age); });
+  var labels = rates.map(function (rt) { return label((parseFloat(rt) || 0) / 100); });
+  var minSA = prod.minSA ? prod.minSA(age) : 0;
+  var belowMin = minSA > 0 && SA > 0 && SA < minSA;
+  var minPrem = minSA ? minSA * prod.premRate(minSA, age) / 1000 : 0;
+  var premFloor = prod.minPrem || 0;
+  var belowMinPrem = premFloor > 0 && P > 0 && P < premFloor;
+  var overMaxPrem = P > MAX_PREM;
+  var N = SCEN.length, PY = prod.premYears, T = prod.term;
+
+  var banks = [BANK_RATE, 0.015].map(function (rt) {
+    return { pct: +(rt * 100).toFixed(2) + '%', res: bankCompare(prod, P, rt) };
+  });
+  var gnt = R[0].payTot + R[0].mat;
+  var mx = Math.max.apply(null, R.map(function (x) { return x.total; }));
+  var H = 150;
+  var ev = function (v) { return v <= 0 ? '—' : fmt(v); };
+
+  // ---- update input displays without rebuilding inputs (preserve focus) ----
+  var saInput = document.getElementById('f-sa');
+  var premInput = document.getElementById('f-prem');
+  var saValue = state.src === 'sa' ? state.sa : (SA ? SA.toLocaleString('en-US') : '');
+  var premValue = state.src === 'prem' ? state.prem : (P ? P.toLocaleString('en-US', { maximumFractionDigits: 2 }) : '');
+  if (document.activeElement !== saInput) saInput.value = saValue;
+  if (document.activeElement !== premInput) premInput.value = premValue;
+  document.getElementById('box-sa').className = state.src === 'prem' ? 'amtbox computed' : 'amtbox';
+  document.getElementById('box-prem').className = state.src === 'sa' ? 'amtbox computed' : 'amtbox';
+  document.getElementById('tag-sa').style.display = state.src === 'prem' ? '' : 'none';
+  document.getElementById('tag-prem').style.display = state.src === 'sa' ? '' : 'none';
+  document.getElementById('f-age').value = String(age);
+
+  // ---- warnings ----
+  var warns = '';
+  if (belowMinPrem) warns += '<div class="warn" role="alert">' + WARN_SVG + '<span><b>เบี้ยประกันภัยขั้นต่ำ ' + fmt(premFloor) + ' บาท/ปี</b> · เบี้ยปัจจุบัน ' + fmt(P) + ' บาท ต่ำกว่าขั้นต่ำ — กรุณาเพิ่มเบี้ยเป็นอย่างน้อย ' + fmt(premFloor) + ' บาท/ปี</span></div>';
+  if (overMaxPrem) warns += '<div class="warn" role="alert">' + WARN_SVG + '<span><b>เบี้ยประกันภัยต่อปีสูงสุด ' + fmt(MAX_PREM) + ' บาท</b> · เบี้ยที่คำนวณได้ ' + fmt(P) + ' บาท เกินกำหนด — กรุณาลดจำนวนเงินเอาประกันภัย</span></div>';
+  if (belowMin) warns += '<div class="warn" role="alert">' + WARN_SVG + '<span><b>อายุ 71 ปีขึ้นไป ทุนประกันขั้นต่ำ 200,000 บาท</b> · ทุนปัจจุบัน ' + fmt(SA) + ' บาท ต่ำกว่าขั้นต่ำ — เพิ่มเบี้ยเป็นอย่างน้อย ' + fmt(minPrem) + ' บาท/ปี</span></div>';
+  document.getElementById('warns').innerHTML = warns;
+
+  // ---- results ----
+  var html = '';
+  // KPI
+  html += '<div class="cards">'
+    + '<div class="kpi"><div class="kl">ทุนประกัน</div><div class="kv">' + fmt(SA) + '</div><div class="ks">บาท</div></div>'
+    + '<div class="kpi"><div class="kl">เบี้ย/ปี × ' + PY + ' ปี</div><div class="kv">' + fmt(P) + '</div><div class="ks">รวม ' + fmt(PY * P) + ' บาท</div></div>'
+    + '<div class="kpi hl"><div class="kl">เงินการันตีรวม</div><div class="kv">' + fmt(R[0].payTot + R[0].mat) + '</div><div class="ks">เงินคืน+ครบสัญญา</div></div>'
+    + '<div class="kpi"><div class="kl">ความคุ้มครองชีวิต</div><div class="kv">' + fmt(R[0].rows[0].death) + '</div><div class="ks">ขั้นต่ำปีแรก → สูงสุด ' + fmt((PY + 0.35) * SA) + '</div></div>'
+    + '</div>';
+
+  // TABLE A
+  html += '<div class="sect"><span class="bar"></span><h2>ตารางที่ 1 · ภาพรวมผลประโยชน์</h2><span class="tagm">เมื่ออยู่ครบสัญญา ' + T + ' ปี</span></div>';
+  html += '<div class="tblwrap"><div class="scroll"><table class="ta"><thead><tr><th>รายการผลประโยชน์</th>';
+  SCEN.forEach(function (s, i) { html += '<th style="color:' + s.t + ';background:' + s.bg + '">ดัชนี ' + labels[i] + '/ปี</th>'; });
+  banks.forEach(function (b) { html += '<th class="bankcol">ฝากธนาคาร<br />' + b.pct + '/ปี</th>'; });
+  html += '</tr></thead><tbody>';
+  // row payTot
+  html += '<tr><td>เงินคืนรายปี (สิ้นปี 1–' + (T - 1) + ')<span class="gtag tg-g">การันตี</span></td>';
+  R.forEach(function (x, i) { html += '<td style="color:' + SCEN[i].t + '">' + fmt(x.payTot) + '</td>'; });
+  banks.forEach(function () { html += '<td class="bankcol">—</td>'; });
+  html += '</tr>';
+  // row mat
+  html += '<tr><td>เงินครบสัญญา (สิ้นปี ' + T + ')<span class="gtag tg-g">การันตี</span></td>';
+  R.forEach(function (x, i) { html += '<td style="color:' + SCEN[i].t + '">' + fmt(x.mat) + '</td>'; });
+  banks.forEach(function (b) { html += '<td class="bankcol">' + fmt(b.res.total) + '</td>'; });
+  html += '</tr>';
+  // bonus rows
+  prod.alive.forEach(function (m, bi) {
+    html += '<tr><td>โบนัสดัชนี · ' + (m[0] === T ? 'ครบสัญญา' : 'ปี ' + m[0]) + '<span class="gtag tg-n">ไม่การันตี</span></td>';
+    R.forEach(function (x, i) { html += '<td style="color:' + SCEN[i].t + '">' + fmt(x.bonuses[bi].val) + '</td>'; });
+    banks.forEach(function () { html += '<td class="bankcol">—</td>'; });
+    html += '</tr>';
+  });
+  // total
+  html += '<tr class="rowtot"><td>รวมรับทั้งหมดตลอดสัญญา</td>';
+  R.forEach(function (x) { html += '<td>' + fmt(x.total) + '</td>'; });
+  banks.forEach(function (b) { html += '<td class="bankcol bankcoltot">' + fmt(b.res.total) + '</td>'; });
+  html += '</tr>';
+  // irr
+  html += '<tr class="rowirr"><td>ผลตอบแทนเฉลี่ยต่อปี (IRR)</td>';
+  R.forEach(function (x, i) { html += '<td style="color:' + SCEN[i].t + '">' + x.irr.toFixed(2) + '%</td>'; });
+  banks.forEach(function (b) { html += '<td class="bankcol">' + b.pct + '</td>'; });
+  html += '</tr></tbody></table></div></div>';
+
+  // CHART
+  html += '<div class="sect"><span class="bar"></span><h2>เปรียบเทียบเงินรับรวม</h2></div>';
+  html += '<div class="tblwrap"><div class="chartwrap">';
+  R.forEach(function (x, i) {
+    var gH = mx > 0 ? gnt / mx * H : 0, bH = mx > 0 ? (x.total - gnt) / mx * H : 0;
+    html += '<div class="chcol"><div class="chbar">';
+    if (bH > 2) html += '<div class="seg" style="height:' + bH + 'px;background:' + SCEN[i].bar + ';border-radius:5px 5px 0 0"><div class="segtxt" style="color:' + SCEN[i].barTx + '">+' + fmt(x.total - gnt) + '</div></div>';
+    html += '<div class="seg g" style="height:' + gH + 'px">' + (i === 0 ? '<div class="segtxt seg-on-navy">การันตี</div>' : '') + '</div>';
+    html += '</div><div class="chtot">' + fmt(x.total) + '</div><div class="chlbl">ดัชนี ' + labels[i] + '/ปี</div></div>';
+  });
+  html += '</div><div class="leg"><span><span class="sw" style="background:#0C1E30"></span>เงินการันตี (ฐานสีน้ำเงิน)</span><span>ส่วนบนของแต่ละแท่ง = โบนัสตามดัชนี (ไม่การันตี · สีตามสถานการณ์)</span></div></div>';
+
+  // TABLE B
+  html += '<div class="sect pgbreak"><span class="bar"></span><h2>ตารางที่ 2 · ผลประโยชน์รายปี (ปีที่ 1–' + T + ')</h2></div>';
+  html += '<div class="tblwrap"><div class="scroll"><table class="tb"><thead>';
+  html += '<tr><th rowspan="2" style="vertical-align:middle">สิ้น<br />ปีที่</th>'
+    + '<th rowspan="2" class="agehdr" style="vertical-align:middle">อายุ</th>'
+    + '<th colspan="4" class="ghg">ส่วนการันตี · รับรองการจ่าย</th>'
+    + '<th colspan="' + N + '" class="ghn">มูลค่ารับหากเวนคืน/ครบสัญญา · รวมโบนัสดัชนี (ไม่การันตี)</th>'
+    + '<th rowspan="2" class="ghtax" style="vertical-align:middle">ลดหย่อน<br />ภาษี</th></tr>';
+  html += '<tr class="subhead"><th>เบี้ย<br />ต่อปี</th><th>เบี้ย<br />สะสม</th><th>เงินจ่ายคืน<br />' + (+(prod.paybackPct * 100).toFixed(2)) + '%</th><th>คุ้มครอง<br />ชีวิต</th>';
+  SCEN.forEach(function (s, i) { html += '<th class="' + (i === 0 ? 'dv' : '') + '" style="color:' + s.t + ';background:' + s.bg + '">ดัชนี<br />' + labels[i] + '/ปี</th>'; });
+  html += '</tr></thead><tbody>';
+  R[0].rows.forEach(function (a, i) {
+    var y = i + 1;
+    var cls = y === PY ? 'rpaid' : '';
+    html += '<tr class="' + cls + '">'
+      + '<td class="yr">' + y + '</td>'
+      + '<td class="age">' + (age ? age + y - 1 : '—') + '</td>'
+      + '<td class="prem">' + (a.prem ? fmt(a.prem) : '—') + '</td>'
+      + '<td class="prem">' + fmt(a.cum) + '</td>'
+      + '<td class="pay">' + fmt(a.pay) + '</td>'
+      + '<td class="dth">' + fmt(a.death) + '</td>';
+    R.forEach(function (x, j) { html += '<td class="' + (j === 0 ? 'dv' : '') + '" style="color:' + SCEN[j].t + '">' + ev(x.rows[i].exit) + '</td>'; });
+    html += '<td class="taxcol">' + (a.prem ? fmt(Math.min(a.prem, 100000)) : '—') + '</td></tr>';
+  });
+  html += '<tr class="rtot"><td class="yr" colspan="2">รวมทั้งสิ้น</td>'
+    + '<td>' + fmt(PY * P) + '</td><td>—</td><td class="pay">' + fmt(R[0].payTot + R[0].mat) + '</td><td>—</td>';
+  SCEN.forEach(function (_, j) { html += '<td class="' + (j === 0 ? 'dv' : '') + '">—</td>'; });
+  html += '<td class="taxcol">' + fmt(PY * Math.min(P, 100000)) + '</td></tr>';
+  html += '</tbody></table></div></div>';
+
+  // disclaimer + foot
+  html += '<div class="disc"><div class="dh">หมายเหตุสำคัญ</div><ul>';
+  prod.notes.forEach(function (n) { html += '<li>' + n + '</li>'; });
+  html += '</ul></div>';
+  html += '<div class="foot">“' + prod.name + ' (อินเด็กซ์ ลิงค์)” เป็นชื่อทางการตลาดของแบบ ' + prod.name + ' แบบมีผลตอบแทนตามดัชนีอ้างอิง · เครื่องคำนวณนี้จัดทำเพื่อประกอบการนำเสนอ</div>';
+
+  document.getElementById('results').innerHTML = html;
+}
+
+function mountCalculator() {
+  var view = document.getElementById('view');
+  view.innerHTML = renderCalculatorShell();
+  state = resetState();
+
+  var saInput = document.getElementById('f-sa');
+  var premInput = document.getElementById('f-prem');
+  var ageSel = document.getElementById('f-age');
+
+  saInput.addEventListener('input', function (e) {
+    state.src = 'sa';
+    state.sa = fmtInt(e.target.value);
+    e.target.value = state.sa;
+    recalc();
+  });
+  premInput.addEventListener('input', function (e) {
+    state.src = 'prem';
+    state.prem = capPrem(fmtDecimal(e.target.value));
+    e.target.value = state.prem;
+    recalc();
+  });
+  ageSel.addEventListener('change', function (e) { state.age = parseInt(e.target.value, 10); recalc(); });
+
+  document.getElementById('btn-print').addEventListener('click', function () { window.print(); });
+  document.getElementById('btn-reset').addEventListener('click', function () { state = resetState(); recalc(); });
+
+  recalc();
+}
+
+/* ============================================================
+   Factsheet / Documents (ported from Documents.tsx)
+   ============================================================ */
+var factsheetCharts = [];
+var factsheetTooltipEl = null;
+
+function mountDocuments() {
+  var view = document.getElementById('view');
+  view.innerHTML = ''
+    + '<div class="factsheet"><div class="sheet">'
+    + '<header class="head"><div class="head-brand">'
+    + '<img class="head-logo" src="logo.png" alt="Global Savings Plus 15/8" width="58" height="58" />'
+    + '<div><p class="h-eyebrow">ดัชนีอ้างอิงหลายสินทรัพย์ · ควบคุมความผันผวน</p><h1 class="h-title">Citi Grandmaster RC&nbsp;5 Index</h1></div></div>'
+    + '<div class="h-metrics">'
+    + '<div class="hm"><div class="v">4.15<span class="u">%</span></div><div class="l">ผลตอบแทนเฉลี่ยต่อปี</div></div>'
+    + '<div class="hm"><div class="v">4.08<span class="u">%</span></div><div class="l">ความผันผวนเฉลี่ยต่อปี</div></div>'
+    + '<div class="hm gold"><div class="v">1.02</div><div class="l">Sharpe ratio</div></div>'
+    + '</div></header>'
+    + '<div class="body"><div class="main-grid">'
+    + '<section class="panel-alloc"><div class="panel-title"><span class="n">I</span><h2>สัดส่วนการลงทุนเฉลี่ย</h2></div>'
+    + '<div class="alloc-summary" id="allocSummary"></div>'
+    + '<div class="alloc-row"><div class="donut-wrap"><canvas id="donutChart" role="img" aria-label="แผนภูมิวงแหวนแสดงสัดส่วนการลงทุนเฉลี่ยแยกตามกลุ่มสินทรัพย์ ดูค่าแต่ละกลุ่มได้จากรายการข้างเคียง"></canvas>'
+    + '<div class="donut-center" id="donutCenter"><div class="dc-top">รวมทั้งพอร์ต</div><div class="dc-val">100<span class="u">%</span></div><div class="dc-name">9 กลุ่มสินทรัพย์</div></div></div>'
+    + '<div class="legend" id="legend"></div></div>'
+    + '<p class="note">ข้อมูลเฉลี่ย ม.ค. 2548 – เม.ย. 2569 · ชี้/คลิกเพื่อดูรายตัว</p></section>'
+    + '<section class="panel-index"><div class="panel-title"><span class="n">II</span><h2>การเคลื่อนไหวของราคาดัชนี</h2></div>'
+    + '<div class="chart-line-wrap"><canvas id="lineChart" role="img" aria-label="กราฟเส้นแสดงการเคลื่อนไหวของดัชนี Citi Grandmaster RC 5"></canvas><div class="ev-labels"></div></div>'
+    + '<p class="note">ดัชนีเริ่ม 100 จุด ณ ธ.ค. 2545 · คำนวณจากผลตอบแทนรายปีด้านล่าง</p></section>'
+    + '</div>'
+    + '<section class="annual"><div class="panel-title"><span class="n">III</span><h2>ผลตอบแทนรายปี <span style="font-weight:400;font-size:11px;color:var(--muted-2)">(% ต่อปี)</span></h2></div>'
+    + '<div class="chart-bar-wrap"><canvas id="barChart" role="img" aria-label="กราฟแท่งแสดงผลตอบแทนรายปีเป็นเปอร์เซ็นต์"></canvas></div>'
+    + '<div class="table-scroll"><table class="perf"><thead><tr id="tblYears"></tr></thead><tbody><tr id="tblVals"></tr></tbody></table></div></section>'
+    + '<footer class="foot"><div>'
+    + '<div class="notes">ผลการดำเนินงานในอดีตมิได้เป็นสิ่งยืนยันหรือตัวชี้วัดผลการดำเนินงานในอนาคต · ตัวเลขผลตอบแทนเป็นค่าก่อนปรับด้วยอัตราการมีส่วนร่วมในผลตอบแทนที่เกิดจากการเปลี่ยนแปลงของดัชนี · ข้อมูลตั้งแต่ พ.ค. 2565 เป็นผลตอบแทนจริง ก่อนหน้านั้นเป็นการจำลองย้อนหลัง (Backtesting)</div>'
+    + '<div class="src">ที่มา: เอกสารข้อมูล Citi Grandmaster RC 5 Index</div>'
+    + '<a class="src-link" href="https://www.krungthai-axa.co.th/th/products/performance/global-saving-plus-15-8" target="_blank" rel="noopener noreferrer">เอกสารข้อมูลดัชนี · ผลการดำเนินงานแบบเรียลไทม์ (กรุงไทย-แอกซา) ↗</a>'
+    + '</div>'
+    + '<a class="qr-ph" href="https://www.krungthai-axa.co.th/th/products/performance/global-saving-plus-15-8" target="_blank" rel="noopener noreferrer" aria-label="เปิดเอกสารข้อมูลดัชนีและผลการดำเนินงานแบบเรียลไทม์ที่เว็บไซต์กรุงไทย-แอกซา">ดูดัชนี<br />เรียลไทม์ ↗</a>'
+    + '</footer>'
+    + '</div></div></div>';
+
+  buildFactsheet(view.querySelector('.factsheet'));
+}
+
+function buildFactsheet(root) {
+  var REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var annualReturns = FACTSHEET.annualReturns;
+  var retYears = Object.keys(annualReturns).map(Number);
+  var baseYear = FACTSHEET.baseYear;
+  var levelYears = [baseYear].concat(retYears);
+  var lvl = 100;
+  var levels = [{ year: baseYear, level: 100, ret: null }];
+  retYears.forEach(function (y) { lvl = lvl * (1 + annualReturns[y] / 100); levels.push({ year: y, level: +lvl.toFixed(2), ret: annualReturns[y] }); });
+
+  var groups = FACTSHEET.groups;
+  var assets = [];
+  groups.forEach(function (g) { g.items.forEach(function (it) { assets.push(Object.assign({}, it, { group: g.name })); }); });
+
+  Chart.defaults.font.family = "'IBM Plex Sans Thai','IBM Plex Sans',sans-serif";
+  Chart.defaults.font.size = 11;
+  Chart.defaults.color = '#5F6E7B';
+  var C = { ink: '#0C1E30', goldDeep: '#876A24', muted: '#5F6E7B', line: '#E5E9EE' };
+  var fmtN = function (n, d) { if (d === undefined) d = 2; return n.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d }); };
+  var signCls = function (v) { return v > 0 ? 'pos' : v < 0 ? 'neg' : ''; };
+  var signTxt = function (v) { return (v > 0 ? '+' : '') + fmtN(v); };
+  var $ = function (sel) { return root.querySelector(sel); };
+
+  var ttEl = document.createElement('div');
+  ttEl.id = 'chartjs-tooltip';
+  document.body.appendChild(ttEl);
+  factsheetTooltipEl = ttEl;
+  function externalTooltip(context, render) {
+    var chart = context.chart, tooltip = context.tooltip;
+    if (tooltip.opacity === 0) { ttEl.style.opacity = '0'; return; }
+    ttEl.innerHTML = render(tooltip);
+    var rect = chart.canvas.getBoundingClientRect();
+    var x = window.pageXOffset + rect.left + tooltip.caretX;
+    var y = window.pageYOffset + rect.top + tooltip.caretY;
+    ttEl.style.opacity = '1';
+    ttEl.style.transform = 'translateY(0)';
+    var left = x - ttEl.offsetWidth / 2;
+    var vpRight = window.pageXOffset + document.documentElement.clientWidth - 8;
+    if (left + ttEl.offsetWidth > vpRight) left = vpRight - ttEl.offsetWidth;
+    if (left < 8) left = 8;
+    ttEl.style.left = left + 'px';
+    ttEl.style.top = (y - ttEl.offsetHeight - 12) + 'px';
+  }
+
+  /* LINE */
+  var lineCtx = $('#lineChart');
+  var lg = lineCtx.getContext('2d').createLinearGradient(0, 0, 0, 200);
+  lg.addColorStop(0, 'rgba(199,162,78,.22)');
+  lg.addColorStop(1, 'rgba(199,162,78,0)');
+  var idxOf = function (y) { return levelYears.indexOf(y); };
+  var eventBands = FACTSHEET.eventBands;
+  var evWrap = $('.ev-labels');
+  var evLabelEls = eventBands.map(function (b) {
+    var el = document.createElement('span');
+    el.className = 'ev-label';
+    el.textContent = b.text;
+    evWrap.appendChild(el);
+    return el;
+  });
+  var eventBandPlugin = {
+    id: 'eventBands',
+    beforeDatasetsDraw: function (chart) {
+      var ctx = chart.ctx, bottom = chart.chartArea.bottom, x = chart.scales.x;
+      if (!x) return;
+      ctx.save();
+      eventBands.forEach(function (b) {
+        var iF = idxOf(b.from), iT = idxOf(b.to);
+        if (iF < 0 || iT < 0) return;
+        var pF = x.getPixelForValue(iF), pT = x.getPixelForValue(iT);
+        var step = Math.abs(x.getPixelForValue(1) - x.getPixelForValue(0));
+        var bandLeft = pF - step * 0.45, bandRight = pT + step * 0.45;
+        ctx.fillStyle = 'rgba(12,30,48,.05)';
+        ctx.fillRect(bandLeft, 0, bandRight - bandLeft, bottom);
+      });
+      ctx.restore();
+    },
+    afterDraw: function (chart) {
+      var left = chart.chartArea.left, right = chart.chartArea.right, x = chart.scales.x;
+      if (!x) return;
+      eventBands.forEach(function (b, k) {
+        var el = evLabelEls[k];
+        var iF = idxOf(b.from), iT = idxOf(b.to);
+        if (iF < 0 || iT < 0) { el.style.opacity = '0'; return; }
+        var cx = (x.getPixelForValue(iF) + x.getPixelForValue(iT)) / 2;
+        var w = el.offsetWidth;
+        var lx = cx - w / 2;
+        if (lx < left) lx = left;
+        if (lx + w > right) lx = right - w;
+        el.style.opacity = '1';
+        el.style.left = lx + 'px';
+        el.style.top = (6 + (b.row || 0) * 38) + 'px';
+      });
+    },
+  };
+  var lineChart = new Chart(lineCtx, {
+    type: 'line',
+    data: { labels: levelYears.map(String), datasets: [{
+      data: levels.map(function (l) { return l.level; }),
+      borderColor: C.goldDeep, borderWidth: 2, backgroundColor: lg, fill: true, tension: 0.32,
+      pointRadius: 0, pointHoverRadius: 4, pointHoverBackgroundColor: C.goldDeep,
+      pointHoverBorderColor: '#fff', pointHoverBorderWidth: 2,
+    }] },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      animation: REDUCED ? false : { duration: 1200, easing: 'easeOutQuart' },
+      interaction: { mode: 'index', intersect: false }, layout: { padding: { top: 88 } },
+      plugins: {
+        legend: { display: false },
+        tooltip: { enabled: false, external: function (c) { externalTooltip(c, function (tt) {
+          var d = levels[tt.dataPoints[0].dataIndex];
+          var r = d.ret == null ? '<div class="tt-sub">มูลค่าเริ่มต้น</div>'
+            : '<div class="tt-sub">ปีนี้ <b class="' + signCls(d.ret) + '">' + signTxt(d.ret) + '%</b></div>';
+          return '<div class="tt-title">พ.ศ. ' + d.year + '</div><div class="tt-main">' + fmtN(d.level) + '</div>' + r;
+        }); } },
+      },
+      scales: {
+        x: { grid: { display: false }, border: { color: C.line }, ticks: {
+          maxRotation: 0, autoSkip: false, color: C.muted, font: { size: 10 },
+          callback: function (_v, i) { var y = levelYears[i]; return (y - baseYear) % 3 === 0 ? y : ''; },
+        } },
+        y: { suggestedMin: 80, grid: { color: 'rgba(12,30,48,.05)' }, border: { display: false },
+          ticks: { stepSize: 50, color: C.muted, font: { size: 10, family: "'IBM Plex Sans Thai', sans-serif" } } },
+      },
+    },
+    plugins: [eventBandPlugin],
+  });
+
+  /* DONUT */
+  var donutCtx = $('#donutChart');
+  var centerEl = $('#donutCenter');
+  var selected = -1;
+  function setCenter(i) {
+    if (i < 0) centerEl.innerHTML = '<div class="dc-top">รวมทั้งพอร์ต</div><div class="dc-val">100<span class="u">%</span></div><div class="dc-name">9 กลุ่มสินทรัพย์</div>';
+    else { var a = assets[i]; centerEl.innerHTML = '<div class="dc-top">' + a.group + '</div><div class="dc-val">' + fmtN(a.pct) + '<span class="u">%</span></div><div class="dc-name">' + a.th + '</div>'; }
+  }
+  var donutChart = new Chart(donutCtx, {
+    type: 'doughnut',
+    data: { labels: assets.map(function (a) { return a.th; }), datasets: [{
+      data: assets.map(function (a) { return a.pct; }),
+      backgroundColor: assets.map(function (a) { return a.color; }), borderColor: '#fff', borderWidth: 2,
+      hoverBorderColor: '#fff', hoverOffset: 8, offset: assets.map(function () { return 0; }),
+    }] },
+    options: {
+      responsive: true, maintainAspectRatio: false, cutout: '66%',
+      animation: REDUCED ? false : { animateRotate: true, duration: 1000, easing: 'easeOutCubic' },
+      plugins: { legend: { display: false }, tooltip: { enabled: false } },
+      onHover: function (_e, a) {
+        donutCtx.style.cursor = a.length ? 'pointer' : 'default';
+        if (selected >= 0) return;
+        if (a.length) { setCenter(a[0].index); highlightLegend(a[0].index); }
+        else { setCenter(-1); highlightLegend(-1); }
+      },
+      onClick: function (_e, a) { if (!a.length) { selectAsset(-1); return; } var i = a[0].index; selectAsset(selected === i ? -1 : i); },
+    },
+  });
+  function selectAsset(i) {
+    selected = i;
+    donutChart.data.datasets[0].offset = assets.map(function (_, k) { return k === i ? 13 : 0; });
+    donutChart.update();
+    setCenter(i);
+    highlightLegend(i, true);
+  }
+
+  /* alloc summary */
+  $('#allocSummary').innerHTML = groups.map(function (g) {
+    var s = g.items.reduce(function (a, it) { return a + it.pct; }, 0);
+    return g.name + ' <b>' + fmtN(s) + '%</b>';
+  }).join('<span style="color:#C8D0D8">·</span> ');
+
+  /* LEGEND */
+  var legendEl = $('#legend');
+  assets.forEach(function (it, i) {
+    var row = document.createElement('div');
+    row.className = 'lg-item';
+    row.dataset.i = String(i);
+    row.tabIndex = 0;
+    row.setAttribute('role', 'button');
+    row.setAttribute('aria-label', it.th + ' ' + fmtN(it.pct) + ' เปอร์เซ็นต์');
+    row.innerHTML = '<span class="lg-swatch" style="background:' + it.color + '"></span><span class="lg-name">' + it.th + '</span><span class="lg-pct">' + fmtN(it.pct) + '%</span>';
+    row.addEventListener('mouseenter', function () { if (selected < 0) { setCenter(i); highlightLegend(i); donutChart.setActiveElements([{ datasetIndex: 0, index: i }]); donutChart.update(); } });
+    row.addEventListener('mouseleave', function () { if (selected < 0) { setCenter(-1); highlightLegend(-1); donutChart.setActiveElements([]); donutChart.update(); } });
+    row.addEventListener('click', function () { selectAsset(selected === i ? -1 : i); });
+    row.addEventListener('keydown', function (ev) { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); selectAsset(selected === i ? -1 : i); } });
+    legendEl.appendChild(row);
+  });
+  var legendItems = Array.prototype.slice.call(legendEl.querySelectorAll('.lg-item'));
+  function highlightLegend(i, pin) {
+    legendItems.forEach(function (el) {
+      var k = +el.dataset.i;
+      el.classList.toggle('active', k === i);
+      el.classList.toggle('dim', pin && i >= 0 && k !== i);
+    });
+  }
+
+  /* BAR */
+  var barCtx = $('#barChart');
+  var barChart = new Chart(barCtx, {
+    type: 'bar',
+    data: { labels: retYears.map(String), datasets: [{
+      data: retYears.map(function (y) { return annualReturns[y]; }),
+      backgroundColor: retYears.map(function (y) { return annualReturns[y] < 0 ? 'rgba(199,80,62,.85)' : 'rgba(31,138,107,.85)'; }),
+      hoverBackgroundColor: retYears.map(function (y) { return annualReturns[y] < 0 ? '#C7503E' : '#1F8A6B'; }),
+      borderRadius: 2, borderSkipped: false, maxBarThickness: 22,
+    }] },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      animation: REDUCED ? false : { duration: 800, easing: 'easeOutQuart', delay: function (c) { return c.type === 'data' ? c.dataIndex * 18 : 0; } },
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { display: false },
+        tooltip: { enabled: false, external: function (c) { externalTooltip(c, function (tt) {
+          var i = tt.dataPoints[0].dataIndex, y = retYears[i], v = annualReturns[y];
+          return '<div class="tt-title">พ.ศ. ' + y + '</div><div class="tt-main ' + signCls(v) + '">' + signTxt(v) + '%</div>';
+        }); } },
+      },
+      onHover: function (_e, a) { highlightCell(a.length ? retYears[a[0].index] : null); },
+      scales: {
+        x: { grid: { display: false }, border: { color: C.line }, ticks: {
+          maxRotation: 0, autoSkip: false, color: C.muted, font: { size: 9 },
+          callback: function (_v, i) { return retYears[i] % 2 !== 0 ? retYears[i] : ''; },
+        } },
+        y: { grid: { color: function (ctx) { return ctx.tick.value === 0 ? 'rgba(12,30,48,.25)' : 'rgba(12,30,48,.05)'; } },
+          border: { display: false },
+          ticks: { color: C.muted, font: { size: 10, family: "'IBM Plex Sans Thai', sans-serif" }, callback: function (v) { return v + '%'; } } },
+      },
+    },
+  });
+
+  /* TABLE */
+  $('#tblYears').innerHTML = '<th class="rowlabel">ปี พ.ศ.</th>' + retYears.map(function (y) { return '<th data-y="' + y + '">' + y + '</th>'; }).join('');
+  $('#tblVals').innerHTML = '<td class="rowlabel">ผลตอบแทน</td>' + retYears.map(function (y) { var v = annualReturns[y]; return '<td class="val ' + (v < 0 ? 'neg' : 'pos') + '" data-y="' + y + '">' + signTxt(v) + '</td>'; }).join('');
+  function highlightCell(y) {
+    root.querySelectorAll('table.perf .hl').forEach(function (el) { el.classList.remove('hl'); });
+    if (y == null) return;
+    root.querySelectorAll('table.perf [data-y="' + y + '"]').forEach(function (el) { el.classList.add('hl'); });
+  }
+  var tbl = $('table.perf');
+  tbl.addEventListener('mouseover', function (e) { var c = e.target.closest('[data-y]'); if (c) highlightCell(+c.dataset.y); });
+  tbl.addEventListener('mouseleave', function () { highlightCell(null); });
+
+  factsheetCharts = [lineChart, donutChart, barChart];
+}
+
+function destroyDocuments() {
+  factsheetCharts.forEach(function (c) { try { c.destroy(); } catch (e) {} });
+  factsheetCharts = [];
+  if (factsheetTooltipEl) { factsheetTooltipEl.remove(); factsheetTooltipEl = null; }
+}
+
+/* ============================================================
+   Router (hash-based, matches App.tsx)
+   ============================================================ */
+function viewFromHash() { return window.location.hash.replace('#', '') === 'docs' ? 'docs' : 'calc'; }
+var currentView = null;
+
+function render() {
+  var v = viewFromHash();
+  if (v === currentView) return;
+  if (currentView === 'docs') destroyDocuments();
+  currentView = v;
+  document.getElementById('tab-calc').className = v === 'calc' ? 'tab on' : 'tab';
+  document.getElementById('tab-docs').className = v === 'docs' ? 'tab on' : 'tab';
+  if (v === 'calc') mountCalculator(); else mountDocuments();
+}
+
+document.getElementById('tab-calc').addEventListener('click', function () { window.location.hash = 'calc'; });
+document.getElementById('tab-docs').addEventListener('click', function () { window.location.hash = 'docs'; });
+window.addEventListener('hashchange', render);
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,577 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>คำนวณเบี้ยประกันสุขภาพ</title>
+  <meta name="description" content="เปรียบเทียบแผนประกันสุขภาพและคำนวณเบี้ยประกันของคุณ" />
+  <link rel="manifest" href="manifest.json" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        container: { center: true, padding: "2rem", screens: { "2xl": "1400px" } },
+        extend: {
+          colors: {
+            border: "hsl(60 3% 8%)",
+            input: "hsl(60 3% 8%)",
+            ring: "hsl(14 64% 60%)",
+            background: "hsl(48 33% 97%)",
+            foreground: "hsl(60 3% 8%)",
+            primary: { DEFAULT: "hsl(14 64% 60%)", foreground: "hsl(48 33% 97%)" },
+            secondary: { DEFAULT: "hsl(211 48% 61%)", foreground: "hsl(48 33% 97%)" },
+            destructive: { DEFAULT: "hsl(0 84.2% 60.2%)", foreground: "hsl(0 0% 98%)" },
+            muted: { DEFAULT: "hsl(45 25% 89%)", foreground: "hsl(60 3% 8%)" },
+            accent: { DEFAULT: "hsl(85 20% 46%)", foreground: "hsl(48 33% 97%)" },
+            popover: { DEFAULT: "hsl(48 33% 98%)", foreground: "hsl(60 3% 8%)" },
+            card: { DEFAULT: "hsl(48 33% 98%)", foreground: "hsl(60 3% 8%)" },
+            brand: {
+              ink: "#141413", "ink-light": "#2a2a28", cream: "#faf9f5", gray: "#e8e6dc",
+              orange: "#d97757", "orange-dark": "#c96848", blue: "#6a9bcc", "blue-dark": "#5a8abb",
+              "blue-deep": "#1a2535", green: "#788c5d", "green-dark": "#6a7d50",
+            },
+          },
+          borderRadius: { lg: "0.5rem", md: "calc(0.5rem - 2px)", sm: "calc(0.5rem - 4px)" },
+          fontFamily: { body: ["Google Sans", "sans-serif"], headline: ["Google Sans", "sans-serif"] },
+        },
+      },
+    };
+  </script>
+  <style>
+    body { font-family: "Google Sans", system-ui, -apple-system, "Segoe UI", "IBM Plex Sans Thai", sans-serif; }
+    .ihealthy-scope * { border-color: hsl(60 3% 8% / 1); }
+    table { border-collapse: collapse; }
+    /* Dropdown menu */
+    .ih-menu { display: none; position: absolute; right: 0; top: calc(100% + 4px); z-index: 50;
+      min-width: 10rem; background: hsl(48 33% 98%); border: 1px solid hsl(60 3% 8% / 0.2);
+      border-radius: 0.5rem; box-shadow: 0 10px 25px rgba(0,0,0,.12); padding: 0.25rem; }
+    .ih-menu.open { display: block; }
+    .ih-menu button { display: flex; width: 100%; align-items: center; gap: .5rem; text-align: left;
+      padding: .4rem .6rem; font-size: .8rem; border-radius: .35rem; cursor: pointer; background: transparent; border: 0; }
+    .ih-menu button:hover { background: hsl(45 25% 89%); }
+    .ih-menu button[data-active="true"]::before { content: "✓"; color: hsl(14 64% 60%); font-weight: 700; }
+    .ih-menu button[data-active="false"]::before { content: ""; width: .7rem; display: inline-block; }
+    @media print {
+      .print\:hidden { display: none !important; }
+      body { background: #fff; }
+    }
+  </style>
+</head>
+<body class="bg-background text-foreground">
+<div class="ihealthy-scope">
+<main class="min-h-screen bg-background text-foreground flex flex-col">
+  <div class="container mx-auto px-2 py-4 md:px-4 md:py-16 flex-grow max-w-full">
+    <header class="text-center mb-4 md:mb-12 relative print:hidden">
+      <h1 id="page-title" class="text-xl md:text-5xl font-bold text-primary font-headline tracking-tight"></h1>
+      <p id="page-desc" class="mt-2 md:mt-4 text-xs md:text-lg text-muted-foreground max-w-2xl mx-auto"></p>
+    </header>
+    <div class="space-y-4 md:space-y-12" id="app-root"></div>
+  </div>
+  <footer class="w-full border-t border-amber-100/60 bg-gradient-to-b from-amber-50/40 via-white to-white print:hidden">
+    <div class="mx-auto max-w-3xl px-4 pt-4 pb-6 text-center text-[11px] leading-relaxed text-muted-foreground md:text-sm">
+      <p>ข้อมูลนี้จัดทำขึ้นเพื่อให้ความรู้ทั่วไปเท่านั้น ไม่ถือเป็นคำแนะนำทางการเงินหรือการประกันภัยเฉพาะบุคคล</p>
+      <p class="mt-2">เงื่อนไขความคุ้มครองเป็นไปตามที่ระบุในกรมธรรม์ของบริษัทประกันภัย</p>
+      <p class="mt-2">ผู้สนใจควรศึกษารายละเอียดเพิ่มเติมหรือปรึกษาตัวแทนก่อนตัดสินใจ</p>
+    </div>
+  </footer>
+</main>
+</div>
+
+<!-- toast -->
+<div id="ih-toast" class="fixed bottom-4 right-4 z-[100] hidden max-w-xs rounded-lg bg-brand-ink px-4 py-3 text-sm text-white shadow-lg print:hidden"></div>
+
+<script src="data.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  // ---- data ----
+  var premiumData   = window.IH_PREMIUM;
+  var planDetails   = window.IH_PLAN_DETAILS;
+  var benefitData   = window.IH_BENEFIT_DATA;
+  var AS_INCURRED   = window.IH_AS_INCURRED;
+  var NOT_COVERED   = window.IH_NOT_COVERED;
+  var translations  = window.IH_TRANSLATIONS;
+
+  // ---- state ----
+  var state = {
+    language: "th",
+    age: 30,
+    gender: "male",
+    frequency: "yearly",
+    menuOpen: false,
+  };
+
+  var planOrder = ["bronze", "silver", "gold"];
+  var planHeaderStyles = {
+    smart: "bg-gradient-to-b from-brand-blue to-brand-blue-dark text-white",
+    bronze: "bg-gradient-to-b from-brand-orange to-brand-orange-dark text-white",
+    silver: "bg-brand-gray text-brand-ink",
+    gold: "bg-gradient-to-b from-brand-green to-brand-green-dark text-white",
+  };
+  var PLAN_CELL_BG = "bg-brand-cream";
+
+  var languages = [
+    { code: "th", name: "Thai", nativeName: "ไทย" },
+    { code: "en", name: "English", nativeName: "English" },
+    { code: "ru", name: "Russian", nativeName: "Русский" },
+    { code: "zh", name: "Chinese", nativeName: "中文" },
+    { code: "fr", name: "French", nativeName: "Français" },
+  ];
+
+  // ---- i18n ----
+  function t(key) {
+    return (translations[key] && translations[key][state.language]) || key;
+  }
+  function detectBrowserLanguage() {
+    try {
+      var saved = localStorage.getItem("app-language");
+      if (saved && ["th", "en", "ru", "zh", "fr"].indexOf(saved) !== -1) return saved;
+    } catch (e) {}
+    var bl = (navigator.language || navigator.userLanguage || "th").split("-")[0].toLowerCase();
+    return ["th", "en", "ru", "zh", "fr"].indexOf(bl) !== -1 ? bl : "th";
+  }
+  function setLanguage(lang) {
+    state.language = lang;
+    try { localStorage.setItem("app-language", lang); } catch (e) {}
+    syncMeta();
+    render();
+  }
+
+  // ---- premium logic (exact parity with lib/data.ts) ----
+  function calculateByFrequency(yearlyPremium, frequency) {
+    var p = 0;
+    switch (frequency) {
+      case "yearly": p = yearlyPremium; break;
+      case "six-monthly": p = yearlyPremium * 0.52; break;
+      case "monthly": p = yearlyPremium * 0.09; break;
+      default: return 0;
+    }
+    return Math.round(p);
+  }
+  function calculatePremium(age, gender, plan, frequency) {
+    var planPremiums = premiumData[plan] && premiumData[plan][gender];
+    if (!planPremiums) return 0;
+    var agePremium = planPremiums.find(function (p) { return p.age === age; });
+    if (!agePremium) {
+      var lowerAge = planPremiums.slice().reverse().find(function (p) { return p.age < age; });
+      if (!lowerAge) return 0;
+      return calculateByFrequency(lowerAge.yearly, frequency);
+    }
+    return calculateByFrequency(agePremium.yearly, frequency);
+  }
+
+  // ---- helpers ----
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+  function isNotCovered(v) { return v === NOT_COVERED; }
+  function isAsIncurred(v) { return v === AS_INCURRED; }
+  function shouldMerge(v) { return isNotCovered(v) || isAsIncurred(v); }
+
+  var checkSvg = '<svg class="h-3 w-3 md:h-5 md:w-5 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>';
+
+  function renderBenefitValue(value) {
+    if (value === undefined || value === null) return "";
+    if (isAsIncurred(value)) {
+      return '<div class="flex items-center justify-center gap-0.5 md:gap-2">' + checkSvg +
+        ' <span class="hidden md:inline">' + esc(t("as_incurred")) + "</span></div>";
+    }
+    if (isNotCovered(value)) {
+      return '<span class="text-muted-foreground/80 text-[9px] sm:text-[10px] md:text-sm">' + esc(t("not_covered")) + "</span>";
+    }
+    var displayValue = value.replace(/บาท/g, t("baht"));
+    if (state.language !== "th" && value.indexOf("คืน") !== -1) {
+      displayValue = displayValue.replace("คืน", t("per_night").substring(1));
+    }
+    if (value.indexOf("6,000") !== -1 || value.indexOf("12,000") !== -1) {
+      return '<div class="flex items-center justify-center gap-0.5 md:gap-2">' + checkSvg +
+        ' <span class="text-foreground text-[9px] sm:text-xs md:text-sm">' + esc(displayValue) + "</span></div>";
+    }
+    return '<span class="text-foreground text-[9px] sm:text-[10px] md:text-sm">' + esc(displayValue) + "</span>";
+  }
+
+  // per-plan vertical merge of identical AS_INCURRED / NOT_COVERED runs
+  function getMergedRowSpans(benefits, plan) {
+    var spans = new Array(benefits.length).fill(1);
+    var index = 0;
+    while (index < benefits.length) {
+      var cur = benefits[index][plan];
+      if (shouldMerge(cur)) {
+        var end = index + 1;
+        while (end < benefits.length && benefits[end][plan] === cur) end++;
+        spans[index] = end - index;
+        for (var i = index + 1; i < end; i++) spans[i] = 0;
+        index = end;
+      } else { spans[index] = 1; index++; }
+    }
+    return spans;
+  }
+  // horizontal+vertical merge when identical across ALL displayed plans
+  function getAllPlanMergedSpans(benefits, plans) {
+    var spans = new Array(benefits.length).fill(-1);
+    var index = 0;
+    while (index < benefits.length) {
+      var value = benefits[index][plans[0]];
+      var same = plans.every(function (p) { return benefits[index][p] === value; });
+      if (same && shouldMerge(value)) {
+        var end = index + 1;
+        while (end < benefits.length) {
+          var nv = benefits[end][plans[0]];
+          var nsame = plans.every(function (p) { return benefits[end][p] === nv; });
+          if (!(nsame && shouldMerge(nv) && nv === value)) break;
+          end++;
+        }
+        spans[index] = end - index;
+        for (var i = index + 1; i < end; i++) spans[i] = 0;
+        index = end;
+      } else { spans[index] = -1; index++; }
+    }
+    return spans;
+  }
+
+  function isSubBenefitItem(sub) {
+    return typeof sub === "object" && sub !== null && "id" in sub && "text" in sub;
+  }
+
+  function renderBenefitRow(benefit, index, rowSpansByPlan, allPlansMergedSpans, plans) {
+    var lang = state.language;
+    var allPlansSpan = allPlansMergedSpans[index];
+    var isDailyCashUnder11 = benefit.id === "20" && state.age < 11;
+    if (benefit.id === "20" && state.age >= 66) return "";
+
+    var cellContent = '<div class="flex gap-0.5 md:gap-4">' +
+      '<span class="text-muted-foreground w-3 md:w-4 flex-shrink-0 text-[9px] sm:text-[10px] md:text-sm">' + esc(benefit.id || "") + "</span>" +
+      '<span class="flex-1 text-[9px] sm:text-[10px] md:text-sm leading-tight">' + esc(benefit.name[lang]) + "</span></div>";
+    if (benefit.subBenefit) {
+      cellContent += '<p class="text-[9px] sm:text-[10px] md:text-xs text-muted-foreground mt-0.5 md:mt-1 ml-3 md:ml-10 print:hidden">' + esc(benefit.subBenefit[lang]) + "</p>";
+    }
+    if (benefit.subBenefits) {
+      cellContent += '<ul class="text-[9px] sm:text-[10px] md:text-xs text-muted-foreground mt-1 md:mt-2 space-y-0.5 md:space-y-2 ml-3 md:ml-10 print:hidden">';
+      benefit.subBenefits.forEach(function (sub) {
+        var item = isSubBenefitItem(sub);
+        cellContent += '<li class="text-muted-foreground"><div class="flex gap-2 text-muted-foreground">' +
+          (item ? '<span class="w-6 flex-shrink-0 text-muted-foreground">' + esc(sub.id) + "</span>" : "") +
+          '<span class="flex-1 text-muted-foreground">' + esc(item ? sub.text[lang] : sub[lang]) + "</span></div></li>";
+      });
+      cellContent += "</ul>";
+    }
+
+    var html = '<tr class="border-border/60">';
+    html += '<td class="font-medium w-[40%] p-0 pl-1 pr-1 md:pl-[25px] border-r border-border/60 py-1.5 md:pt-[13px] md:pb-[13px] mt-0 mb-0 align-top text-left">' + cellContent + "</td>";
+
+    if (allPlansSpan > 0) {
+      html += '<td rowspan="' + allPlansSpan + '" colspan="' + plans.length +
+        '" class="text-center border-l border-border/40 p-0.5 md:p-4 bg-background">' +
+        renderBenefitValue(isDailyCashUnder11 ? NOT_COVERED : benefit[plans[0]]) + "</td>";
+    } else {
+      plans.forEach(function (plan) {
+        var value = isDailyCashUnder11 ? NOT_COVERED : benefit[plan];
+        var rowSpan = rowSpansByPlan[plan][index];
+        if (rowSpan === 0) return;
+        var highlightCell = benefit.id === "1" || benefit.id === "18";
+        var cellBgClass = highlightCell
+          ? (isNotCovered(value) ? "bg-background" : PLAN_CELL_BG)
+          : (isNotCovered(value) ? "bg-background" : "");
+        html += '<td rowspan="' + rowSpan + '" class="text-center w-[12%] sm:w-[14%] md:w-[15%] border-l border-border/40 p-0.5 md:p-4 ' + cellBgClass + '">' +
+          renderBenefitValue(value) + "</td>";
+      });
+    }
+    html += "</tr>";
+    return html;
+  }
+
+  function overallBenefitFor(plan) { return t("overall_benefits." + plan); }
+
+  // ---- share text (parity with getAllPlansSummaryText) ----
+  function getAllPlansSummaryText(displayedPlans) {
+    var age = state.age, gender = state.gender, language = state.language;
+    var genderText = gender === "male" ? t("share_gender_male") : t("share_gender_female");
+    var roomBenefit = benefitData[0].benefits.find(function (b) { return b.id === "1"; });
+    var opdCat = benefitData.find(function (c) { return c.benefits.some(function (b) { return b.id === "18"; }); });
+    var opdBenefit = opdCat ? opdCat.benefits.find(function (b) { return b.id === "18"; }) : null;
+
+    var s = "📋 " + t("share_summary_title") + "\n\n";
+    s += "👤 " + t("share_summary_for").replace("{age}", String(age)).replace("{gender}", genderText) + "\n\n\n";
+
+    displayedPlans.forEach(function (plan, idx) {
+      var planInfo = planDetails[plan];
+      var monthly = calculatePremium(age, gender, plan, "monthly");
+      var sixMonthly = calculatePremium(age, gender, plan, "six-monthly");
+      var yearly = calculatePremium(age, gender, plan, "yearly");
+      var roomValue = roomBenefit ? roomBenefit[plan].replace(/บาท/g, t("share_baht")).replace(/\s+/g, " ").trim() : "N/A";
+      var totalBenefit = overallBenefitFor(plan);
+      var ipdBenefit = totalBenefit;
+      var opdValue = opdBenefit ? opdBenefit[plan] : "N/A";
+      var opdDisplay = opdValue === NOT_COVERED
+        ? "🏥 " + t("share_opd_outpatient") + " " + t("share_no_opd")
+        : "🏥 " + t("share_opd") + ": " + opdValue.replace(/บาท/g, t("share_baht")) + " " + t("share_per_year");
+
+      s += "🏆 " + planInfo.name[language] + "\n";
+      s += "✨ " + t("share_max_benefit") + ": " + totalBenefit + " " + t("share_per_year") + "\n";
+      s += "🏥 " + t("share_room_and_board") + ": " + roomValue + " " + t("share_per_night") + "\n";
+      s += "🏥 " + t("share_ipd") + " " + ipdBenefit + " " + t("share_per_year") + "\n";
+      s += opdDisplay + "\n\n";
+      s += "💰 " + t("frequency_monthly") + ": " + monthly.toLocaleString("en-US") + " " + t("share_baht") + "\n";
+      s += "💰 " + t("frequency_six_monthly") + ": " + sixMonthly.toLocaleString("en-US") + " " + t("share_baht") + "\n";
+      s += "💰 " + t("frequency_yearly") + ": " + yearly.toLocaleString("en-US") + " " + t("share_baht") + "\n\n";
+      s += "━━━━━━━━━━━━━━━━━━━━\n\n";
+      if (idx < displayedPlans.length - 1) s += "\n";
+    });
+
+    s += "💼 " + t("share_life_insurance_all_plans") + ": 50,000 " + t("share_baht") + "\n";
+    s += "   " + t("share_can_buy_more") + "\n\n";
+    s += t("share_monthly_first_note");
+    return s;
+  }
+
+  // ---- toast ----
+  var toastTimer = null;
+  function showToast(msg, isError) {
+    var el = document.getElementById("ih-toast");
+    el.textContent = msg;
+    el.className = "fixed bottom-4 right-4 z-[100] max-w-xs rounded-lg px-4 py-3 text-sm text-white shadow-lg print:hidden " +
+      (isError ? "bg-destructive" : "bg-brand-ink");
+    el.classList.remove("hidden");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { el.classList.add("hidden"); }, 2500);
+  }
+
+  // ---- render ----
+  function syncMeta() {
+    document.title = t("meta_title");
+    document.documentElement.lang = state.language;
+    var meta = document.querySelector('meta[name="description"]');
+    if (meta) meta.setAttribute("content", t("meta_description"));
+    document.getElementById("page-title").textContent = t("page_title");
+    document.getElementById("page-desc").textContent = t("page_description");
+  }
+
+  function render() {
+    var lang = state.language;
+    var displayedPlans = (state.age >= 6 && state.age <= 10) ? ["smart", "bronze"] : planOrder;
+
+    // ---- selector controls ----
+    var genderBtn = function (val, id) {
+      var active = state.gender === val;
+      return '<div class="flex items-center"><button data-gender="' + val + '" id="' + id + '" ' +
+        'class="ih-gender flex w-full min-h-[44px] items-center justify-center gap-2 rounded-lg md:rounded-xl border px-3 py-2.5 md:py-3 text-xs md:text-base font-medium cursor-pointer transition-colors ' +
+        (active ? "border-primary bg-primary text-primary-foreground hover:bg-primary/90" : "border-border/60 bg-background text-muted-foreground hover:bg-muted") + '">' +
+        '<svg class="h-4 w-4 md:h-5 md:w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>' +
+        esc(t(val)) + "</button></div>";
+    };
+
+    var ageOptions = "";
+    for (var a = 6; a <= 80; a++) {
+      ageOptions += '<option value="' + a + '"' + (a === state.age ? " selected" : "") + ">" + a + "</option>";
+    }
+
+    var freqOptions = [["yearly", "frequency_yearly"], ["six-monthly", "frequency_six_monthly"], ["monthly", "frequency_monthly"]]
+      .map(function (f) { return '<option value="' + f[0] + '"' + (state.frequency === f[0] ? " selected" : "") + ">" + esc(t(f[1])) + "</option>"; }).join("");
+
+    var infoSvg = '<svg class="h-3 w-3 md:h-4 md:w-4 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>';
+    var userBoxSvg = '<svg class="h-3 w-3 md:h-4 md:w-4 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>';
+    var clockSvg = '<svg class="h-3 w-3 md:h-4 md:w-4 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>';
+    var globeSvg = '<svg class="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>';
+    var share2Svg = '<svg class="h-3 w-3 md:h-4 md:w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>';
+    var printSvg = '<svg class="h-3 w-3 md:h-4 md:w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>';
+
+    // language menu
+    var menuItems = languages.map(function (l) {
+      return '<button data-lang="' + l.code + '" data-active="' + (state.language === l.code) + '">' +
+        esc(l.nativeName) + " (" + esc(l.name) + ")</button>";
+    }).join("");
+
+    // ---- table header ----
+    var headHtml = '<tr class="hover:bg-transparent border-border/60">' +
+      '<th class="font-semibold text-left bg-gradient-to-b from-brand-ink to-brand-blue-deep text-brand-cream w-[40%] pl-1 pr-1 md:pl-6 border-r border-white/20 text-[9px] sm:text-[10px] md:text-sm tracking-wide py-0.5 md:py-0">' + esc(t("benefit_header")) + "</th>";
+    displayedPlans.forEach(function (plan) {
+      headHtml += '<th class="font-semibold text-center w-[12%] sm:w-[14%] md:w-[15%] ' + planHeaderStyles[plan] + ' border-l border-white/20 p-0">' +
+        '<div class="flex flex-col items-center justify-center p-0.5 md:py-2 h-full"><span class="text-[9px] sm:text-xs md:text-lg">' +
+        esc(planDetails[plan].name[lang].toUpperCase()) + "</span></div></th>";
+    });
+    headHtml += "</tr>";
+
+    // ---- premium + total rows ----
+    var freqLabel = state.frequency === "yearly" ? t("yearly_short") : state.frequency === "six-monthly" ? t("six_monthly_short") : t("monthly_short");
+    var premiumRow = '<tr class="border-border/60"><td class="font-bold text-left bg-brand-cream w-[40%] pl-1 pr-1 md:pl-6 border-r border-border/60 text-[9px] sm:text-[10px] md:text-sm h-[36px] md:h-[50px] py-1">' + esc(t("premium_header")) + "</td>";
+    displayedPlans.forEach(function (plan) {
+      var premium = calculatePremium(state.age, state.gender, plan, state.frequency);
+      premiumRow += '<td class="w-[12%] sm:w-[14%] md:w-[15%] p-0.5 md:p-2 bg-brand-ink text-brand-cream border-l border-border/40">' +
+        '<div class="text-center w-full min-h-[16px] md:min-h-[20px] mx-auto flex flex-wrap items-center justify-center">' +
+        '<span class="font-bold text-[9px] sm:text-[10px] md:text-[26px]">' + premium.toLocaleString("en-US") + "</span>" +
+        '<span class="text-[8px] sm:text-[9px] md:text-sm">' + esc(freqLabel) + "</span></div></td>";
+    });
+    premiumRow += "</tr>";
+
+    var totalRow = '<tr class="border-border/60"><td class="font-bold text-[9px] sm:text-[10px] md:text-base bg-brand-cream pl-1 pr-1 md:pl-6 w-[40%] border-r border-border/60 py-1 md:pt-0">' + esc(t("total_benefit_header")) + "</td>";
+    displayedPlans.forEach(function (plan) {
+      totalRow += '<td class="text-center font-bold text-[9px] sm:text-[10px] md:text-base w-[12%] sm:w-[14%] md:w-[15%] p-0.5 md:p-4 ' + PLAN_CELL_BG + ' border-l border-border/40">' + esc(overallBenefitFor(plan)) + "</td>";
+    });
+    totalRow += "</tr>";
+
+    // ---- benefit categories ----
+    var bodyHtml = premiumRow + totalRow;
+    benefitData.forEach(function (category) {
+      var rowSpansByPlan = {};
+      displayedPlans.forEach(function (plan) { rowSpansByPlan[plan] = getMergedRowSpans(category.benefits, plan); });
+      var allPlansMergedSpans = getAllPlanMergedSpans(category.benefits, displayedPlans);
+      bodyHtml += '<tr class="border-border/60"><td colspan="' + (displayedPlans.length + 1) +
+        '" class="bg-gradient-to-r from-brand-ink to-brand-blue text-brand-cream text-[9px] sm:text-xs md:text-lg font-medium px-1 md:px-6 py-0.5 md:py-2 tracking-wide">' +
+        esc(category.category[lang]) + "</td></tr>";
+      category.benefits.forEach(function (benefit, index) {
+        bodyHtml += renderBenefitRow(benefit, index, rowSpansByPlan, allPlansMergedSpans, displayedPlans);
+      });
+    });
+
+    var summaryFor = "👤 " + t("share_summary_for").replace("{age}", String(state.age))
+      .replace("{gender}", state.gender === "male" ? t("share_gender_male") : t("share_gender_female"));
+
+    // ---- waiting period section ----
+    var wpItems = "";
+    for (var i = 1; i <= 8; i++) wpItems += "<li>" + esc(t("waiting_period_120_days_item_" + i)) + "</li>";
+
+    var html =
+    '<div class="w-full max-w-6xl mx-auto">' +
+    '<div class="rounded-lg bg-card text-card-foreground shadow-xl shadow-black/5 border border-border/60 ring-1 ring-black/5 overflow-hidden print:overflow-visible print:shadow-none print:ring-0 print:border-0"><div>' +
+      // card header
+      '<div class="border-b border-border/60 bg-gradient-to-r from-background to-muted p-3 md:p-6 print:hidden">' +
+        '<div class="flex justify-between items-start gap-2"><div class="min-w-0">' +
+          '<div class="text-base md:text-3xl font-headline tracking-tight text-primary font-semibold">' + esc(t("card_title")) + "</div>" +
+          '<div class="text-muted-foreground/90 text-xs md:text-base">' + esc(t("card_description")) + "</div></div>" +
+          '<div class="flex items-center gap-1 flex-shrink-0 relative">' +
+            '<button id="lang-trigger" class="inline-flex items-center justify-center rounded-md border border-border/60 bg-background h-8 md:h-10 text-xs md:text-sm px-2 md:px-3 hover:bg-muted">' +
+            globeSvg + esc(t("language_button_text")) + "</button>" +
+            '<div id="lang-menu" class="ih-menu">' + menuItems + "</div>" +
+          "</div></div></div>" +
+      // controls
+      '<div class="p-0"><div class="p-2 md:p-6 border-b border-border/60 bg-background/80 print:hidden">' +
+        '<div class="rounded-xl md:rounded-2xl border border-border/60 bg-background/95 px-2 py-2 md:px-4 md:py-4 shadow-sm">' +
+          '<div class="grid gap-3 md:grid-cols-3 md:gap-8 grid-cols-1 sm:grid-cols-3">' +
+            // gender
+            '<div class="space-y-1 md:space-y-3"><div class="flex items-center gap-1" title="' + esc(t("gender_tooltip")) + '">' +
+              '<label class="text-xs md:text-base font-semibold text-foreground">' + esc(t("gender_label")) + "</label>" + infoSvg + "</div>" +
+              '<div class="grid grid-cols-2 gap-2">' + genderBtn("male", "gender-male") + genderBtn("female", "gender-female") + "</div></div>" +
+            // age
+            '<div class="space-y-1 md:space-y-3"><div class="flex items-center gap-1" title="' + esc(t("age_tooltip")) + '">' +
+              '<label class="text-xs md:text-base font-semibold text-foreground">' + esc(t("age_label")) + "</label>" + infoSvg + "</div>" +
+              '<div class="flex items-center gap-2"><div class="flex h-8 w-8 md:h-10 md:w-10 items-center justify-center rounded-lg md:rounded-xl border border-border/60 bg-muted flex-shrink-0">' + userBoxSvg + "</div>" +
+              '<select id="age-select" class="min-h-[44px] h-9 md:h-11 w-full max-w-[100px] md:max-w-[120px] rounded-lg md:rounded-xl border border-border/60 bg-background text-xs md:text-base shadow-sm cursor-pointer px-2">' + ageOptions + "</select></div></div>" +
+            // frequency
+            '<div class="space-y-1 md:space-y-3"><div class="flex items-center gap-1" title="' + esc(t("frequency_tooltip")) + '">' +
+              '<label class="text-xs md:text-base font-semibold text-foreground">' + esc(t("frequency_label")) + "</label>" + infoSvg + "</div>" +
+              '<div class="flex items-center gap-2"><div class="flex h-8 w-8 md:h-10 md:w-10 items-center justify-center rounded-lg md:rounded-xl border border-border/60 bg-muted flex-shrink-0">' + clockSvg + "</div>" +
+              '<select id="freq-select" class="min-h-[44px] h-9 md:h-11 w-full max-w-[140px] md:max-w-[180px] rounded-lg md:rounded-xl border border-border/60 bg-background text-xs md:text-base shadow-sm cursor-pointer px-2">' + freqOptions + "</select></div></div>" +
+          "</div></div></div>" +
+        // print area (table)
+        '<div class="print-area space-y-4 rounded-lg md:rounded-xl border border-border/60 bg-background/90 shadow-sm shadow-black/5" id="ih-table">' +
+          '<div class="bg-gradient-to-r from-brand-ink to-brand-blue text-brand-cream p-4 md:p-6 rounded-t-lg md:rounded-t-xl">' +
+            '<h2 class="text-xl md:text-2xl font-bold">' + esc(t("page_title")) + "</h2>" +
+            '<p class="text-base md:text-xl font-semibold text-white/90 mt-1">' + esc(summaryFor) + "</p></div>" +
+          '<div class="overflow-x-auto print:overflow-visible px-0 text-[10px] sm:text-xs md:text-sm">' +
+            '<table class="min-w-full table-fixed md:table-auto w-full"><thead>' + headHtml + "</thead><tbody>" + bodyHtml + "</tbody></table>" +
+          "</div></div>" +
+      "</div>" + // card content
+      "</div>" + // inner div
+      // footer buttons
+      '<div class="p-2 md:p-6 justify-center items-center gap-2 md:gap-4 border-t border-border/60 flex flex-wrap print:hidden">' +
+        '<button id="btn-line" class="inline-flex items-center gap-1.5 md:gap-2 rounded-md bg-brand-green hover:bg-brand-green-dark text-white border-0 text-xs md:text-base min-h-[44px] h-8 md:h-10 px-3 md:px-4 font-medium">' +
+          share2Svg + esc(t("share_all_plans_button_n").replace("{n}", String(displayedPlans.length))) + "</button>" +
+        '<button id="btn-image" class="inline-flex items-center gap-1.5 md:gap-2 rounded-md bg-brand-blue hover:bg-brand-blue-dark text-white border-0 text-xs md:text-base min-h-[44px] h-8 md:h-10 px-3 md:px-4 font-medium">' +
+          share2Svg + " 📸 " + esc(t("share_image_button") || "Share as Image") + "</button>" +
+        '<button id="btn-print" class="inline-flex items-center gap-1.5 md:gap-2 rounded-md bg-brand-ink hover:bg-brand-ink-light text-white border-0 text-xs md:text-base min-h-[44px] h-8 md:h-10 px-3 md:px-4 font-medium">' +
+          printSvg + esc(t("print_pdf_button")) + "</button>" +
+      "</div>" +
+    "</div></div>" +
+    // waiting period
+    '<section class="mt-4 md:mt-6 mx-auto max-w-2xl rounded-lg md:rounded-xl border border-border/60 bg-card text-card-foreground shadow-sm p-4 md:p-6 print:hidden">' +
+      '<h3 class="text-base md:text-lg font-semibold mb-4 flex items-center gap-2">' + clockSvg + esc(t("waiting_period_title")) + "</h3>" +
+      '<div class="space-y-6 text-sm">' +
+        wpBlock(t("waiting_period_approval_title"), t("waiting_period_approval_desc"), null) +
+        wpBlock("30", t("waiting_period_30_days_desc"), t("waiting_period_30_days_title")) +
+        '<div class="flex items-start space-x-4"><div class="flex-shrink-0 w-24 md:w-28 text-center p-2 bg-muted/50 rounded-lg flex flex-col justify-center items-center min-h-[5rem] md:min-h-[6rem]">' +
+          '<div class="text-2xl md:text-3xl font-bold text-primary">120</div><div class="text-xs text-muted-foreground">' + esc(t("waiting_period_120_days_title")) + "</div></div>" +
+          '<div class="flex-1"><p class="text-muted-foreground pt-2 text-xs md:text-sm">' + esc(t("waiting_period_120_days_desc")) + "</p>" +
+          '<ul class="list-disc list-inside mt-2 text-muted-foreground space-y-1 text-xs md:text-sm">' + wpItems + "</ul></div></div>" +
+        wpBlock("12", t("waiting_period_12_months_desc"), t("waiting_period_12_months_title")) +
+        '<p class="text-xs text-muted-foreground pt-2">' + esc(t("waiting_period_footnote")) + "</p>" +
+      "</div></section>";
+
+    document.getElementById("app-root").innerHTML = html;
+    bindEvents();
+  }
+
+  function wpBlock(big, desc, subtitle) {
+    var box = subtitle
+      ? '<div class="text-2xl md:text-3xl font-bold text-primary">' + esc(big) + '</div><div class="text-xs text-muted-foreground">' + esc(subtitle) + "</div>"
+      : '<div class="font-bold text-primary text-xs md:text-sm">' + esc(big) + "</div>";
+    return '<div class="flex items-start space-x-4">' +
+      '<div class="flex-shrink-0 w-24 md:w-28 text-center p-2 bg-muted/50 rounded-lg flex flex-col justify-center items-center min-h-[5rem] md:min-h-[6rem]">' + box + "</div>" +
+      '<p class="text-muted-foreground pt-2 flex-1 text-xs md:text-sm">' + esc(desc) + "</p></div>";
+  }
+
+  // ---- events ----
+  function bindEvents() {
+    document.getElementById("age-select").addEventListener("change", function (e) {
+      state.age = parseInt(e.target.value, 10); render();
+    });
+    document.getElementById("freq-select").addEventListener("change", function (e) {
+      state.frequency = e.target.value; render();
+    });
+    Array.prototype.forEach.call(document.querySelectorAll(".ih-gender"), function (btn) {
+      btn.addEventListener("click", function () { state.gender = btn.getAttribute("data-gender"); render(); });
+    });
+
+    // language dropdown
+    var trigger = document.getElementById("lang-trigger");
+    var menu = document.getElementById("lang-menu");
+    trigger.addEventListener("click", function (e) { e.stopPropagation(); menu.classList.toggle("open"); });
+    Array.prototype.forEach.call(menu.querySelectorAll("button"), function (b) {
+      b.addEventListener("click", function () { menu.classList.remove("open"); setLanguage(b.getAttribute("data-lang")); });
+    });
+
+    document.getElementById("btn-line").addEventListener("click", function () {
+      var displayedPlans = (state.age >= 6 && state.age <= 10) ? ["smart", "bronze"] : planOrder;
+      var txt = getAllPlansSummaryText(displayedPlans);
+      window.open("https://line.me/R/msg/text/?" + encodeURIComponent(txt), "_blank", "noopener,noreferrer");
+    });
+
+    document.getElementById("btn-print").addEventListener("click", function () { window.print(); });
+
+    document.getElementById("btn-image").addEventListener("click", handleShareImage);
+  }
+
+  // close menu on outside click
+  document.addEventListener("click", function () {
+    var menu = document.getElementById("lang-menu");
+    if (menu) menu.classList.remove("open");
+  });
+
+  function handleShareImage() {
+    var el = document.getElementById("ih-table");
+    if (!el || typeof html2canvas === "undefined") { showToast(t("share_image_error"), true); return; }
+    var prev = { width: el.style.width, maxWidth: el.style.maxWidth, margin: el.style.margin };
+    el.style.width = "1200px"; el.style.maxWidth = "1200px"; el.style.margin = "0 auto";
+    html2canvas(el, { backgroundColor: "#faf9f5", scale: 2, logging: false, useCORS: true })
+      .then(function (canvas) {
+        var link = document.createElement("a");
+        link.href = canvas.toDataURL("image/png");
+        link.download = "iHealthy-Ultra-Plan-" + state.age + "yo-" + state.gender + ".png";
+        link.click();
+        showToast(t("share_image_downloaded"));
+      })
+      .catch(function (err) { console.error(err); showToast(t("share_image_error"), true); })
+      .finally(function () { el.style.width = prev.width; el.style.maxWidth = prev.maxWidth; el.style.margin = prev.margin; });
+  }
+
+  // ---- init ----
+  state.language = detectBrowserLanguage();
+  syncMeta();
+  render();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>แบบทดสอบผู้จัดการ — Agency Blueprint</title>
+  <link rel="icon" href="icon.png" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: { extend: {
+        colors: {
+          background: 'hsl(var(--background))', foreground: 'hsl(var(--foreground))',
+          card: { DEFAULT: 'hsl(var(--card))', foreground: 'hsl(var(--card-foreground))' },
+          primary: { DEFAULT: 'hsl(var(--primary))', foreground: 'hsl(var(--primary-foreground))' },
+          secondary: { DEFAULT: 'hsl(var(--secondary))', foreground: 'hsl(var(--secondary-foreground))' },
+          muted: { DEFAULT: 'hsl(var(--muted))', foreground: 'hsl(var(--muted-foreground))' },
+          accent: { DEFAULT: 'hsl(var(--accent))', foreground: 'hsl(var(--accent-foreground))' },
+          border: 'hsl(var(--border))', ring: 'hsl(var(--ring))',
+        },
+        borderRadius: { lg: 'var(--radius)', md: 'calc(var(--radius) - 2px)', sm: 'calc(var(--radius) - 4px)' },
+        fontFamily: { sans: ['IBM Plex Sans Thai', 'system-ui', 'sans-serif'] },
+      } },
+    };
+  </script>
+  <style>
+    /* Manager test uses a distinct blue theme (inline CSS vars in the original page.tsx) */
+    :root {
+      --primary: 205 75% 45%; --primary-foreground: 0 0% 98%;
+      --accent: 170 60% 40%; --accent-foreground: 0 0% 98%;
+      --secondary: 210 40% 90%; --secondary-foreground: 224 43% 27%;
+      --muted-foreground: 224 43% 40%;
+      --background: 220 20% 96%; --foreground: 224 43% 17%;
+      --card: 0 0% 100%; --card-foreground: 224 43% 17%;
+      --border: 210 33% 86%; --ring: 205 75% 45%;
+      --radius: 0.75rem;
+    }
+    body { font-family: 'IBM Plex Sans Thai', system-ui, sans-serif; background-color: hsl(var(--background)); color: hsl(var(--foreground)); }
+    * { border-color: hsl(var(--border)); }
+    /* radio dots */
+    .rg-item { width: 1.25rem; height: 1.25rem; border-radius: 9999px; border: 1px solid hsl(var(--primary)); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; flex: none; }
+    .rg-item[data-checked="true"] { background: radial-gradient(hsl(var(--primary)) 45%, transparent 50%); }
+    .rg-item input { position: absolute; opacity: 0; width: 0; height: 0; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .animate-in { animation: fadeIn .5s ease forwards; }
+  </style>
+</head>
+<body class="min-h-screen">
+  <!-- QUIZ VIEW -->
+  <div id="quiz-view" class="flex flex-col min-h-screen">
+    <main class="flex-grow container mx-auto px-4 py-8 md:py-12">
+      <div class="relative mb-8 text-center">
+        <a href="index.html" class="inline-block">
+          <img src="logo.png" alt="Agency Blueprint" width="64" height="64" class="mx-auto mb-4 rounded-lg object-cover hover:opacity-90 transition-opacity" />
+        </a>
+        <div class="absolute top-1/2 -translate-y-1/2 left-0">
+          <a href="index.html" class="inline-flex items-center rounded-md px-4 py-2 text-sm font-medium hover:bg-secondary/40 transition-colors">
+            <svg class="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+            กลับหน้าแรก
+          </a>
+        </div>
+        <h1 class="text-3xl font-bold text-primary">แบบทดสอบผู้จัดการ</h1>
+      </div>
+
+      <div class="w-full max-w-4xl mx-auto bg-card text-card-foreground shadow-md rounded-lg border">
+        <div class="p-6 pb-2">
+          <h2 class="text-lg font-semibold">ประเมินภาวะผู้นำในการบริหารหน่วย</h2>
+          <p class="text-sm text-muted-foreground mt-1">ให้คะแนนความพึงพอใจในแต่ละข้อจาก 1 (ไม่เห็นด้วยอย่างยิ่ง) ถึง 5 (เห็นด้วยอย่างยิ่ง)</p>
+        </div>
+        <div class="p-6 pt-2">
+          <form id="test-form" class="space-y-6">
+            <div id="questions" class="space-y-6"></div>
+            <p id="error-msg" class="text-sm text-destructive hidden" style="color:hsl(0 84% 60%)">กรุณาเลือกคำตอบให้ครบทุกข้อ</p>
+            <button type="submit" class="w-full text-lg py-3 rounded-md bg-accent hover:bg-accent/90 text-accent-foreground font-medium transition-colors">ส่งแบบทดสอบ</button>
+          </form>
+        </div>
+      </div>
+    </main>
+    <footer class="py-4 text-center text-muted-foreground text-sm">
+      <p>Application by Pheerapatpisit Thongsrithong</p>
+    </footer>
+  </div>
+
+  <!-- RESULT VIEW -->
+  <div id="result-view" class="flex-col min-h-screen hidden">
+    <main class="flex-grow container mx-auto px-4 py-8 md:py-12 flex items-center justify-center">
+      <div class="w-full max-w-2xl mx-auto">
+        <a href="index.html" class="inline-block">
+          <img src="logo.png" alt="Agency Blueprint" width="80" height="80" class="mx-auto mb-4 rounded-lg object-cover hover:opacity-90 transition-opacity" />
+        </a>
+        <div class="text-center bg-card shadow-lg rounded-lg border animate-in">
+          <div class="p-6 flex flex-col items-center">
+            <div class="mx-auto rounded-full p-3 w-fit mb-4" style="background:#dcfce7">
+              <svg class="h-12 w-12" style="color:#16a34a" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.801 10A10 10 0 1 1 17 3.335"/><path d="m9 11 3 3L22 4"/></svg>
+            </div>
+            <h2 id="result-title" class="text-2xl font-bold text-primary"></h2>
+            <p id="result-desc" class="text-base text-muted-foreground mt-2"></p>
+          </div>
+          <div class="p-6 pt-0 flex flex-col gap-4 items-center">
+            <button id="retry-btn" class="inline-flex items-center justify-center rounded-md bg-primary text-primary-foreground px-8 py-3 text-base font-medium hover:bg-primary/90 transition-colors">ทำแบบทดสอบอีกครั้ง</button>
+            <a href="index.html" class="inline-flex items-center rounded-md px-4 py-2 text-sm font-medium hover:bg-secondary/40 transition-colors">
+              <svg class="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+              กลับหน้าแรก
+            </a>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="agency.js"></script>
+  <script>
+    /* build questions */
+    const qWrap = document.getElementById('questions');
+    managerTestQuestions.forEach((q, index) => {
+      const item = document.createElement('div');
+      item.className = 'space-y-3 p-4 rounded-lg border bg-background hover:bg-secondary/50 transition-colors';
+      const dots = [1, 2, 3, 4, 5].map(v =>
+        `<div class="flex flex-col items-center space-y-2">
+           <label class="rg-item" data-checked="false">
+             <input type="radio" name="q${index}" value="${v}" />
+           </label>
+           <span class="font-normal text-sm">${v}</span>
+         </div>`).join('');
+      item.innerHTML = `
+        <label class="text-base font-medium block">${index + 1}. ${q}</label>
+        <div class="flex justify-around items-center pt-2 sm:justify-between sm:px-8" data-group="q${index}">
+          <div class="hidden sm:block text-sm text-muted-foreground">ไม่เห็นด้วยอย่างยิ่ง</div>
+          ${dots}
+          <div class="hidden sm:block text-sm text-muted-foreground">เห็นด้วยอย่างยิ่ง</div>
+        </div>`;
+      qWrap.appendChild(item);
+    });
+
+    /* radio visual state */
+    qWrap.addEventListener('change', e => {
+      if (e.target.matches('input[type="radio"]')) {
+        const group = e.target.name;
+        document.querySelectorAll(`input[name="${group}"]`).forEach(r =>
+          r.closest('.rg-item').dataset.checked = r.checked ? 'true' : 'false');
+      }
+    });
+
+    function getResultContent(score) {
+      if (score >= 96) {
+        return { title: 'สุดยอดผู้จัดการหน่วย!', description: `คุณได้คะแนน ${score} เต็ม 120! คุณมีความเป็นผู้นำและทักษะการบริหารหน่วยที่ยอดเยี่ยมในทุกมิติ พร้อมที่จะนำพาทีมไปสู่ความสำเร็จอย่างยั่งยืน` };
+      }
+      if (score >= 72) {
+        return { title: 'ผู้จัดการหน่วยระดับมืออาชีพ', description: `คุณได้คะแนน ${score} เต็ม 120. คุณมีทักษะการบริหารจัดการที่ดีและเป็นระบบ แต่ยังมีบางจุดที่สามารถพัฒนาเพิ่มเติมเพื่อยกระดับความเป็นผู้นำของคุณได้` };
+      }
+      return { title: 'ยังมีโอกาสในการพัฒนา', description: `คุณได้คะแนน ${score} เต็ม 120. คุณมีความตั้งใจที่ดี แต่ยังต้องการการพัฒนาทักษะในหลายๆ ด้านเพื่อการเป็นผู้จัดการหน่วยที่มีประสิทธิภาพ` };
+    }
+
+    const quizView = document.getElementById('quiz-view');
+    const resultView = document.getElementById('result-view');
+
+    document.getElementById('test-form').addEventListener('submit', e => {
+      e.preventDefault();
+      const answers = [];
+      let complete = true;
+      for (let i = 0; i < managerTestQuestions.length; i++) {
+        const sel = document.querySelector(`input[name="q${i}"]:checked`);
+        if (!sel) { complete = false; break; }
+        answers.push(parseInt(sel.value, 10));
+      }
+      if (!complete) {
+        document.getElementById('error-msg').classList.remove('hidden');
+        return;
+      }
+      document.getElementById('error-msg').classList.add('hidden');
+      const totalScore = answers.reduce((s, v) => s + v, 0);
+      const { title, description } = getResultContent(totalScore);
+      document.getElementById('result-title').textContent = title;
+      document.getElementById('result-desc').textContent = description;
+      quizView.classList.add('hidden');
+      resultView.classList.remove('hidden');
+      resultView.classList.add('flex');
+      window.scrollTo(0, 0);
+    });
+
+    document.getElementById('retry-btn').addEventListener('click', () => {
+      document.getElementById('test-form').reset();
+      document.querySelectorAll('.rg-item').forEach(d => d.dataset.checked = 'false');
+      resultView.classList.add('hidden');
+      resultView.classList.remove('flex');
+      quizView.classList.remove('hidden');
+      window.scrollTo(0, 0);
+    });
+  </script>
+</body>
+</html>
