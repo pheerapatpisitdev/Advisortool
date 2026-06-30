@@ -35,6 +35,27 @@
     .gi-switch input:checked + .track { background: #3f5e52; }
     .gi-switch input:checked + .track::after { transform: translateX(20px); }
     .tabular-nums { font-variant-numeric: tabular-nums; }
+
+    /* --- coexist with the shared global header (sticky 64px bar at top of <body>) --- */
+    /* The page is a full app-shell: its fixed full-height sidebar, sticky sub-header,
+       and mobile menu button all anchor to top:0 and would sit under / over the global
+       header. Offset them by --az-header-h so they live below it. */
+    #app aside { top: var(--az-header-h, 64px) !important; height: calc(100vh - var(--az-header-h, 64px)) !important; }
+    #app main > header { top: var(--az-header-h, 64px) !important; }
+    #app [data-opensidebar] { top: calc(var(--az-header-h, 64px) + 8px) !important; }
+    /* keep the page exactly one viewport tall (header is in normal flow) — no double scrollbar */
+    #app > div { min-height: calc(100vh - var(--az-header-h, 64px)); }
+    #app main { min-height: calc(100vh - var(--az-header-h, 64px)) !important; }
+
+    /* --- play the slide-up animation only on page mount / nav change --- */
+    /* render() rebuilds innerHTML on every keystroke & button press; without this the
+       whole page would replay its entrance animation each time. The keyframe only runs
+       when the root carries .gi-anim, which render() adds for first load + nav switches. */
+    .animate-slide-up { animation: none; }
+    .gi-anim .animate-slide-up { animation: slide-up .4s ease-out both; }
+    @media (prefers-reduced-motion: reduce) {
+      .gi-anim .animate-slide-up { animation: none; }
+    }
   </style>
   <!-- jsPDF + html2canvas for the PDF quote -->
   <script src="jspdf.umd.min.js" defer></script>

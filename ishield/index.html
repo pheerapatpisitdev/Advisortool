@@ -300,8 +300,7 @@ function chartSVG(R){
   const series=[
     {key:'cumPrem',name:'เบี้ยสะสม',color:'#c0392b'},
     {key:'cv',name:'มูลค่าเวนคืนเงินสด',color:'#0e9aa7'},
-    {key:'death',name:'ความคุ้มครองเสียชีวิต',color:'#1c5d99'},
-    {key:'diff',name:'ส่วนต่าง (เวนคืน−เบี้ย)',color:'#a85d12'}
+    {key:'death',name:'ความคุ้มครองเสียชีวิต',color:'#1c5d99'}
   ];
   let maxV=-Infinity,minV=Infinity;
   rows.forEach(r=>series.forEach(s=>{const v=r[s.key];if(v>maxV)maxV=v;if(v<minV)minV=v;}));

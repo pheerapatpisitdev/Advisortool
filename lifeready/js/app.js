@@ -1,7 +1,7 @@
 // LifeReady — UI logic: build form, recalc, render, two-page flow. Uses window.DATA/CV/LR + config.js globals.
 function buildSelects(){
   var mo=$('mode'); DATA.modes.forEach(function(m){mo.innerHTML+='<option>'+m.th+'</option>'});
-  var pl=$('plan'); DATA.pptPlans.forEach(function(p){pl.innerHTML+='<option value="'+p.seq+'">'+p.th+'</option>'}); pl.value=4;
+  var pl=$('plan'); DATA.pptPlans.forEach(function(p){pl.innerHTML+='<option value="'+p.seq+'">'+p.th+'</option>'}); pl.value=3;
 }
 function buildRiders(){
   var b=$('riderBody'); b.innerHTML='';
@@ -27,7 +27,7 @@ function ctlHTML(r,i){
   return '';
 }
 function numVal(id){ var e=$(id); return e?(parseFloat(String(e.value).replace(/,/g,''))||0):0; }
-function getInputs(){ return { age:parseInt($('age').value)||0, sex:STATE.sex, mode:$('mode').value, seq:parseInt($('plan').value), mainSA:numVal('mainSA'), occ:parseInt($('occ').value) }; }
+function getInputs(){ return { age:parseInt($('age').value)||0, sex:STATE.sex, mode:$('mode').value, seq:parseInt($('plan').value), mainSA:numVal('mainSA'), occ:($('occ')?parseInt($('occ').value):1) }; }
 function readRider(r,i){
   if(!$('ck_'+r.key) || !$('ck_'+r.key).checked) return null;
   if(r.ctl==='buy') return {buy:true};
@@ -92,7 +92,7 @@ function recalc(){
 }
 
 function render(res,inp){
-  $('custStrip').innerHTML=[['ผู้เอาประกันภัย',($('cname').value||'-')],['อายุ',inp.age+' ปี'],['เพศ',inp.sex],['แบบประกัน',planName(inp.seq)],['งวดชำระ',inp.mode],['ขั้นอาชีพ','ขั้น '+inp.occ]]
+  $('custStrip').innerHTML=[['ผู้เอาประกันภัย',($('cname').value||'-')],['อายุ',inp.age+' ปี'],['เพศ',inp.sex],['แบบประกัน',planName(inp.seq)],['งวดชำระ',inp.mode]]
     .map(function(x){return '<div class="it"><span>'+x[0]+': </span><b>'+x[1]+'</b></div>'}).join('');
   $('warnBox').innerHTML = res.main.ok?'':('<div class="warn">อายุ '+inp.age+' ปี ไม่อยู่ในเกณฑ์รับประกันของแผน “'+planName(inp.seq)+'” (รับอายุ '+res.main.amin+'–'+res.main.amax+' ปี) — กรุณากลับไปเลือกแผนหรือแก้ไขอายุ</div>');
   var body='<tr class="main"><td><span class="rn">สัญญาหลัก — ไลฟ์เรดดี้</span><br><span class="rd">'+(res.main.ok?('รหัส '+res.main.plancode+' · ชำระเบี้ย '+res.main.payYear+' ปี'):'')+'</span></td><td class="amt">'+fmt0(inp.mainSA)+' บาท</td><td class="pm">'+(res.main.ok?fmt(res.main.mode):'ไม่คุ้มครอง')+'</td></tr>';
@@ -129,7 +129,7 @@ function renderCV(res,inp){
     var mark='', rowcls='';
     if(!breakeven && cum>0 && diff>=0){ breakeven=true; beAge=r.age; mark=' <span class="be">จุดคุ้มทุน</span>'; rowcls=' class="be-row"'; }
     var diffTxt='<span class="'+(diff>=0?'gain':'loss')+'">'+(diff>=0?'+':'−')+fmt0(Math.abs(Math.round(diff)))+'</span>';
-    h+='<tr'+rowcls+'><td>'+r.age+'</td><td>'+r.year+'</td><td>'+fmt0(Math.round(prem))+mark+'</td><td>'+fmt0(Math.round(cum))+'</td><td>'+fmt0(Math.round(r.surrender))+'</td><td>'+diffTxt+'</td><td>'+fmt0(inp.mainSA)+'</td></tr>';
+    h+='<tr'+rowcls+'><td>'+r.age+'</td><td>'+r.year+'</td><td>'+(prem>0?fmt0(Math.round(prem)):'')+mark+'</td><td>'+fmt0(Math.round(cum))+'</td><td>'+fmt0(Math.round(r.surrender))+'</td><td>'+diffTxt+'</td><td>'+fmt0(inp.mainSA)+'</td></tr>';
     pts.push({year:r.year, age:r.age, cum:cum, surr:r.surrender, sa:inp.mainSA, diff:diff});
   });
   h+='</tbody>'; $('cvTbl').innerHTML=h;
@@ -141,8 +141,7 @@ var CVCHART=null;
 var CV_SERIES=[
   {key:'cum',  name:'เบี้ยสะสม',            color:'#b3322c'},
   {key:'surr', name:'มูลค่าเวนคืนเงินสด',   color:'#1f8a8a'},
-  {key:'sa',   name:'ความคุ้มครองเสียชีวิต', color:'#15366b'},
-  {key:'diff', name:'ส่วนต่าง (เวนคืน−เบี้ย)', color:'#9c5a2a'}
+  {key:'sa',   name:'ความคุ้มครองเสียชีวิต', color:'#15366b'}
 ];
 function buildCVChart(pts, beAge){
   var W=900,H=380, L=66,R=20,T=20,B=58;
@@ -150,7 +149,7 @@ function buildCVChart(pts, beAge){
   var n=pts.length;
   var xMin=1, xMax=Math.max(2, pts[n-1].year);
   var yMax=0, yMin=0;
-  pts.forEach(function(p){ yMax=Math.max(yMax,p.cum,p.surr,p.sa,p.diff); yMin=Math.min(yMin,p.diff); });
+  pts.forEach(function(p){ CV_SERIES.forEach(function(s){ var v=p[s.key]; yMax=Math.max(yMax,v); yMin=Math.min(yMin,v); }); });
   function niceCeil(v){ if(v<=0)return 0; var pw=Math.pow(10,Math.floor(Math.log10(v))); return Math.ceil(v/pw)*pw; }
   yMax=niceCeil(yMax); if(yMin<0) yMin=-niceCeil(-yMin);
   var X=function(yr){ return L+(yr-xMin)/(xMax-xMin)*iw; };

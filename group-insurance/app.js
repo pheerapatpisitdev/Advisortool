@@ -628,8 +628,12 @@
     return renderBusinessTypePage();
   }
 
+  // Play the entrance animation only on first load + nav switches, not on every
+  // in-page re-render (typing, toggles, add/remove group). See .gi-anim in index.html.
+  var animatePage = true;
+
   function render() {
-    var html = '<div class="min-h-screen w-full flex">' +
+    var html = '<div class="min-h-screen w-full flex' + (animatePage ? ' gi-anim' : '') + '">' +
       renderSidebar() +
       '<main class="flex-1 min-w-0 lg:ml-72 min-h-screen flex flex-col bg-[#fafbfc]">' +
       '<header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 pl-20 pr-4 lg:pl-8 lg:pr-8 py-4 shadow-sm">' +
@@ -640,6 +644,7 @@
       '</main></div>' +
       renderQuoteModal();
     document.getElementById('app').innerHTML = html;
+    animatePage = false; // subsequent re-renders (input/toggle) won't replay the animation
   }
 
   // ===================== EVENTS =====================
@@ -655,7 +660,7 @@
     var el = e.target.closest ? e.target.closest('[data-nav],[data-opensidebar],[data-closesidebar],[data-lang],[data-plan],[data-rider],[data-removegroup],[data-addgroup],[data-toggle-rider],[data-openquote],[data-shareline],[data-quoteclose],[data-pdf]') : null;
     if (!el) return;
 
-    if (el.hasAttribute('data-nav')) { state.currentPage = el.getAttribute('data-nav'); state.sidebarOpen = false; render(); return; }
+    if (el.hasAttribute('data-nav')) { state.currentPage = el.getAttribute('data-nav'); state.sidebarOpen = false; animatePage = true; render(); return; }
     if (el.hasAttribute('data-opensidebar')) { state.sidebarOpen = true; render(); return; }
     if (el.hasAttribute('data-closesidebar')) { if (el.tagName === 'A') { return; } state.sidebarOpen = false; render(); return; }
     if (el.hasAttribute('data-lang')) { setLang(el.getAttribute('data-lang')); return; }
