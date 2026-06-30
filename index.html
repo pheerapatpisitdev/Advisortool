@@ -76,11 +76,15 @@
     }
     .az-subhead { text-align: center; color: #6b7280; font-size: 14.5px; padding-bottom: 22px; }
 
+    /* เดสก์ท็อป + iPad (แนวตั้ง/แนวนอน): 4 คอลัมน์ */
     .az-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 300px));
-      justify-content: center;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 20px;
+    }
+    /* มือถือ: 2 คอลัมน์เรียงข้างกัน (แบบ AdvisorZone) */
+    @media (max-width: 640px) {
+      .az-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
     }
 
     .az-card {
