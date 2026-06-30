@@ -5,32 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>แบบสอบถามความถนัดในอาชีพ (CAQ)</title>
 
-  <!-- Tailwind Play CDN (วานิลลา ไม่ต้อง build) -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    // คงสี/โทเคนเดิมจาก tailwind.config.js ของโปรเจกต์
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            "bg-dark": "#1C1B1A",
-            "surface-light": "#F7F5F2",
-            "text-primary-light": "#1A1917",
-            "text-primary-dark": "#EEEBE6",
-            "text-secondary": "#9C9A96",
-            "bubble-user-light": "#EDEAE5",
-            "border-light": "#D9D5CE",
-          },
-        },
-      },
-    };
-  </script>
+  <!-- Tailwind (prebuilt, ไม่ต้อง compile runtime) -->
+  <link rel="stylesheet" href="styles.css" />
 
-  <!-- SweetAlert2 ผ่าน CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!-- SweetAlert2 (self-hosted) -->
+  <script src="sweetalert2.min.js"></script>
 
-  <!-- Supabase JS (สำหรับบันทึกคำตอบ) -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Supabase JS (self-hosted, สำหรับบันทึกคำตอบ) -->
+  <script src="supabase.min.js"></script>
 
   <style>
     /* แอนิเมชันเดิมจาก career.css */

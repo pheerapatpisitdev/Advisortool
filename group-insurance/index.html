@@ -4,26 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>ประกันภัยกลุ่ม — Group Insurance</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            teal: {
-              100: '#cfe0da', 200: '#a9c2b9', 300: '#82a497',
-              400: '#5f7f74', 500: '#4f7064', 600: '#3f5e52',
-              700: '#2f4a3d', 800: '#2a473d', 900: '#1f3329',
-            },
-          },
-          keyframes: {
-            'slide-up': { '0%': { opacity: '0', transform: 'translateY(12px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
-          },
-          animation: { 'slide-up': 'slide-up 0.4s ease-out both' },
-        },
-      },
-    };
-  </script>
+  <link rel="stylesheet" href="styles.css" />
   <style>
     /* ported from _src/index.css */
     html { scroll-behavior: smooth; }
@@ -54,8 +35,8 @@
     .tabular-nums { font-variant-numeric: tabular-nums; }
   </style>
   <!-- jsPDF + html2canvas for the PDF quote -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="jspdf.umd.min.js"></script>
+  <script src="html2canvas.min.js"></script>
   <script src="data.js"></script>
 </head>
 <body>
