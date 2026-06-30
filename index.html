@@ -3,6 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="ศูนย์รวมเครื่องมือที่ปรึกษาประกันและการเงิน — คำนวณเบี้ย ผลประโยชน์ และแบบประเมิน ครบในที่เดียว" />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
   <title>Advisortool — Hub</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -14,29 +16,29 @@
 
     .az-shell {
       font-family: 'IBM Plex Sans Thai', system-ui, sans-serif;
-      background: #f4f5f7;
+      background: linear-gradient(180deg, #fff0f6 0%, #fff5f8 40%, #fdeef4 100%);
       min-height: calc(100dvh - var(--az-header-h));
-      color: #33415c;
+      color: #5b3a4a;
     }
 
     .az-header {
       position: sticky; top: 0; z-index: 120;
       display: flex; align-items: center; justify-content: space-between;
       height: var(--az-header-h); padding: 0 22px;
-      background: #ffffff; border-bottom: 1px solid #e9eaee;
+      background: #fffafc; border-bottom: 1px solid #f6d6e3;
       font-family: 'IBM Plex Sans Thai', system-ui, sans-serif;
     }
     .az-header__icon {
       display: inline-flex; align-items: center; justify-content: center;
-      width: 44px; height: 44px; border-radius: 12px; color: #1f3aa0;
-      border: 1px solid #e5e7eb; background: #fff; text-decoration: none;
+      width: 44px; height: 44px; border-radius: 12px; color: #d6336c;
+      border: 1px solid #f6d6e3; background: #fff; text-decoration: none;
       transition: background .18s ease, transform .18s ease;
     }
-    .az-header__icon:hover { background: #f1f4fb; transform: translateY(-1px); }
-    .az-header__icon:focus-visible, .az-card:focus-visible { outline: 3px solid #3b3fb6; outline-offset: 2px; }
+    .az-header__icon:hover { background: #fdeef4; transform: translateY(-1px); }
+    .az-header__icon:focus-visible, .az-card:focus-visible { outline: 3px solid #ec4899; outline-offset: 2px; }
     .az-header__avatar {
       position: relative; width: 44px; height: 44px; border-radius: 50%;
-      display: inline-flex; align-items: center; justify-content: center; background: #eef2fb; color: #1f3aa0;
+      display: inline-flex; align-items: center; justify-content: center; background: #fde0ec; color: #d6336c;
     }
     .az-header__check {
       position: absolute; right: -2px; bottom: -2px; width: 16px; height: 16px; border-radius: 50%;
@@ -44,37 +46,37 @@
     }
     .az-header__left { display: flex; align-items: center; gap: 14px; }
     .az-header__right { display: flex; align-items: center; gap: 12px; }
-    .az-brand { font-weight: 800; font-size: 18px; letter-spacing: -0.3px; color: #14266b; text-decoration: none; }
+    .az-brand { font-weight: 800; font-size: 18px; letter-spacing: -0.3px; color: #be185d; text-decoration: none; }
     .az-menu { position: relative; }
     .az-menu__btn {
       display: inline-flex; align-items: center; gap: 7px; height: 40px; padding: 0 14px;
-      border: 1px solid #e5e7eb; background: #fff; border-radius: 10px; color: #1f3aa0;
+      border: 1px solid #f6d6e3; background: #fff; border-radius: 10px; color: #d6336c;
       font-family: 'IBM Plex Sans Thai', system-ui, sans-serif; font-size: 14px; font-weight: 600; cursor: pointer;
       transition: background .15s;
     }
-    .az-menu__btn:hover { background: #f1f4fb; }
+    .az-menu__btn:hover { background: #fdeef4; }
     .az-menu__chev { transition: transform .18s; }
     .az-menu.open .az-menu__chev { transform: rotate(180deg); }
     .az-menu__panel {
       position: absolute; top: 50px; right: 0; min-width: 264px; background: #fff;
-      border: 1px solid #e9eaee; border-radius: 12px; box-shadow: 0 14px 36px rgba(20,38,107,.18);
+      border: 1px solid #f6d6e3; border-radius: 12px; box-shadow: 0 14px 36px rgba(190,24,93,.18);
       padding: 6px; display: none; z-index: 200;
     }
     .az-menu.open .az-menu__panel { display: block; }
     .az-menu__panel a {
       display: flex; align-items: center; gap: 9px; padding: 9px 12px; border-radius: 8px;
-      color: #33415c; text-decoration: none; font-size: 14px; white-space: nowrap;
+      color: #5b3a4a; text-decoration: none; font-size: 14px; white-space: nowrap;
     }
-    .az-menu__panel a:hover { background: #f1f4fb; color: #1f3aa0; }
-    .az-menu__dot { width: 7px; height: 7px; border-radius: 50%; background: #2b6cc4; flex-shrink: 0; }
+    .az-menu__panel a:hover { background: #fdeef4; color: #d6336c; }
+    .az-menu__dot { width: 7px; height: 7px; border-radius: 50%; background: #ec4899; flex-shrink: 0; }
     @media (max-width: 520px) { .az-brand { display: none; } .az-menu__btn span { display: none; } .az-menu__btn { padding: 0 11px; } }
 
     .az-main { max-width: 1240px; margin: 0 auto; padding: 30px 22px 64px; }
     .az-headline {
       text-align: center; font-size: clamp(28px, 4.4vw, 46px); font-weight: 800;
-      color: #14266b; letter-spacing: -0.5px; padding: 18px 0 8px;
+      color: #be185d; letter-spacing: -0.5px; padding: 18px 0 8px;
     }
-    .az-subhead { text-align: center; color: #6b7280; font-size: 14.5px; padding-bottom: 22px; }
+    .az-subhead { text-align: center; color: #a16077; font-size: 14.5px; padding-bottom: 22px; }
 
     /* เดสก์ท็อป + iPad (แนวตั้ง/แนวนอน): 4 คอลัมน์ */
     .az-grid {
@@ -89,15 +91,15 @@
 
     .az-card {
       display: flex; flex-direction: column; background: #fff; border-radius: 16px; overflow: hidden;
-      text-decoration: none; border: 1px solid #eceef2; box-shadow: 0 1px 2px rgba(20,38,107,.04);
+      text-decoration: none; border: 1px solid #f6d6e3; box-shadow: 0 1px 2px rgba(190,24,93,.05);
       transition: transform .2s ease, box-shadow .2s ease; opacity: 0; transform: translateY(14px);
       animation: az-rise .5s cubic-bezier(.2,.7,.2,1) forwards; color: inherit; position: relative;
     }
-    .az-card:hover { transform: translateY(-6px); box-shadow: 0 18px 38px rgba(20,38,107,.16); }
+    .az-card:hover { transform: translateY(-6px); box-shadow: 0 18px 38px rgba(190,24,93,.18); }
     @keyframes az-rise { to { opacity: 1; transform: translateY(0); } }
 
     .az-card--soon { cursor: default; }
-    .az-card--soon:hover { transform: none; box-shadow: 0 1px 2px rgba(20,38,107,.04); }
+    .az-card--soon:hover { transform: none; box-shadow: 0 1px 2px rgba(190,24,93,.05); }
     .az-card--soon .az-card__media, .az-card--soon .az-body { filter: grayscale(.35); opacity: .85; }
 
     .az-card__media {
@@ -118,13 +120,13 @@
     .az-status--ready { background: rgba(22,163,74,.92); color: #fff; }
     .az-status--soon { background: rgba(55,65,81,.85); color: #fff; }
 
-    .az-band { margin: 0; background: #243f9c; color: #fff; font-size: 17px; font-weight: 700; padding: 13px 16px; line-height: 1.3; }
+    .az-band { margin: 0; background: linear-gradient(135deg, #db2777 0%, #ec4899 100%); color: #fff; font-size: 17px; font-weight: 700; padding: 13px 16px; line-height: 1.3; }
     .az-body { padding: 16px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
-    .az-tagline { color: #2b6cc4; font-weight: 700; font-size: 15.5px; line-height: 1.45; margin: 0; }
+    .az-tagline { color: #d6336c; font-weight: 700; font-size: 15.5px; line-height: 1.45; margin: 0; }
     .az-bullets { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
-    .az-bullets li { position: relative; padding-left: 18px; font-size: 14.5px; line-height: 1.5; color: #4b5563; }
-    .az-bullets li::before { content: ""; position: absolute; left: 2px; top: 8px; width: 6px; height: 6px; border-radius: 50%; background: #2b6cc4; }
-    .az-cta { margin-top: auto; padding-top: 6px; font-size: 14px; font-weight: 700; color: #1f3aa0; display: inline-flex; align-items: center; gap: 6px; }
+    .az-bullets li { position: relative; padding-left: 18px; font-size: 14.5px; line-height: 1.5; color: #7a5563; }
+    .az-bullets li::before { content: ""; position: absolute; left: 2px; top: 8px; width: 6px; height: 6px; border-radius: 50%; background: #ec4899; }
+    .az-cta { margin-top: auto; padding-top: 6px; font-size: 14px; font-weight: 700; color: #d6336c; display: inline-flex; align-items: center; gap: 6px; }
     .az-cta--soon { color: #9ca3af; }
 
     @media (prefers-reduced-motion: reduce) {
@@ -149,9 +151,11 @@
           <svg class="az-menu__chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
         </button>
         <div class="az-menu__panel" id="azMenuPanel" role="menu">
+          <a href="lifeready/" role="menuitem"><span class="az-menu__dot"></span>ไลฟ์เรดดี้ Life Ready — ประกันชีวิตตลอดชีพ</a>
           <a href="global-saving/" role="menuitem"><span class="az-menu__dot"></span>Global Saving Plus 15/8</a>
           <a href="ihealthy/" role="menuitem"><span class="az-menu__dot"></span>iHealthy Ultra</a>
           <a href="ci123/" role="menuitem"><span class="az-menu__dot"></span>CI 123 ประกันโรคร้ายแรง</a>
+          <a href="ishield/" role="menuitem"><span class="az-menu__dot"></span>iShield — ประกันโรคร้ายแรงตลอดชีพ</a>
           <a href="group-insurance/" role="menuitem"><span class="az-menu__dot"></span>ประกันกลุ่ม Group Insurance</a>
           <a href="fhc/" role="menuitem"><span class="az-menu__dot"></span>FHC — แบบสอบถามคุณภาพชีวิต</a>
           <a href="career-agent/" role="menuitem"><span class="az-menu__dot"></span>Career-Agent-Question</a>
@@ -181,8 +185,6 @@
 
   <div class="az-shell">
     <main class="az-main">
-      <h1 class="az-headline">Advisortool</h1>
-      <p class="az-subhead">เลือกเครื่องมือที่ต้องการ กดการ์ดเพื่อเริ่มใช้งานได้เลย</p>
       <div class="az-grid" id="grid"></div>
     </main>
   </div>
@@ -197,11 +199,15 @@
     clipboard: '<svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect width="8" height="4" x="8" y="2" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/></svg>',
     briefcase: '<svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect width="20" height="14" x="2" y="7" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>',
     network: '<svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="9" y="2" width="6" height="6" rx="1"/><rect x="2" y="16" width="6" height="6" rx="1"/><rect x="16" y="16" width="6" height="6" rx="1"/><path d="M12 8v4M5 16v-2a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v2"/></svg>',
+    shield: '<svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>',
   };
   const arrow = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>';
 
   // ready: true → ลิงก์ไปหน้าวานิลลา | false → ยังเป็น React (เร็วๆ นี้)
   const products = [
+    { ready: true, href: "lifeready/", band: "ไลฟ์เรดดี้ Life Ready", tagline: "ประกันชีวิตตลอดชีพ ไลฟ์เรดดี้ (ไม่มีเงินปันผล) — คำนวณเบี้ยและผลประโยชน์ครบในเครื่องเดียว",
+      bullets: ["คำนวณเบี้ยสองทาง: จากทุนประกัน ↔ จากเบี้ย พร้อมสัญญาเพิ่มเติม","ตารางผลประโยชน์ความคุ้มครอง + ตารางมูลค่ากรมธรรม์รายปี","พิมพ์/บันทึก PDF ได้ — อัตราเบี้ยเวอร์ชัน A2026-1"],
+      isNew: true, gradient: "linear-gradient(135deg, #047857 0%, #10b981 55%, #6ee7b7 100%)", image: "hub/lifeready.png", icon: ICONS.heart },
     { ready: true, href: "global-saving/", band: "Global Saving Plus 15/8", tagline: "ยกระดับแผนการเงินเพื่ออนาคต สู่โอกาสรับผลตอบแทนระดับโลก",
       bullets: ["ชำระเบี้ยฯ 8 ปี ให้ความคุ้มครอง 15 ปี","รับเงินคืนทุกปี พร้อมโอกาสรับผลตอบแทนเพิ่มจากดัชนี Citi Grandmaster RC 5 Index","ผลประโยชน์การันตีเงินคืนรวมสูงสุด 815% ของจำนวนเงินเอาประกันภัย"],
       isNew: true, gradient: "linear-gradient(135deg, #1f3aa0 0%, #2b6cc4 55%, #4f9be0 100%)", image: "hub/global-saving.png", icon: ICONS.piggy },
@@ -211,6 +217,9 @@
     { ready: true, href: "ci123/", band: "CI 123 ประกันโรคร้ายแรง", tagline: "เจอ จ่าย ครบ — ดูแลค่าใช้จ่ายเมื่อตรวจพบโรคร้าย",
       bullets: ["คุ้มครองโรคร้ายแรงครอบคลุมหลายระยะ","เครื่องคำนวณเบี้ยในตัว เลือกแผนได้เอง","ลดหย่อนภาษีได้"],
       gradient: "linear-gradient(135deg, #b91c1c 0%, #e2231a 55%, #f97316 100%)", image: "hub/ci123.png", icon: ICONS.activity },
+    { ready: true, href: "ishield/", band: "iShield", tagline: "ประกันชีวิตควบคุ้มครองโรคร้ายแรงตลอดชีพ คุ้มครองถึงอายุ 85 ปี",
+      bullets: ["คำนวณเบี้ยสองทาง: จากทุนประกัน ↔ จากเบี้ย","iShield 5/10/15/20 + สัญญาเพิ่มเติม PB/AP/ECARE/MEB/PLS10","ผลประโยชน์โรคร้ายแรง 70 โรค + ตารางมูลค่ากรมธรรม์ พิมพ์ PDF ได้"],
+      isNew: true, gradient: "linear-gradient(135deg, #0b2942 0%, #1c5d99 55%, #0e9aa7 100%)", image: "hub/ishield.png", icon: ICONS.shield },
     { ready: true, href: "group-insurance/", band: "ประกันกลุ่ม Group Insurance", tagline: "แผนความคุ้มครองสำหรับองค์กร พร้อมใบเสนอราคา",
       bullets: ["ประกันสุขภาพกลุ่ม / อุบัติเหตุกลุ่ม","สร้างใบเสนอราคาและดาวน์โหลด PDF ได้ทันที","เลือกแผนตามประเภทธุรกิจ"],
       gradient: "linear-gradient(135deg, #3b3fb6 0%, #6d5ae0 55%, #9a7af0 100%)", image: "hub/group-insurance.png", icon: ICONS.users },
@@ -233,7 +242,7 @@
     const tagClass = p.ready ? "az-status--ready" : "az-status--soon";
     const inner = `
       <div class="az-card__media" style="background:${p.gradient}">
-        <img src="${esc(p.image)}" alt="" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+        <img src="${esc(p.image)}" alt="" loading="lazy" decoding="async" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
         <span class="az-card__icon" style="display:none">${p.icon}</span>
         <span class="az-status ${tagClass}">${tag}</span>
         ${p.isNew ? '<span class="az-ribbon">NEW</span>' : ''}

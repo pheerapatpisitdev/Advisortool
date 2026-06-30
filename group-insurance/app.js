@@ -15,9 +15,11 @@
   var lang = (function () {
     try { return localStorage.getItem(STORAGE_KEY) || 'th'; } catch (e) { return 'th'; }
   })();
+  document.documentElement.lang = lang;
   function setLang(l) {
     lang = (l === 'th') ? 'th' : 'en';
     try { localStorage.setItem(STORAGE_KEY, lang); } catch (e) {}
+    document.documentElement.lang = lang;
     render();
   }
   function t(key) {

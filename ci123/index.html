@@ -3,6 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="CI 123 ประกันโรคร้ายแรง — ตารางผลประโยชน์และเครื่องคำนวณเบี้ยในตัว เลือกแผนได้เอง" />
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg" />
   <title>ประกันโรคร้ายแรง CI 123</title>
   <link rel="stylesheet" href="styles.css" />
   <style>
@@ -27,53 +29,11 @@
       font-weight: 600; color: #1d4ed8; font-variant-numeric: tabular-nums;
     }
   </style>
-<style data-az-global-header>
-:root { --az-header-h: 64px; }
-.az-gh { position: sticky; top: 0; z-index: 50; display:flex; align-items:center; justify-content:space-between; height: var(--az-header-h); padding:0 22px; background:#fff; border-bottom:1px solid #e9eaee; font-family:'IBM Plex Sans Thai','Sarabun',system-ui,sans-serif; box-sizing:border-box; }
-.az-gh *{ box-sizing:border-box; }
-.az-gh__left{ display:flex; align-items:center; gap:14px; }
-.az-gh__right{ display:flex; align-items:center; gap:12px; }
-.az-gh__home{ display:inline-flex; align-items:center; justify-content:center; width:44px; height:44px; border-radius:12px; color:#1f3aa0; border:1px solid #e5e7eb; background:#fff; text-decoration:none; transition:background .15s; }
-.az-gh__home:hover{ background:#f1f4fb; }
-.az-gh__brand{ font-weight:800; font-size:18px; letter-spacing:-.3px; color:#14266b; text-decoration:none; }
-.az-gh__avatar{ position:relative; width:44px;height:44px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:#eef2fb;color:#1f3aa0; }
-.az-gh__check{ position:absolute; right:-2px; bottom:-2px; width:16px;height:16px;border-radius:50%;background:#16a34a;color:#fff;display:inline-flex;align-items:center;justify-content:center;border:2px solid #fff; }
-.az-gh__menu{ position:relative; }
-.az-gh__btn{ display:inline-flex; align-items:center; gap:7px; height:40px; padding:0 14px; border:1px solid #e5e7eb; background:#fff; border-radius:10px; color:#1f3aa0; font-family:inherit; font-size:14px; font-weight:600; cursor:pointer; transition:background .15s; }
-.az-gh__btn:hover{ background:#f1f4fb; }
-.az-gh__chev{ transition: transform .18s; }
-.az-gh__menu.open .az-gh__chev{ transform: rotate(180deg); }
-.az-gh__panel{ position:absolute; top:50px; right:0; min-width:264px; background:#fff; border:1px solid #e9eaee; border-radius:12px; box-shadow:0 14px 36px rgba(20,38,107,.18); padding:6px; display:none; z-index:300; }
-.az-gh__menu.open .az-gh__panel{ display:block; }
-.az-gh__panel a{ display:flex; align-items:center; gap:9px; padding:9px 12px; border-radius:8px; color:#33415c; text-decoration:none; font-size:14px; white-space:nowrap; font-family:inherit; }
-.az-gh__panel a:hover{ background:#f1f4fb; color:#1f3aa0; }
-.az-gh__dot{ width:7px;height:7px;border-radius:50%;background:#2b6cc4;flex-shrink:0; }
-@media (max-width:520px){ .az-gh__brand{display:none} .az-gh__btn span{display:none} .az-gh__btn{padding:0 11px} }
-
-</style>
+<link rel="stylesheet" href="../assets/global-header.css" />
 </head>
 <body>
-<header class="az-gh" data-az-global-header>
-  <div class="az-gh__left">
-    <a href="../" class="az-gh__home" aria-label="หน้าแรก"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg></a>
-    <a href="../" class="az-gh__brand">Advisortool</a>
-  </div>
-  <div class="az-gh__right">
-    <div class="az-gh__menu" id="azGh">
-      <button class="az-gh__btn" type="button" aria-haspopup="true" aria-expanded="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg><span>เครื่องมือ</span><svg class="az-gh__chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
-      <div class="az-gh__panel" role="menu">
-          <a href="../global-saving/" role="menuitem"><span class="az-gh__dot"></span>Global Saving Plus 15/8</a>
-          <a href="../ihealthy/" role="menuitem"><span class="az-gh__dot"></span>iHealthy Ultra</a>
-          <a href="../ci123/" role="menuitem"><span class="az-gh__dot"></span>CI 123 ประกันโรคร้ายแรง</a>
-          <a href="../group-insurance/" role="menuitem"><span class="az-gh__dot"></span>ประกันกลุ่ม Group Insurance</a>
-          <a href="../fhc/" role="menuitem"><span class="az-gh__dot"></span>FHC — แบบสอบถามคุณภาพชีวิต</a>
-          <a href="../career-agent/" role="menuitem"><span class="az-gh__dot"></span>Career-Agent-Question</a>
-          <a href="../agency/" role="menuitem"><span class="az-gh__dot"></span>Agency Blueprint</a>
-      </div>
-    </div>
-    <span class="az-gh__avatar" aria-label="โปรไฟล์"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span class="az-gh__check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span></span>
-  </div>
-</header>
+<script src="../assets/global-header.js"></script>
+
 <main class="ci123-scope min-h-dvh bg-white px-3 py-6 sm:px-10 sm:py-10 md:px-16 lg:px-24 overflow-x-hidden">
   <div class="mx-auto flex max-w-7xl flex-col items-center w-full min-w-0 gap-8 sm:gap-16">
 
@@ -402,6 +362,6 @@ document.addEventListener('click', (e) => {
   });
 })();
 </script>
-<script data-az-global-header>(function(){var m=document.getElementById('azGh');if(!m)return;var b=m.querySelector('.az-gh__btn');b.addEventListener('click',function(e){e.stopPropagation();var o=m.classList.toggle('open');b.setAttribute('aria-expanded',o?'true':'false');});document.addEventListener('click',function(e){if(!m.contains(e.target)){m.classList.remove('open');b.setAttribute('aria-expanded','false');}});document.addEventListener('keydown',function(e){if(e.key==='Escape'){m.classList.remove('open');b.setAttribute('aria-expanded','false');}});})();</script>
+
 </body>
 </html>
