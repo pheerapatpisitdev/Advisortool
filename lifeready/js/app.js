@@ -19,7 +19,7 @@ function ctlHTML(r,i){
   if(r.ctl==='buy') return '<span class="muted" style="font-size:12px">เลือก ✓ เพื่อซื้อ</span>';
   if(r.ctl==='pb') return '<select class="rin" id="in_pb_type"><option>PB Beyond</option><option>PB Fit</option></select>';
   if(r.ctl==='sa'||r.ctl==='saUnit') return '<input class="rin" type="number" id="in_'+r.key+'" value="'+(v.sa||r.smin||'')+'" step="10000"><div class="hint" id="hint_'+r.key+'"></div>';
-  if(r.ctl==='planMEB'){ var o=MEB_PLANS(i.age).map(function(p){return '<option value="'+p+'">'+p+' บาท/วัน</option>'}).join(''); return '<select class="rin" id="in_'+r.key+'">'+o+'</select>'; }
+  if(r.ctl==='planMEB'){ var o=MEB_PLANS(i.age).map(function(p){return '<option value="'+p+'">'+fmt0(p)+' บาท/วัน</option>'}).join(''); return '<select class="rin" id="in_'+r.key+'">'+o+'</select>'; }
   if(r.ctl==='planMEX'){ var o=MEX_PLANS(i.age).map(function(p){return '<option value="'+p+'">แผน '+p+'</option>'}).join(''); return '<select class="rin" id="in_'+r.key+'">'+o+'</select>'; }
   if(r.ctl==='planMCI'){ var o=MCI_PLANS(i.age).map(function(p){return '<option value="'+p[0]+'">'+p[1]+'</option>'}).join(''); return '<select class="rin" id="in_'+r.key+'">'+o+'</select>'; }
   if(r.ctl==='planMHP'){ var o=MHP_PLANS(i.age).map(function(p){return '<option value="'+p[0]+'">'+p[1]+'</option>'}).join('');
@@ -267,6 +267,20 @@ function saFromPremium(inp, targetModePrem){
 
 function goResult(){ recalc(); render(LAST.res,LAST.inp); $('page-input').style.display='none'; $('page-result').style.display='block'; window.scrollTo(0,0); }
 function goInput(){ $('page-result').style.display='none'; $('page-input').style.display='block'; window.scrollTo(0,0); }
+// iOS/iPadOS cannot print from a "Add to Home Screen" web app (standalone mode) —
+// window.print() is a silent no-op there. Detect it and guide the user to open in
+// Safari; otherwise defer the call so Safari reliably opens the print/AirPrint sheet.
+function printResult(){
+  var standalone = (window.navigator.standalone === true) ||
+    (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches);
+  if (standalone) {
+    alert('พิมพ์ / บันทึก PDF ไม่ได้เมื่อเปิดจากไอคอนบนหน้าจอโฮม\n\n' +
+      'กรุณาเปิดหน้านี้ในแอป Safari (แตะแถบที่อยู่แล้วเปิดใน Safari) แล้วกดปุ่มพิมพ์อีกครั้ง — ' +
+      'หรือใช้ปุ่มแชร์ของ Safari แล้วเลือก “พิมพ์” / “บันทึกไปยังไฟล์”');
+    return;
+  }
+  setTimeout(function(){ try { window.print(); } catch (e) {} }, 0);
+}
 
 function initSeg(segId,stateKey){ $(segId).querySelectorAll('button').forEach(function(btn){ btn.addEventListener('click',function(){ $(segId).querySelectorAll('button').forEach(function(b){b.classList.remove('on');b.setAttribute('aria-checked','false');}); btn.classList.add('on'); btn.setAttribute('aria-checked','true'); STATE[stateKey]=btn.dataset.v; recalc(); }); }); }
 window.addEventListener('DOMContentLoaded',function(){

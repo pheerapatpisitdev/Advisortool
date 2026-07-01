@@ -115,7 +115,7 @@ ol.dzlist li{margin-bottom:5px;line-height:1.45;break-inside:avoid}
 .toolbar .btn{margin-top:0;width:auto;padding:9px 18px;font-size:14px}
 @media print{
   body{background:#fff;font-size:11.5px}
-  #screenInput,.resbar,.toolbar,.btn,header.top .logo{display:none!important}
+  #screenInput,.az-gh,.resbar,.toolbar,.btn,header.top .logo{display:none!important}
   .card{box-shadow:none;border:1px solid #ccc;break-inside:avoid}
   .illus-wrap{max-height:none;overflow:visible}
   table.tb th{position:static}
@@ -128,7 +128,7 @@ ol.dzlist li{margin-bottom:5px;line-height:1.45;break-inside:avoid}
 <link rel="stylesheet" href="../assets/global-header.css" />
 </head>
 <body>
-<script src="../assets/global-header.js"></script>
+<script src="../assets/global-header.js?v=2"></script>
 
 <div class="wrap">
   <header class="top">
@@ -617,7 +617,7 @@ function showScreen(w){
 }
 $('calcBtn').onclick=function(){ if(render()) showScreen('result'); };
 $('backBtn').onclick=function(){ showScreen('input'); };
-$('printBtn').onclick=function(){ window.print(); };
+$('printBtn').onclick=function(){ azPrint(); };
 // age dropdown — rebuild options 0..maxIssue, preserving the current pick if still valid
 function fillAgeOptions(max){
   const sel=$('age'), cur=sel.value!==''?+sel.value:35;

@@ -5,10 +5,28 @@
      <script src="../assets/global-header.js"></script>
 */
 (function () {
+  // Shared print helper for every tool. iOS/iPadOS cannot print from a page launched
+  // via "Add to Home Screen" (standalone web-app mode) — window.print() is a silent
+  // no-op there. Detect it and guide the user to open in Safari; otherwise defer the
+  // call one task so Safari reliably opens the print/AirPrint sheet (it drops a
+  // window.print() fired synchronously inside a click handler).
+  window.azPrint = function () {
+    var standalone = (window.navigator.standalone === true) ||
+      (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches);
+    if (standalone) {
+      alert('พิมพ์ / บันทึก PDF ไม่ได้เมื่อเปิดจากไอคอนบนหน้าจอโฮม\n\n' +
+        'กรุณาเปิดหน้านี้ในแอป Safari (แตะแถบที่อยู่แล้วเปิดใน Safari) แล้วกดปุ่มพิมพ์อีกครั้ง — ' +
+        'หรือใช้ปุ่มแชร์ของ Safari แล้วเลือก “พิมพ์” / “บันทึกไปยังไฟล์”');
+      return;
+    }
+    setTimeout(function () { try { window.print(); } catch (e) {} }, 0);
+  };
+
   // Single source of truth for the cross-tool menu (paths relative to a tool folder).
   var TOOLS = [
     ['../lifeready/',        'ไลฟ์เรดดี้ Life Ready — ประกันชีวิตตลอดชีพ'],
     ['../global-saving/',    'Global Saving Plus 15/8'],
+    ['../pension-smart95/',  'บำนาญ สมาร์ท 95 — บำนาญลดหย่อนภาษี'],
     ['../ihealthy/',         'iHealthy Ultra'],
     ['../ci123/',            'CI 123 ประกันโรคร้ายแรง'],
     ['../ishield/',          'iShield — ประกันโรคร้ายแรงตลอดชีพ'],

@@ -138,4 +138,4 @@ table{width:100%;border-collapse:collapse;font-size:13.5px}
   .riders .rin,.riders select.rin{width:100%;min-width:0;font-size:15px;min-height:40px;padding:8px}
   .tabs button{min-height:40px}
 }
-@media print{header .badge,.result-head,.tabs{display:none}body{background:#fff}.card{box-shadow:none;break-inside:avoid}.cv-wrap{max-height:none;overflow:visible}}
+@media print{.az-gh,header .badge,.result-head,.tabs{display:none}body{background:#fff}.card{box-shadow:none;break-inside:avoid}.cv-wrap{max-height:none;overflow:visible}}

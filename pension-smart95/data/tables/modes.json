@@ -1,0 +1,22 @@
+{
+ "รายปี": {
+  "factor": 1,
+  "periods": 1,
+  "interest": 0
+ },
+ "ราย 6 เดือน": {
+  "factor": 0.52,
+  "periods": 2,
+  "interest": 4
+ },
+ "ราย 3 เดือน": {
+  "factor": 0.27,
+  "periods": 4,
+  "interest": null
+ },
+ "รายเดือน": {
+  "factor": 0.09,
+  "periods": 12,
+  "interest": 8
+ }
+}

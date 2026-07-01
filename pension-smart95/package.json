@@ -1,0 +1,16 @@
+{
+  "name": "pension-smart95-calculator",
+  "version": "1.0.0",
+  "description": "โปรแกรมคำนวณเบี้ยประกัน & ผลประโยชน์ บำนาญ สมาร์ท 95 (A2026-1) — vanilla static web app",
+  "scripts": {
+    "dev": "python3 -m http.server 8080",
+    "verify": "node scripts/verify.mjs",
+    "test": "node scripts/verify.mjs",
+    "build": "node scripts/verify.mjs && node scripts/build.mjs",
+    "build:web": "node scripts/verify.mjs && node scripts/build_web.mjs",
+    "build:all": "node scripts/verify.mjs && node scripts/build.mjs && node scripts/build_web.mjs",
+    "extract": "python3 scripts/extract_tables.py"
+  },
+  "license": "UNLICENSED",
+  "private": true
+}

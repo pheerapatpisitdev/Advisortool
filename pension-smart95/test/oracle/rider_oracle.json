@@ -1,0 +1,15 @@
+{
+ "AP_annual_G16": 3000,
+ "AP_rate_D16": 3,
+ "ECARE_annual_G17": 6500,
+ "ECARE_rate_D17": 6.5,
+ "MEB_annual_G19": 1300,
+ "DCI_annual_G20": 0,
+ "DCI_rate_D20": 0,
+ "PLS_annual_G21": 5640,
+ "PLS_rate_D21": 6.64,
+ "CPR_annual_G47": 0,
+ "CPR_rate_D47": 0,
+ "HIC_annual_G48": 0,
+ "HIC_rate_D48": 0
+}

@@ -160,7 +160,7 @@ table{width:100%;border-collapse:collapse;}
 .doc-actions .btn{text-decoration:none;display:inline-flex;align-items:center;}
 
 @media print{
- body{background:#fff;}.wrap{max-width:100%;padding:0;}.noprint{display:none!important;}.panel{box-shadow:none;}
+ body{background:#fff;}.wrap{max-width:100%;padding:0;}.noprint,.az-gh{display:none!important;}.panel{box-shadow:none;}
  .tb td,.tb tr.rtot td{font-size:10px;}
  .tb th,.tb .ghg,.tb .ghn,.tb th.ghtax{font-size:9.5px;}
  .ta .gtag{font-size:8.5px;}.kpi .ks{font-size:9.5px;}.chlbl{font-size:10px;}
@@ -297,7 +297,7 @@ table{width:100%;border-collapse:collapse;}
 <link rel="stylesheet" href="../assets/global-header.css" />
 </head>
 <body>
-<script src="../assets/global-header.js"></script>
+<script src="../assets/global-header.js?v=2"></script>
 
 <div id="root">
   <nav class="tabbar noprint">
@@ -537,7 +537,7 @@ function mountCalculator() {
   });
   ageSel.addEventListener('change', function (e) { state.age = parseInt(e.target.value, 10); recalc(); });
 
-  document.getElementById('btn-print').addEventListener('click', function () { window.print(); });
+  document.getElementById('btn-print').addEventListener('click', function () { azPrint(); });
   document.getElementById('btn-reset').addEventListener('click', function () { state = resetState(); recalc(); });
 
   recalc();

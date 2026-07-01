@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>โปรแกรมคำนวณเบี้ย — บำนาญ สมาร์ท 95</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Prompt:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="src/styles.css">
+<link rel="stylesheet" href="../assets/global-header.css" />
+<style>
+  /* This page's own <header> is position:sticky;top:0 — offset it below the shared
+     global header so the two sticky bars don't overlap on scroll. Scoped with
+     :not(.az-gh) so it never touches the global header itself. */
+  body > header:not(.az-gh) { top: var(--az-header-h, 64px) !important; }
+</style>
+</head>
+<body>
+<script src="../assets/global-header.js?v=2"></script>
+<header>
+  <div class="hd">
+    <div class="brand"><span class="logo">95</span><span>บำนาญ สมาร์ท 95<small>โปรแกรมคำนวณเบี้ยประกันภัย &amp; ผลประโยชน์</small></span></div>
+    <div class="ver"><b id="verName">บำนาญแบบลดหย่อนภาษีได้</b><span>เวอร์ชั่น A2026-1</span></div>
+  </div>
+</header>
+<div class="wrap">
+
+  <div class="steps">
+    <div class="s active" id="stepA"><span class="n">1</span> กรอกข้อมูล</div>
+    <div class="bar" id="stepBar"></div>
+    <div class="s" id="stepB"><span class="n">2</span> ผลการคำนวณ</div>
+  </div>
+
+  <!-- ============ VIEW 1: INPUT ============ -->
+  <div class="view active" id="viewInput">
+    <div class="grid2">
+      <div class="card">
+        <div class="card-h"><span class="ic">👤</span><h2>ข้อมูลผู้เอาประกันภัย</h2></div>
+        <div class="card-b">
+          <div class="field"><label for="custName">ชื่อผู้เอาประกันภัย</label><input type="text" id="custName" placeholder="เช่น คุณลูกค้าคนพิเศษ" value="คุณลูกค้าคนพิเศษ"></div>
+          <div class="row2">
+            <div class="field"><label id="genderLbl">เพศ</label><div class="seg" id="genderSeg" role="group" aria-labelledby="genderLbl"><button data-v="ชาย" class="on">ชาย</button><button data-v="หญิง">หญิง</button></div></div>
+            <div class="field"><label for="age">อายุ (ปี)</label><select id="age"><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option><option value="24">24</option><option value="25">25</option><option value="26">26</option><option value="27">27</option><option value="28">28</option><option value="29">29</option><option value="30">30</option><option value="31">31</option><option value="32">32</option><option value="33">33</option><option value="34">34</option><option value="35">35</option><option value="36">36</option><option value="37">37</option><option value="38">38</option><option value="39">39</option><option value="40" selected>40</option><option value="41">41</option><option value="42">42</option><option value="43">43</option><option value="44">44</option><option value="45">45</option><option value="46">46</option><option value="47">47</option><option value="48">48</option><option value="49">49</option><option value="50">50</option><option value="51">51</option><option value="52">52</option><option value="53">53</option><option value="54">54</option><option value="55">55</option><option value="56">56</option><option value="57">57</option><option value="58">58</option><option value="59">59</option><option value="60">60</option><option value="61">61</option><option value="62">62</option><option value="63">63</option><option value="64">64</option><option value="65">65</option></select></div>
+          </div>
+          <div class="field"><label for="occ">ระดับอาชีพ (สำหรับสัญญาเพิ่มเติม)</label>
+            <select id="occ"><option value="1">ขั้น 1 (ทั่วไป)</option><option value="2">ขั้น 2</option><option value="3">ขั้น 3</option><option value="4">ขั้น 4 (เสี่ยงสูง)</option></select></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h"><span class="ic">📋</span><h2>เลือกแบบประกัน</h2></div>
+        <div class="card-b">
+          <div class="field"><label id="payOptLbl">รูปแบบการชำระเบี้ย</label>
+            <div class="seg" id="payOptSeg" role="group" aria-labelledby="payOptLbl"><button data-v="ชำระเบี้ย จนรับเงินบำนาญ" class="on">ชำระจนรับบำนาญ</button><button data-v="ชำระเบี้ย 6 ปี">ชำระ 6 ปี</button></div></div>
+          <div class="field"><label id="annuityLbl">อายุที่เริ่มรับเงินบำนาญ</label><div class="seg" id="annuitySeg" role="group" aria-labelledby="annuityLbl"></div><div class="err" id="annuityErr"></div></div>
+          <div class="field"><label for="mode">งวดการชำระเบี้ยประกันภัย</label>
+            <select id="mode"><option>รายปี</option><option>ราย 6 เดือน</option><option>ราย 3 เดือน</option><option>รายเดือน</option></select></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-h"><span class="ic">💰</span><h2>กำหนดจำนวนเงิน</h2><span class="step" id="planStep">—</span></div>
+      <div class="card-b">
+        <div class="grid2">
+          <div class="field"><label id="inputTypeLbl">เลือกกำหนดจาก</label>
+            <div class="seg" id="inputTypeSeg" role="group" aria-labelledby="inputTypeLbl">
+              <button data-v="จำนวนเงินเอาประกันภัย" class="on">ทุนประกัน</button>
+              <button data-v="เบี้ยประกันภัย">เบี้ยประกัน</button>
+              <button data-v="เงินบำนาญรายเดือน">บำนาญ/เดือน</button></div></div>
+          <div class="field"><label id="amtLabel" for="amount">จำนวนเงินเอาประกันภัย (บาท)</label>
+            <input type="number" id="amount" value="100000" step="1000">
+            <div class="hint" id="amtHint">ทุนประกันขั้นต่ำ 75,000 — สูงสุด 20,000,000 บาท</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-h"><span class="ic">➕</span><h2>สัญญาเพิ่มเติม</h2><span class="step">ไม่บังคับ</span></div>
+      <div class="card-b"><div class="riders-grid" id="riderList"></div></div>
+    </div>
+
+    <div class="calc-bar">
+      <div class="calc-err" id="calcErr"></div>
+      <button class="btn-calc" id="btnCalc">คำนวณผลประโยชน์ <span style="font-size:19px">→</span></button>
+    </div>
+  </div>
+
+  <!-- ============ VIEW 2: RESULT ============ -->
+  <div class="view" id="viewResult">
+    <div class="resbar">
+      <button class="btn btn-back" id="btnBack">← แก้ไขข้อมูล</button>
+      <div class="res-summary" id="resSummary"></div>
+      <button class="btn btn-ghost" onclick="azPrint()">🖨️ พิมพ์ / บันทึก PDF</button>
+    </div>
+
+    <div class="card">
+      <div class="card-h"><span class="ic">🧾</span><h2>สรุปเบี้ยประกันภัย</h2><span class="step" id="modeStep">รายปี</span></div>
+      <div class="card-b">
+        <div class="kpi" style="margin-bottom:14px">
+          <div class="box hero"><div class="lbl">เบี้ยประกันภัยรวม</div><div class="val" id="kTotal">—</div><div class="sub" id="kTotalSub"></div></div>
+          <div class="box"><div class="lbl">ทุนประกันสัญญาหลัก</div><div class="val" id="kSA">—</div></div>
+          <div class="box"><div class="lbl" id="kPenLbl">บำนาญที่จะได้รับ</div><div class="val" id="kPension">—</div><div class="sub" id="kPensionSub"></div></div>
+        </div>
+        <table class="prem-tbl"><tbody id="premBody"></tbody></table>
+      </div>
+    </div>
+
+    <div class="card collapse open" id="illusCard">
+      <div class="collapse-h" onclick="document.getElementById('illusCard').classList.toggle('open')">
+        <span class="ic">📊</span><h2 style="font-family:Prompt;font-size:15.5px;color:var(--primary-d)">ตารางแสดงผลประโยชน์รายปี (ตลอดสัญญา)</h2><span class="arr">▾</span></div>
+      <div class="collapse-b">
+        <div class="note" id="illusNote"></div>
+        <div class="tbl-scroll" style="margin-top:10px"><table><thead><tr>
+          <th>อายุ</th><th>ปีที่</th><th>เบี้ย/ปี</th><th>เบี้ยสะสม</th><th>เงินเวนคืน</th><th>คุ้มครองชีวิต</th><th>บำนาญ/ปี</th><th>บำนาญสะสม</th>
+        </tr></thead><tbody id="illusBody"></tbody></table></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-h"><span class="ic">🧮</span><h2>คำนวณสิทธิลดหย่อนภาษี</h2><span class="step">บำนาญสูงสุด</span></div>
+      <div class="card-b">
+        <p class="hint" style="margin-bottom:12px">คำนวณเบี้ยประกันบำนาญสูงสุดที่ซื้อเพิ่มได้เพื่อใช้สิทธิลดหย่อนภาษีอย่างคุ้มค่า</p>
+        <div class="tax-grid">
+          <div class="field"><label for="txIncome">เงินได้พึงประเมินต่อปี (บาท)</label><input type="number" id="txIncome" value="1000000" step="10000"></div>
+          <div class="field"><label for="txRate">อัตราภาษีส่วนเพิ่ม (%)</label><input type="number" id="txRate" value="10" step="5"></div>
+          <div class="field"><label for="txRetire">กองทุนเกษียณ (PVD/กบข./RMF) รวม (บาท)</label><input type="number" id="txRetire" value="0" step="10000"></div>
+          <div class="field"><label for="txOrdinary">เบี้ยประกันชีวิตทั่วไปที่มีอยู่ (บาท)</label><input type="number" id="txOrdinary" value="0" step="10000"></div>
+          <div class="field"><label for="txAnnuity">เบี้ยประกันบำนาญที่มีอยู่แล้ว (บาท)</label><input type="number" id="txAnnuity" value="0" step="10000"></div>
+        </div>
+        <div class="tax-out">
+          <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:8px">
+            <div><div class="hint">ซื้อเบี้ยบำนาญเพิ่มได้สูงสุด</div><div class="big" id="txMax">—</div></div>
+            <div style="text-align:right"><div class="hint">ประหยัดภาษีสูงสุด</div><div class="big" id="txBenefit" style="color:var(--good)">—</div></div>
+          </div>
+          <div class="hint" id="txNote" style="margin-top:8px"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="disclaimer">
+    เอกสารนี้เป็นเพียงโปรแกรมช่วยคำนวณเพื่อประกอบการนำเสนอเบื้องต้นเท่านั้น มิใช่ส่วนหนึ่งของสัญญาประกันภัย ผลประโยชน์ ความคุ้มครอง และข้อยกเว้นเป็นไปตามที่กำหนดในกรมธรรม์ ตัวเลขลดหย่อนภาษีเป็นการประมาณการอย่างง่าย ผลประโยชน์ทางภาษีที่ได้รับจริงขึ้นอยู่กับเงินได้สุทธิของแต่ละบุคคลตามหลักเกณฑ์ของกรมสรรพากร · อ้างอิงอัตราเบี้ยและสูตรคำนวณจากไฟล์ทางการ บำนาญ สมาร์ท 95 (A2026-1)
+  </p>
+</div>
+<script src="data/db.js"></script>
+<script src="src/engine.js"></script>
+<script src="src/app.js"></script>
+</body>
+</html>

@@ -24,13 +24,14 @@
     .ih-menu button[data-active="false"]::before { content: ""; width: .7rem; display: inline-block; }
     @media print {
       .print\:hidden { display: none !important; }
+      .az-gh { display: none !important; }
       body { background: #fff; }
     }
   </style>
 <link rel="stylesheet" href="../assets/global-header.css" />
 </head>
 <body class="bg-background text-foreground">
-<script src="../assets/global-header.js"></script>
+<script src="../assets/global-header.js?v=2"></script>
 
 <div class="ihealthy-scope">
 <main class="min-h-screen bg-background text-foreground flex flex-col">
@@ -513,7 +514,7 @@
       window.open("https://line.me/R/msg/text/?" + encodeURIComponent(txt), "_blank", "noopener,noreferrer");
     });
 
-    document.getElementById("btn-print").addEventListener("click", function () { window.print(); });
+    document.getElementById("btn-print").addEventListener("click", function () { azPrint(); });
 
     document.getElementById("btn-image").addEventListener("click", handleShareImage);
   }

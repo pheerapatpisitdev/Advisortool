@@ -782,7 +782,7 @@
     var isPa = ctx.isPa;
     var lines = [
       '💼 ' + t(isPa ? 'quoteTitleMultiPa' : 'quoteTitleMultiHealth'),
-      '👥 ' + t('totalPeople') + ': ' + result.totalCount + ' ' + t('people') + ' (' + t('bandUsed') + ' ' + result.band + ')',
+      '👥 ' + t('totalPeople') + ': ' + fmt(result.totalCount) + ' ' + t('people') + ' (' + t('bandUsed') + ' ' + result.band + ')',
       '',
     ];
     result.groups.forEach(function (cg, i) {

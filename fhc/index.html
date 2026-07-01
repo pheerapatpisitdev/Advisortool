@@ -392,8 +392,8 @@ function recalc() {
   setText("v-net-month", imN > 0 ? fmt(imN - exN) : "—");
   setText("v-sav", fmt(sav)); setText("v-dbt", fmt(dbt)); setText("v-inv", fmt(inv));
   setText("s-wy", wy ? wy + " ปี" : "—"); setText("s-my", my ? my + " ปี" : "—");
-  setText("s-ti", ti ? fmtM(ti) + " บาท" : "—");
-  setText("s-sav", fmtM(sav) + " บาท"); setText("s-dbt", fmtM(dbt) + " บาท"); setText("s-net", fmtM(net) + " บาท");
+  setText("s-ti", ti ? fmt(ti) + " บาท" : "—");
+  setText("s-sav", fmt(sav) + " บาท"); setText("s-dbt", fmt(dbt) + " บาท"); setText("s-net", fmt(net) + " บาท");
 
   return { cur, ret, expAge, wy, my, imN, exN, iy, ti, sav, dbt, inv, net };
 }

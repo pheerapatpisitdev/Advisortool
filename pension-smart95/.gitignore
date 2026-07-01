@@ -1,0 +1,8 @@
+node_modules/
+*.log
+.DS_Store
+__pycache__/
+*.pyc
+.venv/
+# build output is committed so non-devs can grab dist/ directly; remove next line to ignore it
+# dist/
