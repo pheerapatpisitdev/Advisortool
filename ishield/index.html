@@ -8,10 +8,10 @@
 <title>โปรแกรมคำนวณเบี้ยประกัน iShield</title>
 <link rel="stylesheet" href="../assets/global-header.css" />
 <link rel="stylesheet" href="../assets/theme.css?v=1" />
-<link rel="stylesheet" href="css/styles.css?v=1" />
+<link rel="stylesheet" href="css/styles.css?v=3" />
 </head>
 <body class="az-theme">
-<script src="../assets/global-header.js?v=2"></script>
+<script src="../assets/global-header.js?v=3"></script>
 
 <header class="az-hero">
   <div class="az-hero__in">
@@ -36,8 +36,6 @@
       <div class="az-card">
         <div class="az-card__h"><span class="az-card__n">1</span><h2>ข้อมูลผู้เอาประกันภัย</h2></div>
         <div class="az-card__b">
-        <label class="fld"><span class="lab">ชื่อผู้เอาประกันภัย</span>
-          <input type="text" id="name" placeholder="เช่น คุณคนพิเศษ" value=""></label>
         <div class="az-grid2">
           <label class="fld"><span class="lab">อายุ (ปี)</span>
             <select id="age"></select></label>
@@ -48,37 +46,30 @@
             </div></label>
         </div>
         <label class="fld"><span class="lab">แบบประกัน</span>
-          <select id="product">
-            <option value="iShield 5">iShield 5 (ชำระเบี้ย 5 ปี)</option>
-            <option value="iShield 10" selected>iShield 10 (ชำระเบี้ย 10 ปี)</option>
-            <option value="iShield 15">iShield 15 (ชำระเบี้ย 15 ปี)</option>
-            <option value="iShield 20">iShield 20 (ชำระเบี้ย 20 ปี)</option>
-          </select></label>
+          <div class="az-seg" id="productSeg">
+            <button data-v="iShield 5">iShield 5</button>
+            <button data-v="iShield 10" class="on">iShield 10</button>
+            <button data-v="iShield 15">iShield 15</button>
+            <button data-v="iShield 20">iShield 20</button>
+          </div></label>
         <label class="fld"><span class="lab">งวดการชำระเบี้ย</span>
-          <select id="mode">
-            <option>รายปี</option><option>ราย 6 เดือน</option>
-            <option>ราย 3 เดือน</option><option>รายเดือน</option>
-          </select></label>
+          <div class="az-seg" id="modeSeg">
+            <button data-v="รายปี" class="on">รายปี</button>
+            <button data-v="ราย 6 เดือน">ราย 6 เดือน</button>
+            <button data-v="รายเดือน">รายเดือน</button>
+          </div></label>
+        <div class="az-grid2">
+          <label class="fld"><span class="lab">จำนวนเงินเอาประกันภัย (บาท)</span>
+            <input type="text" inputmode="numeric" class="money" id="sa" value="500,000"></label>
+          <label class="fld"><span class="lab">เบี้ยสัญญาหลัก/งวด (บาท)</span>
+            <input type="text" inputmode="numeric" class="money" id="targetPrem" placeholder="กรอกเพื่อคำนวณทุนย้อนกลับ"></label>
+        </div>
+        <div class="mini">ทุนประกัน 100,000 – 5,000,000 บาท • กรอกช่องใดช่องหนึ่ง อีกช่องจะคำนวณให้อัตโนมัติ</div>
         </div>
       </div>
 
       <div class="az-card">
-        <div class="az-card__h"><span class="az-card__n">2</span><h2>วิธีคำนวณ</h2></div>
-        <div class="az-card__b">
-        <div class="az-seg is-mb13" id="dirSeg">
-          <button data-v="sa" class="on">จากทุนประกัน</button>
-          <button data-v="prem">จากเบี้ยประกัน</button>
-        </div>
-        <label class="fld" id="saFld"><span class="lab">จำนวนเงินเอาประกันภัย (บาท)</span>
-          <input type="text" inputmode="numeric" class="money" id="sa" value="500,000"></label>
-        <label class="fld" id="premFld" style="display:none"><span class="lab">เบี้ยประกันภัยที่ต้องการ (ต่องวด, บาท)</span>
-          <input type="text" inputmode="numeric" class="money" id="targetPrem" value="100,000"></label>
-        <div class="mini">ทุนประกัน 100,000 – 5,000,000 บาท</div>
-        </div>
-      </div>
-
-      <div class="az-card">
-        <div class="az-card__h"><span class="az-card__n">3</span><h2>สัญญาเพิ่มเติม (ไม่บังคับ)</h2></div>
+        <div class="az-card__h"><span class="az-card__n">2</span><h2>สัญญาเพิ่มเติม (ไม่บังคับ)</h2></div>
         <div class="az-card__b">
         <label class="fld"><span class="lab">ขั้นอาชีพ (สำหรับ AP / ECARE / MEB)</span>
           <select id="occ"><option value="1">ขั้น 1</option><option value="2">ขั้น 2</option>
@@ -394,16 +385,25 @@ function $(id){return document.getElementById(id);}
 function moneyVal(id){return +(($(id).value||'').replace(/[^0-9.]/g,''))||0;}
 function seg(container,cb){container.querySelectorAll('button').forEach(b=>b.onclick=()=>{
   container.querySelectorAll('button').forEach(x=>x.classList.remove('on'));b.classList.add('on');cb&&cb(b.dataset.v);});}
-let sexV='ชาย',dirV='sa',pbPlanV='fit';
-seg($('sexSeg'),v=>sexV=v);
-seg($('dirSeg'),v=>{dirV=v;$('saFld').style.display=v==='sa'?'block':'none';$('premFld').style.display=v==='prem'?'block':'none';});
+let sexV='ชาย',dirV='sa',pbPlanV='fit',productV='iShield 10',modeV='รายปี';
+seg($('sexSeg'),v=>{sexV=v;syncPrem();});
 seg($('pbPlan'),v=>pbPlanV=v);
+seg($('productSeg'),v=>{productV=v;fillAgeOptions(PROD[v].maxIssue);syncPrem();});
+seg($('modeSeg'),v=>{modeV=v;syncPrem();});
+// live two-way: SA <-> base premium/mode (like LifeReady). Type either field; the other is computed.
+function curRate(){var P=PROD[productV];var a=+$('age').value;return (P&&Number.isFinite(a))?(baseRate(P.code,SEX(sexV),a)||0):0;}
+function grpN(n){return Math.round(n).toLocaleString('en-US');}
+function syncPrem(){ if(document.activeElement===$('targetPrem'))return; var r=curRate(),M=MODE[modeV],SA=moneyVal('sa'); $('targetPrem').value=(r>0&&SA>0)?grpN(rdown(r*SA/1000*M.f,2)):''; }
+function syncSA(){ var r=curRate(),M=MODE[modeV],pm=moneyVal('targetPrem'); if(r>0&&pm>0){$('sa').value=grpN(rup(pm/M.f*1000/r,0));} }
+$('sa').addEventListener('input',syncPrem);
+$('targetPrem').addEventListener('input',syncSA);
+$('age').addEventListener('change',syncPrem);
 document.querySelectorAll('.rider input[type=checkbox]').forEach(c=>c.onchange=()=>{
   c.closest('.rider').classList.toggle('open',c.checked);});
 
 function gather(){
-  return {name:$('name').value||'ผู้เอาประกันภัย',age:+$('age').value,sex:sexV,product:$('product').value,
-    mode:$('mode').value,dir:dirV,sa:moneyVal('sa'),targetPrem:moneyVal('targetPrem'),occ:$('occ').value,
+  return {name:'ผู้เอาประกันภัย',age:+$('age').value,sex:sexV,product:productV,
+    mode:modeV,dir:dirV,sa:moneyVal('sa'),targetPrem:moneyVal('targetPrem'),occ:$('occ').value,
     pb:$('r_pb').querySelector('input').checked,pbPlan:pbPlanV,payerAge:+$('payerAge').value,payerSex:$('payerSex').value,
     ap:$('r_ap').querySelector('input').checked,apSA:moneyVal('apSA'),
     ecare:$('r_ecare').querySelector('input').checked,ecareSA:moneyVal('ecareSA'),
@@ -457,13 +457,15 @@ function _renderCore(){
   }
   h+=chartSVG(R);
   h+=`<div class="illus-wrap"><table class="tb"><thead><tr>
-      <th>สิ้นปีที่</th><th>อายุ</th><th>เบี้ยสัญญาหลักสะสม</th><th>มูลค่าเวนคืนเงินสด</th><th>ส่วนต่าง<br><span class="mini">(มูลค่าเวนคืน − เบี้ยสะสม)</span></th><th>ความคุ้มครองการเสียชีวิต</th></tr></thead><tbody>`;
+      <th>อายุ</th><th>ปี</th><th>เบี้ยประกัน</th><th>เบี้ยประกันสะสม</th><th>มูลค่าเวนคืน</th><th>ส่วนต่าง<br><span class="mini">(เวนคืน − เบี้ยสะสม)</span></th><th>ทุนประกัน</th></tr></thead><tbody>`;
+  let prevCum=0;
   R.rows.forEach(r=>{
-    const dcol=r.diff>=0?'#1b8a5a':'#c0392b';
+    const dcol=r.diff>=0?'#0f8a4d':'#c0392b';
     const dtxt=(r.diff>=0?'+':'')+fmt(r.diff,0);
     const be=(r.yr===R.breakEvenYr);
-    const premCell=be?'<span style="color:#1b8a5a;font-weight:800">จุดคุ้มทุน</span>':(r.yr<=R.pay)?fmt(r.cumPrem,0):'<span style="color:var(--muted)">–</span>';
-    h+=`<tr${be?' style="background:#e6f6f0!important;font-weight:700"':''}><td style="text-align:center">${r.yr}${be?' ⭐':''}</td><td style="text-align:center">${r.age}</td><td>${premCell}</td><td>${fmt(r.cv)}</td><td style="color:${dcol};font-weight:700">${dtxt}</td><td>${fmt(r.death)}</td></tr>`;
+    const yearPrem=r.cumPrem-prevCum; prevCum=r.cumPrem;
+    const premCell=(yearPrem>0?fmt(yearPrem,0):'')+(be?' <span style="color:#0f8a4d;font-weight:800;font-size:10.5px">จุดคุ้มทุน</span>':'');
+    h+=`<tr${be?' style="background:#e7f6ee!important;font-weight:700"':''}><td style="text-align:center">${r.age}</td><td style="text-align:center">${r.yr}</td><td>${premCell}</td><td>${fmt(r.cumPrem,0)}</td><td>${fmt(r.cv)}</td><td style="color:${dcol};font-weight:700">${dtxt}</td><td>${fmt(R.SA)}</td></tr>`;
   });
   h+=`</tbody></table></div>`;
 
@@ -524,9 +526,9 @@ function fillAgeOptions(max){
   sel.innerHTML=o;
   sel.value=String(Math.min(cur,max));
 }
-// product max-age hint
-$('product').addEventListener('change',()=>{fillAgeOptions(PROD[$('product').value].maxIssue);});
-fillAgeOptions(PROD[$('product').value].maxIssue);
+// product max-age: age options refill on product change is handled in the productSeg callback above
+fillAgeOptions(PROD[productV].maxIssue);
+syncPrem();
 // thousands separator for money inputs (format while typing, keep caret roughly in place)
 (function(){
   function grp(v){v=(v||'').replace(/[^0-9]/g,'');return v?(+v).toLocaleString('en-US'):'';}

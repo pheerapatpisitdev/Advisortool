@@ -69,7 +69,8 @@ table.tb{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:6px}
 table.tb th,table.tb td{padding:8px 10px;text-align:right;border-bottom:1px solid var(--line);border-right:1px solid var(--line)}
 table.tb th:last-child,table.tb td:last-child{border-right:none}
 table.tb th{border-right-color:rgba(255,255,255,.18)}
-table.tb th{background:var(--navy);color:#fff;font-weight:600;font-size:12.5px;text-align:right;position:sticky;top:0}
+table.tb th{background:var(--navy);color:#fff;font-weight:600;font-size:12.5px;text-align:right}
+.illus-wrap table.tb th{text-align:center}
 table.tb th:first-child,table.tb td:first-child{text-align:left}
 table.tb tr:nth-child(even) td{background:#f8fafc}
 table.tb tfoot td,table.tb .total td{font-weight:800;background:var(--soft)!important;color:var(--navy);border-top:2px solid var(--blue)}
@@ -140,3 +141,6 @@ ol.dzlist li{margin-bottom:5px;line-height:1.45;break-inside:avoid}
    (the two style="margin-top:16px" instances on stacked cards were dropped outright —
    .az-card already carries margin-bottom:16px, so the old rule was redundant.) */
 .is-mb13{margin-bottom:13px}
+/* product segmented control: 4 options fit one row on desktop, wrap on narrow screens */
+#productSeg{flex-wrap:wrap}
+#productSeg button{flex:1 1 22%}
