@@ -22,6 +22,7 @@ table{width:100%;border-collapse:collapse;font-size:13.5px}
 /* calculate bar */
 .calc-bar{position:sticky;bottom:0;display:flex;justify-content:center;padding:14px 0 4px;margin-top:4px}
 /* result page */
+.result-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap}
 .cust-strip{background:#fff;border:1px solid var(--line);border-radius:12px;padding:13px 18px;margin-bottom:18px;display:flex;flex-wrap:wrap;gap:8px 26px;box-shadow:var(--shadow)}
 .cust-strip .it{font-size:13px}.cust-strip .it b{color:var(--navy)}.cust-strip .it span{color:var(--muted)}
 .breakdown th{background:var(--navy);color:#fff;padding:10px 10px;text-align:left;font-size:12.5px;font-weight:600}
@@ -100,4 +101,4 @@ table{width:100%;border-collapse:collapse;font-size:13.5px}
   .riders .rin,.riders select.rin{width:100%;min-width:0;font-size:15px;min-height:40px;padding:8px}
   .tabs button{min-height:40px}
 }
-@media print{header .badge,.result-head,.tabs{display:none}.cv-wrap{max-height:none;overflow:visible}}
+@media print{header .az-hero__badge,.result-head,.tabs{display:none}.cv-wrap{max-height:none;overflow:visible}}
