@@ -3,7 +3,7 @@
 var $=function(id){return document.getElementById(id)};
 function fmt(n){ if(n===''||n==null||isNaN(n)) return '0'; return Number(n).toLocaleString('th-TH',{minimumFractionDigits:(n%1?2:0),maximumFractionDigits:2}); }
 function fmt0(n){ return Number(n||0).toLocaleString('th-TH'); }
-var STATE={ sex:'หญิง', payerSex:'ชาย', riders:{} };
+var STATE={ sex:'หญิง', payerSex:'ชาย', mode:'รายปี', seq:'3', riders:{} };
 
 var RIDERS=[
  {key:'pb', name:'PB (พีบี)', desc:'คุ้มครองผู้ชำระเบี้ย', ctl:'pb', min:0,max:70},

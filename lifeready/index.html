@@ -11,10 +11,10 @@
 <meta http-equiv="Expires" content="0">
 <link rel="stylesheet" href="../assets/global-header.css" />
 <link rel="stylesheet" href="../assets/theme.css?v=1" />
-<link rel="stylesheet" href="css/styles.css?v=17">
+<link rel="stylesheet" href="css/styles.css?v=20">
 </head>
 <body class="az-theme">
-<script src="../assets/global-header.js"></script>
+<script src="../assets/global-header.js?v=3"></script>
 
 <header class="az-hero">
   <div class="az-hero__in">
@@ -37,22 +37,11 @@
   <div class="az-card">
     <div class="az-card__h"><span class="az-card__n">1</span><h2>ข้อมูลผู้เอาประกันภัย</h2></div>
     <div class="az-card__b">
+      <div class="az-field"><label for="age">อายุ (ปี)</label><select id="age"></select></div>
+      <div class="az-field"><label id="sexSegLbl">เพศ</label><div class="az-seg" id="sexSeg" role="radiogroup" aria-labelledby="sexSegLbl"><button type="button" role="radio" aria-checked="true" data-v="หญิง" class="on">หญิง</button><button type="button" role="radio" aria-checked="false" data-v="ชาย">ชาย</button></div></div>
+      <div class="az-field"><label id="modeSegLbl">งวดการชำระเบี้ย</label><div class="az-seg" id="modeSeg" role="radiogroup" aria-labelledby="modeSegLbl"></div></div>
+      <div class="az-field"><label id="planSegLbl">แผนการชำระเบี้ย</label><div class="az-seg" id="planSeg" role="radiogroup" aria-labelledby="planSegLbl"></div></div>
       <div class="az-grid2">
-        <div class="az-field" style="flex:2"><label for="cname">ชื่อผู้เอาประกันภัย</label><input id="cname" value="คุณคนพิเศษ"></div>
-        <div class="az-field"><label for="age">อายุ (ปี)</label><input id="age" type="number" value="35" min="0" max="80"></div>
-      </div>
-      <div class="az-grid2">
-        <div class="az-field"><label id="sexSegLbl">เพศ</label><div class="az-seg" id="sexSeg" role="radiogroup" aria-labelledby="sexSegLbl"><button type="button" role="radio" aria-checked="true" data-v="หญิง" class="on">หญิง</button><button type="button" role="radio" aria-checked="false" data-v="ชาย">ชาย</button></div></div>
-        <div class="az-field"><label for="mode">งวดการชำระเบี้ย</label><select id="mode"></select></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="az-card">
-    <div class="az-card__h"><span class="az-card__n">2</span><h2>แบบประกันหลัก</h2></div>
-    <div class="az-card__b">
-      <div class="az-grid2">
-        <div class="az-field" style="flex:2"><label for="plan">แผนการชำระเบี้ย</label><select id="plan"></select></div>
         <div class="az-field"><label for="mainSA">จำนวนเงินเอาประกันภัย (บาท)</label><input id="mainSA" type="text" inputmode="numeric" value="1,000,000"></div>
         <div class="az-field"><label for="mainPrem">เบี้ยสัญญาหลัก/งวด (บาท)</label><input id="mainPrem" type="text" inputmode="decimal" placeholder="กรอกเพื่อคำนวณทุนย้อนกลับ"></div>
       </div>
@@ -61,7 +50,7 @@
   </div>
 
   <div class="az-card">
-    <div class="az-card__h"><span class="az-card__n">3</span><h2>สัญญาเพิ่มเติม</h2></div>
+    <div class="az-card__h"><span class="az-card__n">2</span><h2>สัญญาเพิ่มเติม</h2></div>
     <div class="az-card__b">
       <div id="pbExtra" class="az-grid2" style="display:none;background:#f6f8fb;padding:10px;border-radius:9px">
         <div class="az-field"><label for="payerAge">อายุผู้ชำระเบี้ย (PB)</label><input id="payerAge" type="number" value="35" min="20" max="70"></div>
@@ -128,8 +117,8 @@
 
 <script src="js/data.js?v=15"></script>
 <script src="js/engine.js?v=15"></script>
-<script src="js/config.js?v=15"></script>
-<script src="js/app.js?v=16"></script>
+<script src="js/config.js?v=16"></script>
+<script src="js/app.js?v=20"></script>
 
 </body>
 </html>

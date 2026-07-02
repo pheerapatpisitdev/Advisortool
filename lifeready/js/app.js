@@ -1,7 +1,10 @@
 // LifeReady — UI logic: build form, recalc, render, two-page flow. Uses window.DATA/CV/LR + config.js globals.
+function segBtn(v,label,on){ return '<button type="button" role="radio" data-v="'+v+'" aria-checked="'+(on?'true':'false')+'" class="'+(on?'on':'')+'">'+label+'</button>'; }
+function planShort(th){ return th.replace(/^ชำระเบี้ย\s*/,'').replace(/\s*Package$/,''); }
 function buildSelects(){
-  var mo=$('mode'); DATA.modes.forEach(function(m){mo.innerHTML+='<option>'+m.th+'</option>'});
-  var pl=$('plan'); DATA.pptPlans.forEach(function(p){pl.innerHTML+='<option value="'+p.seq+'">'+p.th+'</option>'}); pl.value=3;
+  var ag=$('age'); if(ag){ var ao=''; for(var a=0;a<=80;a++){ ao+='<option value="'+a+'"'+(a===35?' selected':'')+'>'+a+'</option>'; } ag.innerHTML=ao; }
+  $('modeSeg').innerHTML = DATA.modes.filter(function(m){ return m.th!=='ราย 3 เดือน'; }).map(function(m){ return segBtn(m.th, m.th, m.th===STATE.mode); }).join('');
+  $('planSeg').innerHTML = DATA.pptPlans.filter(function(p){ return p.seq<=4; }).map(function(p){ return segBtn(p.seq, planShort(p.th), String(p.seq)===String(STATE.seq)); }).join('');
 }
 function buildRiders(){
   var b=$('riderBody'); b.innerHTML='';
@@ -27,7 +30,7 @@ function ctlHTML(r,i){
   return '';
 }
 function numVal(id){ var e=$(id); return e?(parseFloat(String(e.value).replace(/,/g,''))||0):0; }
-function getInputs(){ return { age:parseInt($('age').value)||0, sex:STATE.sex, mode:$('mode').value, seq:parseInt($('plan').value), mainSA:numVal('mainSA'), occ:($('occ')?parseInt($('occ').value):1) }; }
+function getInputs(){ return { age:parseInt($('age').value)||0, sex:STATE.sex, mode:STATE.mode, seq:parseInt(STATE.seq), mainSA:numVal('mainSA'), occ:($('occ')?parseInt($('occ').value):1) }; }
 function readRider(r,i){
   if(!$('ck_'+r.key) || !$('ck_'+r.key).checked) return null;
   if(r.ctl==='buy') return {buy:true};
@@ -92,7 +95,7 @@ function recalc(){
 }
 
 function render(res,inp){
-  $('custStrip').innerHTML=[['ผู้เอาประกันภัย',($('cname').value||'-')],['อายุ',inp.age+' ปี'],['เพศ',inp.sex],['แบบประกัน',planName(inp.seq)],['งวดชำระ',inp.mode]]
+  $('custStrip').innerHTML=[['อายุ',inp.age+' ปี'],['เพศ',inp.sex],['แบบประกัน',planName(inp.seq)],['งวดชำระ',inp.mode]]
     .map(function(x){return '<div class="it"><span>'+x[0]+': </span><b>'+x[1]+'</b></div>'}).join('');
   $('warnBox').innerHTML = res.main.ok?'':('<div class="warn">อายุ '+inp.age+' ปี ไม่อยู่ในเกณฑ์รับประกันของแผน “'+planName(inp.seq)+'” (รับอายุ '+res.main.amin+'–'+res.main.amax+' ปี) — กรุณากลับไปเลือกแผนหรือแก้ไขอายุ</div>');
   var body='<tr class="main"><td><span class="rn">สัญญาหลัก — ไลฟ์เรดดี้</span><br><span class="rd">'+(res.main.ok?('รหัส '+res.main.plancode+' · ชำระเบี้ย '+res.main.payYear+' ปี'):'')+'</span></td><td class="amt">'+fmt0(inp.mainSA)+' บาท</td><td class="pm">'+(res.main.ok?fmt(res.main.mode):'ไม่คุ้มครอง')+'</td></tr>';
@@ -302,7 +305,8 @@ function initSeg(segId,stateKey){ $(segId).querySelectorAll('button').forEach(fu
 window.addEventListener('DOMContentLoaded',function(){
   buildSelects(); buildRiders();
   initSeg('sexSeg','sex'); initSeg('payerSexSeg','payerSex');
-  ['age','mode','plan','mainSA','occ','payerAge','cname'].forEach(function(id){ var e=$(id); if(e){e.addEventListener('input',recalc);e.addEventListener('change',recalc);} });
+  initSeg('modeSeg','mode'); initSeg('planSeg','seq');
+  ['age','mainSA','occ','payerAge'].forEach(function(id){ var e=$(id); if(e){e.addEventListener('input',recalc);e.addEventListener('change',recalc);} });
   // live thousands-separator while typing in the money fields
   function groupCommas(el,allowDot){
     var raw=String(el.value).replace(allowDot?/[^0-9.]/g:/[^0-9]/g,'');
