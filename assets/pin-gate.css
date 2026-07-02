@@ -1,0 +1,84 @@
+/* Advisortool — PIN gate styles (ธีม Navy & Gold).
+   Self-contained: ใช้ตัวแปรจาก theme.css ถ้ามี ไม่มีก็ fallback เป็นค่าจริง. */
+
+/* ระหว่างล็อก: ซ่อนหน้าจริง + กัน scroll. overlay เป็น sibling ของ body จึงไม่โดนซ่อน. */
+html.az-locked { overflow: hidden; background: var(--az-navy, #0d2c54); }
+html.az-locked body { display: none !important; }
+
+.az-pin {
+  position: fixed; inset: 0; z-index: 2147483000;
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+  background: linear-gradient(120deg, var(--az-navy, #0d2c54), var(--az-navy-2, #143b6e));
+  font-family: var(--az-font, 'IBM Plex Sans Thai', 'Sarabun', 'Segoe UI', Tahoma, sans-serif);
+  -webkit-tap-highlight-color: transparent;
+  animation: az-pin-in .2s ease;
+}
+.az-pin--out { animation: az-pin-out .26s ease forwards; }
+@keyframes az-pin-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes az-pin-out { from { opacity: 1; } to { opacity: 0; } }
+
+.az-pin__card {
+  width: 100%; max-width: 340px; background: var(--az-card, #fff);
+  border-radius: 18px; box-shadow: 0 20px 60px rgba(0,0,0,.35);
+  padding: 28px 24px 24px; text-align: center;
+}
+.az-pin__brand {
+  display: inline-block; font-size: 12px; font-weight: 700; letter-spacing: .5px;
+  text-transform: uppercase; color: var(--az-gold-d, #a97f28);
+  background: var(--az-gold-l, #f7efdd); padding: 4px 12px; border-radius: 20px;
+}
+.az-pin__title { margin-top: 14px; font-size: 18px; font-weight: 700; color: var(--az-navy, #0d2c54); }
+
+.az-pin__dots { display: flex; justify-content: center; gap: 12px; margin: 20px 0 6px; }
+.az-pin__dots span {
+  width: 13px; height: 13px; border-radius: 50%;
+  border: 2px solid var(--az-line, #e2e8f0); background: transparent;
+  transition: transform .1s, background .1s, border-color .1s;
+}
+.az-pin__dots span.is-filled {
+  background: var(--az-navy, #0d2c54); border-color: var(--az-navy, #0d2c54); transform: scale(1.05);
+}
+
+.az-pin__msg {
+  min-height: 18px; font-size: 12.5px; color: var(--az-bad, #c0392b);
+  font-weight: 500; opacity: 0; transition: opacity .15s;
+}
+.az-pin__msg--show { opacity: 1; }
+
+.az-pin__pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 14px; }
+.az-pin__pad.is-disabled { opacity: .45; pointer-events: none; }
+.az-pin__key {
+  height: 62px; border: 0; border-radius: 14px; cursor: pointer;
+  background: var(--az-soft, #eef3f8); color: var(--az-navy, #0d2c54);
+  font-family: inherit; font-size: 24px; font-weight: 600;
+  transition: transform .06s, background .12s; -webkit-user-select: none; user-select: none;
+}
+.az-pin__key:hover { background: var(--az-gold-l, #f7efdd); }
+.az-pin__key:active { transform: scale(.94); background: var(--az-gold-l, #f7efdd); }
+.az-pin__key--back { font-size: 20px; color: var(--az-muted, #64748b); }
+.az-pin__spacer { visibility: hidden; }
+
+.az-shake { animation: az-shake .38s cubic-bezier(.36,.07,.19,.97); }
+@keyframes az-shake {
+  10%, 90% { transform: translateX(-1px); }
+  20%, 80% { transform: translateX(2px); }
+  30%, 50%, 70% { transform: translateX(-5px); }
+  40%, 60% { transform: translateX(5px); }
+}
+
+/* ปุ่มล็อกลอย (แสดงเมื่อปลดแล้ว) */
+.az-lock-btn {
+  position: fixed; left: 14px; bottom: 14px; z-index: 2147482000;
+  width: 40px; height: 40px; border-radius: 50%;
+  border: 1px solid var(--az-line, #e2e8f0);
+  background: rgba(255,255,255,.9); color: var(--az-navy, #0d2c54);
+  display: flex; align-items: center; justify-content: center; cursor: pointer;
+  box-shadow: 0 2px 8px rgba(16,42,76,.18); opacity: .6;
+  transition: opacity .15s, transform .1s;
+  -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
+}
+.az-lock-btn:hover { opacity: 1; }
+.az-lock-btn:active { transform: scale(.92); }
+
+@media print { .az-lock-btn { display: none !important; } }
+@media (max-width: 380px) { .az-pin__key { height: 54px; font-size: 21px; } }
