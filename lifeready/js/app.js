@@ -18,7 +18,7 @@ function ctlHTML(r,i){
   var v=STATE.riders[r.key]||{};
   if(r.ctl==='buy') return '<span class="muted" style="font-size:12px">เลือก ✓ เพื่อซื้อ</span>';
   if(r.ctl==='pb') return '<select class="rin" id="in_pb_type"><option>PB Beyond</option><option>PB Fit</option></select>';
-  if(r.ctl==='sa'||r.ctl==='saUnit') return '<input class="rin" type="number" id="in_'+r.key+'" value="'+(v.sa||r.smin||'')+'" step="10000"><div class="hint" id="hint_'+r.key+'"></div>';
+  if(r.ctl==='sa'||r.ctl==='saUnit') return '<input class="rin" type="number" id="in_'+r.key+'" value="'+(v.sa||r.smin||'')+'" step="10000"><div class="az-hint" id="hint_'+r.key+'"></div>';
   if(r.ctl==='planMEB'){ var o=MEB_PLANS(i.age).map(function(p){return '<option value="'+p+'">'+fmt0(p)+' บาท/วัน</option>'}).join(''); return '<select class="rin" id="in_'+r.key+'">'+o+'</select>'; }
   if(r.ctl==='planMEX'){ var o=MEX_PLANS(i.age).map(function(p){return '<option value="'+p+'">แผน '+p+'</option>'}).join(''); return '<select class="rin" id="in_'+r.key+'">'+o+'</select>'; }
   if(r.ctl==='planMCI'){ var o=MCI_PLANS(i.age).map(function(p){return '<option value="'+p[0]+'">'+p[1]+'</option>'}).join(''); return '<select class="rin" id="in_'+r.key+'">'+o+'</select>'; }
@@ -105,6 +105,14 @@ function render(res,inp){
   $('bkFoot').innerHTML='<tr class="sub"><td colspan="2">รวมเบี้ยสัญญาเพิ่มเติม</td><td>'+fmt(riderSum)+' บาท</td></tr>'+
     '<tr class="grand"><td colspan="2">เบี้ยรวมต่องวด ('+inp.mode+')</td><td>'+fmt(res.modeTotal)+' บาท</td></tr>'+
     '<tr class="ann"><td colspan="2">เทียบเท่าเบี้ยรายปี</td><td>'+fmt(res.annualTotal)+' บาท/ปี</td></tr>';
+  // KPI strip — reuses the totals already computed above (res.modeTotal / res.main), never recomputed
+  var kT=$('kTotal');
+  if(kT){
+    kT.textContent=fmt(res.modeTotal)+' บาท';
+    $('kTotalSub').textContent='งวด'+inp.mode;
+    $('kMainSA').textContent=fmt0(inp.mainSA)+' บาท';
+    $('kMainPrem').textContent=res.main.ok?(fmt(res.main.mode)+' บาท'):'ไม่คุ้มครอง';
+  }
   renderBenefit(res,inp); renderCV(res,inp);
 }
 function renderBenefit(res,inp){
@@ -139,9 +147,9 @@ function renderCV(res,inp){
 // Interactive vanilla SVG line chart — 4 series over policy year/age, hover to read each year.
 var CVCHART=null;
 var CV_SERIES=[
-  {key:'cum',  name:'เบี้ยสะสม',            color:'#b3322c'},
-  {key:'surr', name:'มูลค่าเวนคืนเงินสด',   color:'#1f8a8a'},
-  {key:'sa',   name:'ความคุ้มครองเสียชีวิต', color:'#15366b'}
+  {key:'cum',  name:'เบี้ยสะสม',            color:'#c79a3a'},
+  {key:'surr', name:'มูลค่าเวนคืนเงินสด',   color:'#0a7d8c'},
+  {key:'sa',   name:'ความคุ้มครองเสียชีวิต', color:'#0d2c54'}
 ];
 function buildCVChart(pts, beAge){
   var W=900,H=380, L=66,R=20,T=20,B=58;
@@ -265,8 +273,16 @@ function saFromPremium(inp, targetModePrem){
   return Math.round(sa/1000)*1000; // round to nearest 1,000 บาท
 }
 
-function goResult(){ recalc(); render(LAST.res,LAST.inp); $('page-input').style.display='none'; $('page-result').style.display='block'; window.scrollTo(0,0); }
-function goInput(){ $('page-result').style.display='none'; $('page-input').style.display='block'; window.scrollTo(0,0); }
+function goResult(){ recalc(); render(LAST.res,LAST.inp); $('page-input').style.display='none'; $('page-result').style.display='block'; window.scrollTo(0,0);
+  if($('stepA')) $('stepA').classList.remove('az-active');
+  if($('stepB')) $('stepB').classList.add('az-active');
+  if($('stepBar')) $('stepBar').classList.add('az-done');
+}
+function goInput(){ $('page-result').style.display='none'; $('page-input').style.display='block'; window.scrollTo(0,0);
+  if($('stepB')) $('stepB').classList.remove('az-active');
+  if($('stepA')) $('stepA').classList.add('az-active');
+  if($('stepBar')) $('stepBar').classList.remove('az-done');
+}
 // iOS/iPadOS cannot print from a "Add to Home Screen" web app (standalone mode) —
 // window.print() is a silent no-op there. Detect it and guide the user to open in
 // Safari; otherwise defer the call so Safari reliably opens the print/AirPrint sheet.

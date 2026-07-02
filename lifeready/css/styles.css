@@ -1,36 +1,10 @@
 /* LifeReady calculator — styles */
-@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap');
 :root{
   --navy:#0d2c54; --navy2:#143b6e; --teal:#0a7d8c; --teal-l:#e6f4f6;
   --gold:#c79a3a; --bg:#f4f6f9; --card:#fff; --line:#e2e8f0; --txt:#1f2937;
   --muted:#64748b; --green:#0f8a4d; --green-l:#e7f6ee; --red:#c0392b; --red-l:#fdecea;
   --shadow:0 1px 3px rgba(16,42,76,.08),0 1px 2px rgba(16,42,76,.06);
 }
-*{box-sizing:border-box}
-body{margin:0;font-family:"Sarabun","Segoe UI",Tahoma,sans-serif;background:var(--bg);color:var(--txt);font-size:15px;line-height:1.5;touch-action:manipulation}
-.wrap{max-width:1180px;margin:0 auto;padding:0 16px 60px}
-.wrap.narrow{max-width:840px}
-header{background:linear-gradient(120deg,var(--navy),var(--navy2));color:#fff;padding:22px 0;margin-bottom:22px;box-shadow:var(--shadow)}
-header .wrap{padding-bottom:0;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
-header h1{font-size:21px;margin:0 0 3px;font-weight:700}
-header .sub{opacity:.82;font-size:13.5px}
-header .badge{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);padding:7px 14px;border-radius:10px;font-size:13px;text-align:right}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-@media(max-width:880px){.grid{grid-template-columns:1fr}}
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 18px 16px;margin-bottom:18px;box-shadow:var(--shadow)}
-.card h2{font-size:15px;margin:0 0 14px;color:var(--navy);display:flex;align-items:center;gap:9px;font-weight:700;border-bottom:2px solid var(--teal-l);padding-bottom:9px}
-.card h2 .n{background:var(--teal);color:#fff;width:23px;height:23px;border-radius:7px;display:inline-flex;align-items:center;justify-content:center;font-size:13px;flex:0 0 auto}
-.row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px}
-.f{flex:1;min-width:130px}
-.f label{display:block;font-size:12.5px;color:var(--muted);margin-bottom:5px;font-weight:600}
-input,select{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:9px;font-family:inherit;font-size:14.5px;background:#fff;color:var(--txt);transition:border .15s,box-shadow .15s}
-input:focus,select:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 3px rgba(10,125,140,.12)}
-/* visible keyboard focus on all interactive controls */
-.seg button:focus-visible,.tabs button:focus-visible,.btn:focus-visible,.btn-calc:focus-visible,.riders input[type=checkbox]:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
-input[type=number]{text-align:right}
-.seg{display:flex;gap:0;border:1px solid var(--line);border-radius:9px;overflow:hidden}
-.seg button{flex:1;border:none;background:#fff;padding:9px;font-family:inherit;font-size:14px;cursor:pointer;color:var(--muted);transition:.15s}
-.seg button.on{background:var(--teal);color:#fff;font-weight:600}
 table{width:100%;border-collapse:collapse;font-size:13.5px}
 .riders th{background:var(--navy);color:#fff;padding:9px 8px;text-align:left;font-weight:600;font-size:12.5px}
 .riders th:nth-child(3),.riders td:nth-child(3){text-align:left}
@@ -43,18 +17,11 @@ table{width:100%;border-collapse:collapse;font-size:13.5px}
 .rname{font-weight:600;color:var(--txt);cursor:pointer;display:inline-block}
 .rdesc{font-size:11px;color:var(--muted)}
 .rnote{font-size:11px;color:var(--red);display:block}
-.hint{font-size:11px;color:var(--muted);white-space:nowrap;margin-top:3px}
+/* visible keyboard focus on kept custom controls not covered by theme.css */
+.tabs button:focus-visible,.riders input[type=checkbox]:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
 /* calculate bar */
 .calc-bar{position:sticky;bottom:0;display:flex;justify-content:center;padding:14px 0 4px;margin-top:4px}
-.btn-calc{background:linear-gradient(120deg,var(--teal),#0a8d9e);color:#fff;border:none;border-radius:12px;padding:15px 46px;font-family:inherit;font-size:17px;font-weight:700;cursor:pointer;box-shadow:0 6px 18px rgba(10,125,140,.35);transition:transform .12s,box-shadow .12s}
-.btn-calc:hover{transform:translateY(-1px);box-shadow:0 9px 24px rgba(10,125,140,.42)}
-.btn-calc:active{transform:translateY(0)}
 /* result page */
-.result-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap}
-.btn{border:none;border-radius:10px;padding:11px 20px;font-family:inherit;font-size:14.5px;font-weight:600;cursor:pointer}
-.btn-back{background:#fff;color:var(--navy);border:1px solid var(--line)}
-.btn-back:hover{background:#f1f5f9}
-.btn-print{background:var(--navy);color:#fff}
 .cust-strip{background:#fff;border:1px solid var(--line);border-radius:12px;padding:13px 18px;margin-bottom:18px;display:flex;flex-wrap:wrap;gap:8px 26px;box-shadow:var(--shadow)}
 .cust-strip .it{font-size:13px}.cust-strip .it b{color:var(--navy)}.cust-strip .it span{color:var(--muted)}
 .breakdown th{background:var(--navy);color:#fff;padding:10px 10px;text-align:left;font-size:12.5px;font-weight:600}
@@ -114,8 +81,6 @@ table{width:100%;border-collapse:collapse;font-size:13.5px}
 .benefit-tbl .cat{color:var(--navy);font-weight:700;background:#f6f8fb}
 .warn{background:var(--red-l);color:var(--red);border:1px solid #f3c1bb;padding:9px 12px;border-radius:9px;font-size:13px;margin-bottom:12px}
 .muted{color:var(--muted);font-size:12px}
-.pill{display:inline-block;font-size:10.5px;padding:2px 7px;border-radius:20px;background:var(--teal-l);color:var(--teal);font-weight:600}
-.foot{margin-top:18px;font-size:11.5px;color:var(--muted);line-height:1.6}
 /* vertical column separators for all data tables */
 .riders th,.riders td,
 .breakdown th,.breakdown td,
@@ -129,13 +94,10 @@ table{width:100%;border-collapse:collapse;font-size:13.5px}
 .riders th,.breakdown th,.cv-table th{border-right-color:rgba(255,255,255,.18)}
 .cv-table th.grp{border-right-color:rgba(255,255,255,.18)}
 
-/* mobile: 16px inputs prevent iOS focus-zoom; 44px min targets; riders controls fill their cell so the table never overflows */
+/* mobile: 44px min targets; riders controls fill their cell so the table never overflows */
 @media(max-width:640px){
-  input,select,.seg button{font-size:16px}
-  input,select,.seg button{min-height:44px}
-  .btn,.btn-back,.btn-print{min-height:44px}
   .riders input[type=checkbox]{width:22px;height:22px}
   .riders .rin,.riders select.rin{width:100%;min-width:0;font-size:15px;min-height:40px;padding:8px}
   .tabs button{min-height:40px}
 }
-@media print{.az-gh,header .badge,.result-head,.tabs{display:none}body{background:#fff}.card{box-shadow:none;break-inside:avoid}.cv-wrap{max-height:none;overflow:visible}}
+@media print{header .badge,.result-head,.tabs{display:none}.cv-wrap{max-height:none;overflow:visible}}

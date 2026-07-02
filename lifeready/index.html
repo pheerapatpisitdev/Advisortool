@@ -9,88 +9,118 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<link rel="stylesheet" href="css/styles.css?v=16">
 <link rel="stylesheet" href="../assets/global-header.css" />
+<link rel="stylesheet" href="../assets/theme.css?v=1" />
+<link rel="stylesheet" href="css/styles.css?v=17">
 </head>
-<body>
+<body class="az-theme">
 <script src="../assets/global-header.js"></script>
 
-<header><div class="wrap">
-  <div><h1>โปรแกรมคำนวณเบี้ยประกันภัย</h1><div class="sub">ไลฟ์เรดดี้ (ไม่มีเงินปันผล) &middot; LifeReady (Non-Participating)</div></div>
-  <div class="badge">เวอร์ชัน <b>A2026-1</b><br>ใช้ได้ถึง 31 มี.ค. 2570</div>
-</div></header>
+<header class="az-hero">
+  <div class="az-hero__in">
+    <div class="az-hero__brand">
+      <span class="az-hero__logo">LR</span>
+      <span><span class="az-hero__ttl">โปรแกรมคำนวณเบี้ยประกันภัย</span><span class="az-hero__sub">ไลฟ์เรดดี้ (ไม่มีเงินปันผล) &middot; LifeReady (Non-Participating)</span></span>
+    </div>
+    <div class="az-hero__badge"><b>เวอร์ชัน A2026-1</b>ใช้ได้ถึง 31 มี.ค. 2570</div>
+  </div>
+</header>
+
+<div class="az-steps az-wrap az-narrow" id="lrSteps">
+  <div class="az-s az-active" id="stepA"><span class="az-n">1</span> ข้อมูล &amp; แบบประกัน</div>
+  <div class="az-bar" id="stepBar"></div>
+  <div class="az-s" id="stepB"><span class="az-n">2</span> ผลการคำนวณ</div>
+</div>
 
 <!-- ============ PAGE 1 : INPUT ============ -->
-<div class="wrap narrow" id="page-input">
-  <div class="card">
-    <h2><span class="n">1</span> ข้อมูลผู้เอาประกันภัย</h2>
-    <div class="row">
-      <div class="f" style="flex:2"><label for="cname">ชื่อผู้เอาประกันภัย</label><input id="cname" value="คุณคนพิเศษ"></div>
-      <div class="f"><label for="age">อายุ (ปี)</label><input id="age" type="number" value="35" min="0" max="80"></div>
-    </div>
-    <div class="row">
-      <div class="f"><label id="sexSegLbl">เพศ</label><div class="seg" id="sexSeg" role="radiogroup" aria-labelledby="sexSegLbl"><button type="button" role="radio" aria-checked="true" data-v="หญิง" class="on">หญิง</button><button type="button" role="radio" aria-checked="false" data-v="ชาย">ชาย</button></div></div>
-      <div class="f"><label for="mode">งวดการชำระเบี้ย</label><select id="mode"></select></div>
+<div class="az-wrap az-narrow" id="page-input">
+  <div class="az-card">
+    <div class="az-card__h"><span class="az-card__n">1</span><h2>ข้อมูลผู้เอาประกันภัย</h2></div>
+    <div class="az-card__b">
+      <div class="az-grid2">
+        <div class="az-field" style="flex:2"><label for="cname">ชื่อผู้เอาประกันภัย</label><input id="cname" value="คุณคนพิเศษ"></div>
+        <div class="az-field"><label for="age">อายุ (ปี)</label><input id="age" type="number" value="35" min="0" max="80"></div>
+      </div>
+      <div class="az-grid2">
+        <div class="az-field"><label id="sexSegLbl">เพศ</label><div class="az-seg" id="sexSeg" role="radiogroup" aria-labelledby="sexSegLbl"><button type="button" role="radio" aria-checked="true" data-v="หญิง" class="on">หญิง</button><button type="button" role="radio" aria-checked="false" data-v="ชาย">ชาย</button></div></div>
+        <div class="az-field"><label for="mode">งวดการชำระเบี้ย</label><select id="mode"></select></div>
+      </div>
     </div>
   </div>
 
-  <div class="card">
-    <h2><span class="n">2</span> แบบประกันหลัก</h2>
-    <div class="row">
-      <div class="f" style="flex:2"><label for="plan">แผนการชำระเบี้ย</label><select id="plan"></select></div>
-      <div class="f"><label for="mainSA">จำนวนเงินเอาประกันภัย (บาท)</label><input id="mainSA" type="text" inputmode="numeric" value="1,000,000"></div>
-      <div class="f"><label for="mainPrem">เบี้ยสัญญาหลัก/งวด (บาท)</label><input id="mainPrem" type="text" inputmode="decimal" placeholder="กรอกเพื่อคำนวณทุนย้อนกลับ"></div>
+  <div class="az-card">
+    <div class="az-card__h"><span class="az-card__n">2</span><h2>แบบประกันหลัก</h2></div>
+    <div class="az-card__b">
+      <div class="az-grid2">
+        <div class="az-field" style="flex:2"><label for="plan">แผนการชำระเบี้ย</label><select id="plan"></select></div>
+        <div class="az-field"><label for="mainSA">จำนวนเงินเอาประกันภัย (บาท)</label><input id="mainSA" type="text" inputmode="numeric" value="1,000,000"></div>
+        <div class="az-field"><label for="mainPrem">เบี้ยสัญญาหลัก/งวด (บาท)</label><input id="mainPrem" type="text" inputmode="decimal" placeholder="กรอกเพื่อคำนวณทุนย้อนกลับ"></div>
+      </div>
+      <div id="mainNote" class="az-hint"></div>
     </div>
-    <div id="mainNote" class="hint"></div>
   </div>
 
-  <div class="card">
-    <h2><span class="n">3</span> สัญญาเพิ่มเติม</h2>
-    <div id="pbExtra" class="row" style="display:none;background:#f6f8fb;padding:10px;border-radius:9px">
-      <div class="f"><label for="payerAge">อายุผู้ชำระเบี้ย (PB)</label><input id="payerAge" type="number" value="35" min="20" max="70"></div>
-      <div class="f"><label id="payerSexSegLbl">เพศผู้ชำระเบี้ย (PB)</label><div class="seg" id="payerSexSeg" role="radiogroup" aria-labelledby="payerSexSegLbl"><button type="button" role="radio" aria-checked="true" data-v="ชาย" class="on">ชาย</button><button type="button" role="radio" aria-checked="false" data-v="หญิง">หญิง</button></div></div>
+  <div class="az-card">
+    <div class="az-card__h"><span class="az-card__n">3</span><h2>สัญญาเพิ่มเติม</h2></div>
+    <div class="az-card__b">
+      <div id="pbExtra" class="az-grid2" style="display:none;background:#f6f8fb;padding:10px;border-radius:9px">
+        <div class="az-field"><label for="payerAge">อายุผู้ชำระเบี้ย (PB)</label><input id="payerAge" type="number" value="35" min="20" max="70"></div>
+        <div class="az-field"><label id="payerSexSegLbl">เพศผู้ชำระเบี้ย (PB)</label><div class="az-seg" id="payerSexSeg" role="radiogroup" aria-labelledby="payerSexSegLbl"><button type="button" role="radio" aria-checked="true" data-v="ชาย" class="on">ชาย</button><button type="button" role="radio" aria-checked="false" data-v="หญิง">หญิง</button></div></div>
+      </div>
+      <table class="riders"><thead><tr><th style="width:30px"></th><th>สัญญาเพิ่มเติม</th><th>จำนวนเงิน / แผน</th></tr></thead>
+      <tbody id="riderBody"></tbody></table>
+      <div class="muted" style="margin-top:8px">* ติ๊กเลือกสัญญาที่ต้องการ แล้วระบุจำนวนเงิน/แผน ระบบจะตรวจสอบเกณฑ์อายุและขั้นต่ำ–สูงสุดให้อัตโนมัติ</div>
     </div>
-    <table class="riders"><thead><tr><th style="width:30px"></th><th>สัญญาเพิ่มเติม</th><th>จำนวนเงิน / แผน</th></tr></thead>
-    <tbody id="riderBody"></tbody></table>
-    <div class="muted" style="margin-top:8px">* ติ๊กเลือกสัญญาที่ต้องการ แล้วระบุจำนวนเงิน/แผน ระบบจะตรวจสอบเกณฑ์อายุและขั้นต่ำ–สูงสุดให้อัตโนมัติ</div>
   </div>
 
-  <div class="calc-bar"><button class="btn-calc" onclick="goResult()">คำนวณเบี้ยประกัน &nbsp;→</button></div>
+  <div class="calc-bar"><button class="az-btn-calc" onclick="goResult()">คำนวณเบี้ยประกัน &nbsp;→</button></div>
 </div>
 
 <!-- ============ PAGE 2 : RESULT ============ -->
-<div class="wrap" id="page-result" style="display:none">
+<div class="az-wrap" id="page-result" style="display:none">
   <div class="result-head">
-    <button class="btn btn-back" onclick="goInput()">←&nbsp; กลับไปแก้ไขข้อมูล</button>
-    <button class="btn btn-print" onclick="printResult()">🖨️&nbsp; พิมพ์ / บันทึก PDF</button>
+    <button class="az-btn az-btn-back" onclick="goInput()">←&nbsp; กลับไปแก้ไขข้อมูล</button>
+    <button class="az-btn az-btn-ghost" onclick="printResult()">🖨️&nbsp; พิมพ์ / บันทึก PDF</button>
   </div>
   <div class="cust-strip" id="custStrip"></div>
 
-  <div class="grid">
-    <div class="card">
-      <h2>สรุปเบี้ยประกันภัย</h2>
-      <div id="warnBox"></div>
-      <table class="breakdown"><thead><tr><th>รายการ</th><th>ทุนประกัน / แผน</th><th>เบี้ย (งวด)</th></tr></thead>
-        <tbody id="bkBody"></tbody>
-        <tfoot id="bkFoot"></tfoot>
-      </table>
+  <div class="az-kpi" id="lrKpi" style="margin-bottom:18px">
+    <div class="az-box az-hero-box"><div class="az-lbl">เบี้ยประกันภัยรวม (งวดแรก)</div><div class="az-val" id="kTotal">—</div><div class="az-sub" id="kTotalSub"></div></div>
+    <div class="az-box"><div class="az-lbl">ทุนประกันสัญญาหลัก</div><div class="az-val" id="kMainSA">—</div></div>
+    <div class="az-box"><div class="az-lbl">เบี้ยสัญญาหลัก/งวด</div><div class="az-val" id="kMainPrem">—</div></div>
+  </div>
+
+  <div class="az-grid2">
+    <div class="az-card">
+      <div class="az-card__h"><h2>สรุปเบี้ยประกันภัย</h2></div>
+      <div class="az-card__b">
+        <div id="warnBox"></div>
+        <table class="breakdown"><thead><tr><th>รายการ</th><th>ทุนประกัน / แผน</th><th>เบี้ย (งวด)</th></tr></thead>
+          <tbody id="bkBody"></tbody>
+          <tfoot id="bkFoot"></tfoot>
+        </table>
+      </div>
     </div>
-    <div class="card">
-      <h2>ตารางผลประโยชน์ความคุ้มครอง</h2>
-      <table class="benefit-tbl" id="benefitTbl"></table>
+    <div class="az-card">
+      <div class="az-card__h"><h2>ตารางผลประโยชน์ความคุ้มครอง</h2></div>
+      <div class="az-card__b">
+        <table class="benefit-tbl" id="benefitTbl"></table>
+      </div>
     </div>
   </div>
 
-  <div class="card">
-    <div class="tabs">
-      <button class="on" data-tab="cv">ตารางมูลค่ากรมธรรม์</button>
+  <div class="az-card">
+    <div class="az-card__b">
+      <div class="tabs">
+        <button class="on" data-tab="cv">ตารางมูลค่ากรมธรรม์</button>
+      </div>
+      <div class="muted" style="margin-bottom:10px">มูลค่ากรมธรรม์ต่อจำนวนเงินเอาประกันภัย <b id="cvSA">0</b> บาท (เฉพาะสัญญาหลัก ไลฟ์เรดดี้)</div>
+      <div id="cvChart" class="cv-chart-wrap"></div>
+      <div class="cv-wrap"><table class="cv-table" id="cvTbl"></table></div>
     </div>
-    <div class="muted" style="margin-bottom:10px">มูลค่ากรมธรรม์ต่อจำนวนเงินเอาประกันภัย <b id="cvSA">0</b> บาท (เฉพาะสัญญาหลัก ไลฟ์เรดดี้)</div>
-    <div id="cvChart" class="cv-chart-wrap"></div>
-    <div class="cv-wrap"><table class="cv-table" id="cvTbl"></table></div>
   </div>
 
-  <div class="foot">
+  <div class="az-disclaimer">
     เอกสารนี้เป็นเพียงโปรแกรมช่วยคำนวณเบี้ยประกันภัยเบื้องต้น คำนวณตามอัตราเบี้ยในไฟล์ <b>ไลฟ์เรดดี้_A2026-1</b> ผลประโยชน์ ความคุ้มครอง และข้อยกเว้นเป็นไปตามที่กำหนดในกรมธรรม์
     ผู้ซื้อควรทำความเข้าใจรายละเอียดความคุ้มครองและเงื่อนไขก่อนตัดสินใจทำประกันภัยทุกครั้ง
   </div>
