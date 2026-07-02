@@ -105,10 +105,10 @@
   }
   function fieldHTML(code, f) {
     const id = `f_${code}_${f.k}`, v = RD[code][f.k];
-    if (f.t === 'num') return `<div class="field"><label for="${id}">${f.label}</label><input type="number" id="${id}" value="${v}" step="${f.step || 1}"></div>`;
-    if (f.t === 'select') return `<div class="field"><label for="${id}">${f.label}</label><select id="${id}">${f.opts.map(o => `<option value="${o[0]}" ${o[0] == v ? 'selected' : ''}>${o[1]}</option>`).join('')}</select></div>`;
-    if (f.t === 'selectDyn') return `<div class="field"><label for="${id}">${f.label}</label><select id="${id}"></select></div>`;
-    if (f.t === 'seg') return `<div class="field"><label id="${id}_lbl">${f.label}</label><div class="seg" id="${id}" role="group" aria-labelledby="${id}_lbl">${f.opts.map(o => `<button data-v="${o[0]}" class="${o[0] == v ? 'on' : ''}">${o[1]}</button>`).join('')}</div></div>`;
+    if (f.t === 'num') return `<div class="az-field"><label for="${id}">${f.label}</label><input type="number" id="${id}" value="${v}" step="${f.step || 1}"></div>`;
+    if (f.t === 'select') return `<div class="az-field"><label for="${id}">${f.label}</label><select id="${id}">${f.opts.map(o => `<option value="${o[0]}" ${o[0] == v ? 'selected' : ''}>${o[1]}</option>`).join('')}</select></div>`;
+    if (f.t === 'selectDyn') return `<div class="az-field"><label for="${id}">${f.label}</label><select id="${id}"></select></div>`;
+    if (f.t === 'seg') return `<div class="az-field"><label id="${id}_lbl">${f.label}</label><div class="az-seg" id="${id}" role="group" aria-labelledby="${id}_lbl">${f.opts.map(o => `<button data-v="${o[0]}" class="${o[0] == v ? 'on' : ''}">${o[1]}</button>`).join('')}</div></div>`;
     return '';
   }
   function bindRiderFields() {
@@ -174,11 +174,11 @@
 
   function showView(v) {
     const input = v === 'input';
-    $('viewInput').classList.toggle('active', input);
-    $('viewResult').classList.toggle('active', !input);
-    $('stepA').classList.toggle('active', input);
-    $('stepB').classList.toggle('active', !input);
-    $('stepBar').classList.toggle('done', !input);
+    $('viewInput').classList.toggle('az-active', input);
+    $('viewResult').classList.toggle('az-active', !input);
+    $('stepA').classList.toggle('az-active', input);
+    $('stepB').classList.toggle('az-active', !input);
+    $('stepBar').classList.toggle('az-done', !input);
     try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) {}
   }
 
@@ -204,13 +204,13 @@
     html += rowP(plan.productName, b.modePremium, `อัตรา ${b.rate} ต่อ 1,000 · ทุน ${fmt(b.SA)}`);
     const onR = res.riders.filter(r => r && r.eligible), badR = res.riders.filter(r => r && !r.eligible);
     if (onR.length) { html += `<tr class="sub-h"><td colspan="3">สัญญาเพิ่มเติม</td></tr>`; onR.forEach(r => html += rowP(r.label, r.mode, r.rate ? `อัตรา ${r.rate}` : '')); }
-    if (badR.length) badR.forEach(r => html += `<tr><td class="lbl" style="color:var(--bad)">${r.label}</td><td colspan="2" style="color:var(--bad);font-size:12px">${r.note || 'ไม่อยู่ในเกณฑ์'}</td></tr>`);
+    if (badR.length) badR.forEach(r => html += `<tr><td class="lbl" style="color:var(--az-bad)">${r.label}</td><td colspan="2" style="color:var(--az-bad);font-size:12px">${r.note || 'ไม่อยู่ในเกณฑ์'}</td></tr>`);
     html += `<tr class="total"><td class="lbl">เบี้ยประกันภัยรวม (งวด${input.mode})</td><td></td><td>${fmt2(res.totalModePremium)}</td></tr>`;
     $('premBody').innerHTML = html;
 
     renderIllustration(res);
   }
-  function rowP(label, val, sub) { return `<tr><td class="lbl">${label}${sub ? `<br><span style="font-weight:400;color:var(--muted);font-size:11.5px">${sub}</span>` : ''}</td><td></td><td>${fmt2(val)}</td></tr>`; }
+  function rowP(label, val, sub) { return `<tr><td class="lbl">${label}${sub ? `<br><span style="font-weight:400;color:var(--az-muted);font-size:11.5px">${sub}</span>` : ''}</td><td></td><td>${fmt2(val)}</td></tr>`; }
 
   function renderIllustration(res) {
     const ill = res.illustration, b = res.base;
