@@ -1,0 +1,12 @@
+/* Advisortool — PIN gate configuration. แก้รหัสและตัวเลือกที่นี่ที่เดียว.
+   หมายเหตุ: นี่คือ soft gate (ฝั่งเบราว์เซอร์) — ซอร์สเปิดดูได้ PIN นี้อ่านได้
+   จากหน้าเว็บ ใช้กันคนทั่วไป ไม่ได้กันคนที่เปิดดูโค้ด. */
+window.PIN_GATE_CONFIG = {
+  pin: '123456',                        // รหัส 6 หลักของทีม — เปลี่ยนตรงนี้
+  storageKey: 'az_gate',                // key ใน localStorage
+  idleTimeoutMs: 12 * 60 * 60 * 1000,   // ไม่ใช้งานเกิน 12 ชม. → ล็อกใหม่ (sliding)
+  maxAttempts: 5,                       // ใส่ผิดกี่ครั้งถึงล็อกชั่วคราว
+  lockoutSeconds: 30,                   // ล็อกนานเท่าไร (วินาที)
+  title: 'กรุณาใส่รหัสผ่าน',
+  subtitle: 'Advisortool'
+};
