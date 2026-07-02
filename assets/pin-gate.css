@@ -8,6 +8,7 @@ html.az-locked body { display: none !important; }
 .az-pin {
   position: fixed; inset: 0; z-index: 2147483000;
   display: flex; align-items: center; justify-content: center; padding: 20px;
+  overflow: auto; /* กันคีย์แพดล้นจอบนหน้าจอเตี้ย (มือถือแนวนอน) ให้เลื่อนได้ */
   background: linear-gradient(120deg, var(--az-navy, #0d2c54), var(--az-navy-2, #143b6e));
   font-family: var(--az-font, 'IBM Plex Sans Thai', 'Sarabun', 'Segoe UI', Tahoma, sans-serif);
   -webkit-tap-highlight-color: transparent;
