@@ -47,29 +47,7 @@
     .az-header__left { display: flex; align-items: center; gap: 14px; }
     .az-header__right { display: flex; align-items: center; gap: 12px; }
     .az-brand { font-weight: 800; font-size: 18px; letter-spacing: -0.3px; color: #be185d; text-decoration: none; }
-    .az-menu { position: relative; }
-    .az-menu__btn {
-      display: inline-flex; align-items: center; gap: 7px; height: 40px; padding: 0 14px;
-      border: 1px solid #f6d6e3; background: #fff; border-radius: 10px; color: #d6336c;
-      font-family: 'IBM Plex Sans Thai', system-ui, sans-serif; font-size: 14px; font-weight: 600; cursor: pointer;
-      transition: background .15s;
-    }
-    .az-menu__btn:hover { background: #fdeef4; }
-    .az-menu__chev { transition: transform .18s; }
-    .az-menu.open .az-menu__chev { transform: rotate(180deg); }
-    .az-menu__panel {
-      position: absolute; top: 50px; right: 0; min-width: 264px; background: #fff;
-      border: 1px solid #f6d6e3; border-radius: 12px; box-shadow: 0 14px 36px rgba(190,24,93,.18);
-      padding: 6px; display: none; z-index: 200;
-    }
-    .az-menu.open .az-menu__panel { display: block; }
-    .az-menu__panel a {
-      display: flex; align-items: center; gap: 9px; padding: 9px 12px; border-radius: 8px;
-      color: #5b3a4a; text-decoration: none; font-size: 14px; white-space: nowrap;
-    }
-    .az-menu__panel a:hover { background: #fdeef4; color: #d6336c; }
-    .az-menu__dot { width: 7px; height: 7px; border-radius: 50%; background: #ec4899; flex-shrink: 0; }
-    @media (max-width: 520px) { .az-brand { display: none; } .az-menu__btn span { display: none; } .az-menu__btn { padding: 0 11px; } }
+    @media (max-width: 520px) { .az-brand { display: none; } }
 
     .az-main { max-width: 1240px; margin: 0 auto; padding: 30px 22px 64px; }
     .az-headline {
@@ -144,45 +122,12 @@
       <a href="./" class="az-brand">Advisortool</a>
     </div>
     <div class="az-header__right">
-      <div class="az-menu" id="azMenu">
-        <button class="az-menu__btn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="azMenuPanel">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-          <span>เครื่องมือ</span>
-          <svg class="az-menu__chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-        </button>
-        <div class="az-menu__panel" id="azMenuPanel" role="menu">
-          <a href="lifeready/" role="menuitem"><span class="az-menu__dot"></span>ไลฟ์เรดดี้ Life Ready — ประกันชีวิตตลอดชีพ</a>
-          <a href="global-saving/" role="menuitem"><span class="az-menu__dot"></span>Global Saving Plus 15/8</a>
-          <a href="pension-smart95/" role="menuitem"><span class="az-menu__dot"></span>บำนาญ สมาร์ท 95 — บำนาญลดหย่อนภาษี</a>
-          <a href="ihealthy/" role="menuitem"><span class="az-menu__dot"></span>iHealthy Ultra</a>
-          <a href="ci123/" role="menuitem"><span class="az-menu__dot"></span>CI 123 ประกันโรคร้ายแรง</a>
-          <a href="ishield/" role="menuitem"><span class="az-menu__dot"></span>iShield — ประกันโรคร้ายแรงตลอดชีพ</a>
-          <a href="group-insurance/" role="menuitem"><span class="az-menu__dot"></span>ประกันกลุ่ม Group Insurance</a>
-          <a href="fhc/" role="menuitem"><span class="az-menu__dot"></span>FHC — แบบสอบถามคุณภาพชีวิต</a>
-          <a href="career-agent/" role="menuitem"><span class="az-menu__dot"></span>Career-Agent-Question</a>
-          <a href="agency/" role="menuitem"><span class="az-menu__dot"></span>Agency Blueprint</a>
-        </div>
-      </div>
       <span class="az-header__avatar" aria-label="โปรไฟล์">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         <span class="az-header__check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
       </span>
     </div>
   </header>
-  <script>
-    (function () {
-      var menu = document.getElementById('azMenu'), btn = menu.querySelector('.az-menu__btn');
-      btn.addEventListener('click', function (e) {
-        e.stopPropagation();
-        var open = menu.classList.toggle('open');
-        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-      });
-      document.addEventListener('click', function (e) {
-        if (!menu.contains(e.target)) { menu.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); }
-      });
-      document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { menu.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); } });
-    })();
-  </script>
 
   <div class="az-shell">
     <main class="az-main">
@@ -242,13 +187,11 @@
   const grid = document.getElementById('grid');
 
   grid.innerHTML = products.map((p, i) => {
-    const tag = p.ready ? "พร้อมใช้งาน" : "เร็วๆ นี้";
-    const tagClass = p.ready ? "az-status--ready" : "az-status--soon";
     const inner = `
       <div class="az-card__media" style="background:${p.gradient}">
         <img src="${esc(p.image)}" alt="" loading="lazy" decoding="async" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
         <span class="az-card__icon" style="display:none">${p.icon}</span>
-        <span class="az-status ${tagClass}">${tag}</span>
+        ${p.ready ? '' : '<span class="az-status az-status--soon">เร็วๆ นี้</span>'}
         ${p.isNew ? '<span class="az-ribbon">NEW</span>' : ''}
       </div>
       <h2 class="az-band">${esc(p.band)}</h2>
@@ -256,7 +199,7 @@
         <p class="az-tagline">${esc(p.tagline)}</p>
         <ul class="az-bullets">${p.bullets.map(b => `<li>${esc(b)}</li>`).join('')}</ul>
         ${p.ready
-          ? `<span class="az-cta">เปิดแอป ${arrow}</span>`
+          ? `<span class="az-cta">${arrow}</span>`
           : `<span class="az-cta az-cta--soon">ยังเป็น React (เร็วๆ นี้)</span>`}
       </div>`;
     const delay = `style="animation-delay:${i * 80}ms"`;

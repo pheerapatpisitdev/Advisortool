@@ -1,0 +1,121 @@
+/* Advisortool — shared theme "Navy & Gold".
+   Loaded AFTER assets/global-header.css. All classes are prefixed .az- so they
+   never collide with each tool's legacy CSS during migration.
+   Activate on a page by adding class="az-theme" to <body>. */
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap');
+
+:root{
+  --az-navy:#0d2c54; --az-navy-2:#143b6e;
+  --az-gold:#c79a3a; --az-gold-l:#f7efdd; --az-gold-d:#a97f28;
+  --az-teal:#0a7d8c; --az-teal-l:#e6f4f6; --az-teal-d:#086876;
+  --az-bg:#f4f6f9; --az-card:#ffffff; --az-line:#e2e8f0; --az-soft:#eef3f8;
+  --az-ink:#1f2937; --az-muted:#64748b;
+  --az-good:#0f8a4d; --az-good-l:#e7f6ee;
+  --az-bad:#c0392b; --az-bad-l:#fdecea;
+  --az-radius:14px; --az-radius-s:9px;
+  --az-shadow:0 1px 3px rgba(16,42,76,.08),0 1px 2px rgba(16,42,76,.06);
+  --az-font:'IBM Plex Sans Thai','Sarabun','Segoe UI',Tahoma,sans-serif;
+}
+
+/* base (scoped to the class so it never restyles pages that don't opt in) */
+.az-theme{ font-family:var(--az-font); background:var(--az-bg); color:var(--az-ink); font-size:15px; line-height:1.5; -webkit-text-size-adjust:100%; }
+.az-theme *{ box-sizing:border-box; }
+.az-wrap{ max-width:1180px; margin:0 auto; padding:0 16px 80px; }
+.az-wrap.az-narrow{ max-width:860px; }
+
+/* product hero header (non-sticky) */
+.az-hero{ background:linear-gradient(120deg,var(--az-navy),var(--az-navy-2)); color:#fff; box-shadow:var(--az-shadow); }
+.az-hero__in{ max-width:1180px; margin:0 auto; padding:20px 16px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+.az-hero__brand{ display:flex; align-items:center; gap:13px; }
+.az-hero__logo{ width:46px; height:46px; border-radius:12px; background:var(--az-gold); color:var(--az-navy); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:19px; letter-spacing:-.5px; flex:none; }
+.az-hero__ttl{ font-size:21px; font-weight:700; line-height:1.15; }
+.az-hero__sub{ font-size:13px; opacity:.82; margin-top:2px; }
+.az-hero__badge{ text-align:right; border:1px solid var(--az-gold); background:rgba(199,154,58,.16); border-radius:10px; padding:7px 14px; font-size:12.5px; }
+.az-hero__badge b{ display:block; font-size:13.5px; }
+
+/* steps indicator */
+.az-steps{ display:flex; align-items:center; gap:8px; justify-content:center; margin:20px 0 4px; }
+.az-steps .az-s{ display:flex; align-items:center; gap:8px; font-size:13px; color:var(--az-muted); font-weight:500; }
+.az-steps .az-s .az-n{ width:24px; height:24px; border-radius:50%; background:#fff; border:1.5px solid var(--az-line); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:600; color:var(--az-muted); }
+.az-steps .az-s.az-active{ color:var(--az-navy); }
+.az-steps .az-s.az-active .az-n{ background:var(--az-navy); border-color:var(--az-navy); color:#fff; }
+.az-steps .az-bar{ width:46px; height:2px; background:var(--az-line); border-radius:2px; }
+.az-steps .az-bar.az-done{ background:var(--az-navy); }
+
+/* card */
+.az-card{ background:var(--az-card); border:1px solid var(--az-line); border-radius:var(--az-radius); box-shadow:var(--az-shadow); margin-bottom:16px; overflow:hidden; }
+.az-card__h{ padding:13px 18px; border-bottom:1px solid var(--az-line); display:flex; align-items:center; gap:10px; background:linear-gradient(0deg,#fbfcfe,#fff); }
+.az-card__n{ width:26px; height:26px; border-radius:8px; background:var(--az-gold-l); color:var(--az-gold-d); display:flex; align-items:center; justify-content:center; font-size:13.5px; font-weight:700; flex:none; }
+.az-card__h h2{ font-size:15.5px; font-weight:600; color:var(--az-navy); margin:0; }
+.az-card__tag{ margin-left:auto; font-size:11px; color:var(--az-muted); background:var(--az-soft); padding:2px 10px; border-radius:20px; white-space:nowrap; }
+.az-card__b{ padding:16px 18px; }
+
+/* form layout + controls */
+.az-grid2{ display:grid; grid-template-columns:1fr 1fr; gap:0 18px; align-items:start; }
+.az-field{ margin-bottom:13px; } .az-field:last-child{ margin-bottom:0; }
+.az-field > label{ display:block; font-size:13px; font-weight:500; color:var(--az-muted); margin-bottom:5px; }
+.az-theme input[type=text],.az-theme input[type=number],.az-theme select{ width:100%; padding:10px 11px; border:1px solid var(--az-line); border-radius:var(--az-radius-s); font-family:inherit; font-size:16px; background:#fff; color:var(--az-ink); transition:border .15s,box-shadow .15s; }
+.az-theme input:focus,.az-theme select:focus{ outline:none; border-color:var(--az-teal); box-shadow:0 0 0 3px rgba(10,125,140,.14); }
+.az-theme input[type=number]{ text-align:right; }
+.az-seg{ display:flex; background:var(--az-soft); border-radius:var(--az-radius-s); padding:3px; gap:3px; }
+.az-seg button{ flex:1; border:0; background:transparent; min-height:40px; padding:8px 6px; border-radius:7px; font-family:inherit; font-size:13.5px; color:var(--az-muted); cursor:pointer; font-weight:500; transition:.15s; }
+.az-seg button.on{ background:#fff; color:var(--az-navy); box-shadow:0 1px 4px rgba(0,0,0,.08); font-weight:600; }
+.az-seg button:disabled{ opacity:.35; cursor:not-allowed; }
+.az-hint{ font-size:12px; color:var(--az-muted); margin-top:5px; }
+.az-err{ font-size:12.5px; color:var(--az-bad); margin-top:5px; font-weight:500; }
+
+/* buttons */
+.az-btn{ display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:11px 18px; border-radius:10px; border:0; font-family:inherit; font-weight:600; font-size:14.5px; cursor:pointer; transition:.15s; }
+.az-btn-calc{ width:100%; padding:15px; border-radius:13px; background:linear-gradient(120deg,var(--az-teal),var(--az-teal-d)); color:#fff; font-size:17px; box-shadow:0 6px 18px rgba(10,125,140,.32); }
+.az-btn-calc:hover{ transform:translateY(-1px); box-shadow:0 9px 24px rgba(10,125,140,.42); }
+.az-btn-calc:active{ transform:translateY(0); }
+.az-btn-back{ background:var(--az-navy); color:#fff; }
+.az-btn-back:hover{ background:var(--az-navy-2); }
+.az-btn-ghost{ background:#fff; color:var(--az-navy); border:1px solid var(--az-line); box-shadow:var(--az-shadow); }
+.az-btn-ghost:hover{ background:var(--az-soft); }
+
+/* KPI summary */
+.az-kpi{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.az-kpi .az-box{ background:linear-gradient(135deg,var(--az-soft),#fff); border:1px solid var(--az-line); border-radius:12px; padding:14px; }
+.az-kpi .az-box.az-hero-box{ grid-column:1/-1; background:linear-gradient(135deg,var(--az-navy),var(--az-navy-2)); border:0; color:#fff; }
+.az-kpi .az-lbl{ font-size:12.5px; color:var(--az-muted); margin-bottom:3px; }
+.az-kpi .az-box.az-hero-box .az-lbl{ color:rgba(255,255,255,.82); }
+.az-kpi .az-val{ font-size:25px; font-weight:700; color:var(--az-navy); line-height:1.1; font-variant-numeric:tabular-nums; }
+.az-kpi .az-box.az-hero-box .az-val{ color:#fff; font-size:30px; }
+.az-kpi .az-sub{ font-size:12px; color:var(--az-muted); margin-top:4px; }
+.az-kpi .az-box.az-hero-box .az-sub{ color:rgba(255,255,255,.85); }
+
+/* tables */
+.az-table{ width:100%; border-collapse:collapse; font-size:13.5px; font-variant-numeric:tabular-nums; }
+.az-table th,.az-table td{ padding:8px 10px; text-align:right; border-bottom:1px solid var(--az-line); border-right:1px solid var(--az-line); }
+.az-table th:first-child,.az-table td:first-child{ text-align:left; }
+.az-table th:last-child,.az-table td:last-child{ border-right:none; }
+.az-table thead th{ background:var(--az-navy); color:#fff; font-weight:600; font-size:12.5px; border-right-color:rgba(255,255,255,.18); }
+.az-table tbody tr:nth-child(even) td{ background:#f8fafc; }
+.az-table tbody tr:hover td{ background:var(--az-teal-l); }
+.az-table tfoot td,.az-table tr.az-total td{ font-weight:700; color:var(--az-navy); background:var(--az-gold-l); border-top:2px solid var(--az-gold); }
+
+/* misc */
+.az-note{ background:var(--az-soft); border-left:3px solid var(--az-gold); padding:10px 13px; border-radius:0 8px 8px 0; font-size:12.5px; color:var(--az-muted); margin-top:12px; }
+.az-warn{ background:var(--az-bad-l); color:var(--az-bad); border:1px solid #f3c1bb; padding:9px 12px; border-radius:9px; font-size:13px; margin-bottom:12px; }
+.az-pill{ display:inline-block; font-size:11px; padding:3px 10px; border-radius:20px; background:var(--az-teal-l); color:var(--az-teal-d); font-weight:600; }
+.az-disclaimer{ font-size:11.5px; color:var(--az-muted); text-align:center; margin:24px auto 0; line-height:1.6; max-width:920px; }
+.az-view{ display:none; } .az-view.az-active{ display:block; animation:az-fade .25s ease; }
+@keyframes az-fade{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:none;} }
+
+@media(max-width:760px){ .az-grid2{ grid-template-columns:1fr; } .az-kpi{ grid-template-columns:1fr; } }
+@media(max-width:640px){
+  .az-theme input,.az-theme select,.az-seg button{ font-size:16px; min-height:44px; }
+  .az-btn,.az-btn-calc,.az-btn-back,.az-btn-ghost{ min-height:44px; }
+}
+
+/* keyboard focus */
+.az-seg button:focus-visible,.az-btn:focus-visible,.az-btn-calc:focus-visible,.az-btn-back:focus-visible,.az-btn-ghost:focus-visible{ outline:3px solid var(--az-teal); outline-offset:2px; }
+
+/* print — shared base; each tool may add its own page-break rules on top */
+@media print{
+  .az-gh,.az-hero__badge,.az-steps,.az-btn,.az-btn-calc,.az-btn-back,.az-btn-ghost{ display:none !important; }
+  .az-theme{ background:#fff; font-size:12px; }
+  .az-card{ box-shadow:none; border:1px solid #ccc; break-inside:avoid; }
+  .az-grid2{ grid-template-columns:1fr; }
+}
