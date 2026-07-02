@@ -38,7 +38,7 @@
 .tax-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 @media(max-width:560px){.tax-grid{grid-template-columns:1fr}.row2{grid-template-columns:1fr}.kpi{grid-template-columns:1fr}}
 .tax-out{background:linear-gradient(135deg,#fff8ec,#fffdf8);border:1px solid #f0dcb8;border-radius:12px;padding:14px;margin-top:6px}
-.tax-out .big{font-family:'Prompt';font-size:24px;font-weight:600;color:var(--az-gold-d)}
+.tax-out .big{font-size:24px;font-weight:600;color:var(--az-gold-d)}
 
 @media print{
   .resbar,.calc-bar{display:none!important}
