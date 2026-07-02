@@ -4,14 +4,16 @@
    หมายเหตุ: soft gate เท่านั้น — PIN อ่านได้ในซอร์ส. */
 (function () {
   var CFG = window.PIN_GATE_CONFIG || {};
-  var PIN = String(CFG.pin == null ? '' : CFG.pin);
+  // รองรับหลายรหัส (pins: array) หรือรหัสเดียว (pin: string) — normalize เป็น array
+  var PINS = (Array.isArray(CFG.pins) ? CFG.pins : (CFG.pin != null ? [CFG.pin] : []))
+    .map(function (p) { return String(p); });
   var KEY = CFG.storageKey || 'az_gate';
   var IDLE = CFG.idleTimeoutMs || 12 * 60 * 60 * 1000;
   var MAX = CFG.maxAttempts || 5;
   var LOCKOUT = (CFG.lockoutSeconds || 30) * 1000;
   var TITLE = CFG.title || 'กรุณาใส่รหัสผ่าน';
   var SUBTITLE = CFG.subtitle || 'Advisortool';
-  var CONFIG_OK = /^\d{6}$/.test(PIN);
+  var CONFIG_OK = PINS.length > 0 && PINS.every(function (p) { return /^\d{6}$/.test(p); });
 
   var LOCK_ICON = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
 
@@ -143,7 +145,7 @@
     renderDots();
   }
   function submit() {
-    if (entered === PIN) {
+    if (PINS.indexOf(entered) !== -1) {
       unlock();
       overlay.classList.add('az-pin--out');
       setTimeout(function () {
