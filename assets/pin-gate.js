@@ -150,6 +150,9 @@
         root.classList.remove('az-locked');
         if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
         onReady(mountLockButton);
+        // เผื่อหน้าโหลดตอนล็อก (body ถูกซ่อน) แล้วมีกราฟ/เลย์เอาต์ที่วัดขนาดตอนโหลด
+        // ให้วัดใหม่หลังโชว์ (defense-in-depth สำหรับเครื่องมือที่ใช้ Chart.js ฯลฯ)
+        try { window.dispatchEvent(new Event('resize')); } catch (e) {}
       }, 260);
       return;
     }
