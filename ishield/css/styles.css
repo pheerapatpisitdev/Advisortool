@@ -1,0 +1,139 @@
+/* iShield calculator — tool-specific styles (loaded after ../assets/theme.css).
+   NOTE: this file intentionally keeps a local :root with the tool's ORIGINAL
+   (unprefixed) custom-property names — --navy/--blue/--teal/--accent/--bg/--card/
+   --line/--txt/--muted/--soft/--good/--bad. The results screen is built by a
+   large inline <script> that we must not edit (see project rules), and that
+   script both (a) writes class="kpi"/"kpi hi"/"t"/"v"/"u" markup for the summary
+   boxes and (b) injects raw inline styles like style="color:var(--muted)" as
+   literal strings. Removing these variables or the .kpi rules — as the generic
+   theme migration would normally do — would silently break that untouched,
+   script-generated output. Everything theme.css already owns (reset, body,
+   .wrap, header, generic inputs/select, .seg, .card, .row2, .btn) has been
+   dropped here in favor of the shared .az-* classes. */
+:root{
+  --navy:#0b2942; --blue:#1c5d99; --teal:#0e9aa7; --accent:#e8821e;
+  --bg:#f4f6f9; --card:#ffffff; --line:#dde3ea; --txt:#1f2a37; --muted:#65748b;
+  --good:#1b8a5a; --bad:#c0392b; --soft:#eef3f8;
+}
+
+/* screen containers (two-screen input/result flow toggled via el.style.display in the script) */
+#screenInput{max-width:760px;margin:18px auto 0}
+#screenResult{margin-top:18px}
+
+/* result screen action bar (buttons inside now use .az-btn.az-btn-ghost) */
+.resbar{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.resbar .az-btn{margin-top:0;flex:1;min-width:170px}
+
+/* form field wrapper (tool-specific, no theme.css equivalent) */
+label.fld{display:block;margin-bottom:13px}
+label.fld .lab{font-size:13px;color:var(--muted);margin-bottom:5px;display:block;font-weight:600}
+
+/* rider (สัญญาเพิ่มเติม) toggle cards */
+.rider{border:1px solid var(--line);border-radius:10px;padding:11px 12px;margin-bottom:10px;background:#fbfcfe}
+.rider .rh{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.rider .rh .name{font-weight:700;font-size:14px;color:var(--navy)}
+.rider .rh .desc{font-size:11.5px;color:var(--muted)}
+.rider .body{margin-top:10px;display:none}
+.rider.open .body{display:block}
+
+/* on/off switch used by riders */
+.switch{position:relative;width:42px;height:23px;flex:none}
+.switch input{opacity:0;width:0;height:0}
+.slider{position:absolute;inset:0;background:#c4ccd6;border-radius:30px;transition:.2s;cursor:pointer}
+.slider:before{content:"";position:absolute;height:17px;width:17px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}
+.switch input:checked + .slider{background:var(--teal)}
+.switch input:checked + .slider:before{transform:translateX(19px)}
+
+/* warning / error banners injected by the script (needs the show/err state toggles — az-warn has no equivalent) */
+.warn{background:#fff4e5;border:1px solid #f0c987;color:#92590f;border-radius:9px;padding:9px 11px;font-size:13px;margin-bottom:11px;display:none}
+.warn.show{display:block}
+.warn.err{background:#fdecea;border-color:#e8a39c;color:#a02c20}
+
+/* ===== results ===== */
+.sumgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+@media(max-width:620px){.sumgrid{grid-template-columns:1fr}}
+
+/* KPI boxes: kept because the script builds this markup itself (class="kpi"/"kpi hi") —
+   see note at top of file. Visually mirrors .az-box/.az-hero-box. */
+.kpi{background:linear-gradient(135deg,var(--soft),#fff);border:1px solid var(--line);border-radius:12px;padding:14px}
+.kpi .t{font-size:12px;color:var(--muted);font-weight:600}
+.kpi .v{font-size:24px;font-weight:800;color:var(--navy);margin-top:3px}
+.kpi .u{font-size:12px;color:var(--muted)}
+.kpi.hi{background:linear-gradient(135deg,#103a5e,#1c5d99);border:none}
+.kpi.hi .t,.kpi.hi .u{color:#cfe0f0}.kpi.hi .v{color:#fff}
+
+table.tb{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:6px}
+table.tb th,table.tb td{padding:8px 10px;text-align:right;border-bottom:1px solid var(--line);border-right:1px solid var(--line)}
+table.tb th:last-child,table.tb td:last-child{border-right:none}
+table.tb th{border-right-color:rgba(255,255,255,.18)}
+table.tb th{background:var(--navy);color:#fff;font-weight:600;font-size:12.5px;text-align:right;position:sticky;top:0}
+table.tb th:first-child,table.tb td:first-child{text-align:left}
+table.tb tr:nth-child(even) td{background:#f8fafc}
+table.tb tfoot td,table.tb .total td{font-weight:800;background:var(--soft)!important;color:var(--navy);border-top:2px solid var(--blue)}
+
+.tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:20px;background:var(--soft);color:var(--blue);font-weight:600}
+
+.illus-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;margin-top:8px}
+.vt-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;margin-top:8px}
+table.vt th{font-size:11.5px;line-height:1.2;text-align:center;border-left:1px solid rgba(255,255,255,.18)}
+table.vt th.grp{background:#143a5e;font-size:12.5px}
+table.vt td{font-size:12.5px}
+table.vt th.gp2,table.vt td:nth-child(5),table.vt td:nth-child(6),table.vt td:nth-child(7){background:rgba(14,154,167,.05)}
+table.vt thead tr:first-child th.gp2{background:#0e6a73}
+.vtsection{margin-top:18px}
+
+.subtle{font-size:12px;color:var(--muted);margin-top:6px}
+
+.ci{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
+@media(max-width:620px){.ci{grid-template-columns:1fr}}
+.cibox{border:1px solid var(--line);border-radius:11px;padding:14px;background:#fbfcfe}
+.cibox .h{font-weight:700;color:var(--navy);font-size:14px;margin-bottom:6px}
+.cibox .amt{font-size:21px;font-weight:800;color:var(--teal)}
+.cibox p{font-size:12.5px;color:var(--muted);margin-top:5px}
+.cinote{margin-top:14px;background:#f8fbfd;border:1px solid var(--line);border-left:4px solid var(--teal);border-radius:9px;padding:12px 14px;font-size:12.5px;color:var(--txt)}
+.cinote b{color:var(--navy);font-size:13px}
+.cinote ul{margin:7px 0 0 18px;color:var(--muted)}
+.cinote li{margin-bottom:5px;line-height:1.5}
+
+details.dz{margin-top:14px;border:1px solid var(--line);border-radius:11px;overflow:hidden;background:#fff}
+details.dz>summary{cursor:pointer;padding:13px 16px;font-weight:700;color:var(--navy);background:var(--soft);list-style:none;user-select:none;font-size:14px}
+details.dz>summary::-webkit-details-marker{display:none}
+details.dz>summary:before{content:"▸ ";color:var(--accent)}
+details.dz[open]>summary:before{content:"▾ "}
+.dzgrp{padding:6px 16px 14px}
+.dzh{font-weight:700;font-size:13px;margin:12px 0 8px;padding:7px 11px;border-radius:7px}
+.dzh.early{background:#fff4e8;color:#a85d12;border:1px solid #f0c987}
+.dzh.major{background:#fdeceb;color:#a02c20;border:1px solid #e8a39c}
+ol.dzlist{columns:2;column-gap:26px;margin:0;padding-left:20px;font-size:12.5px;color:var(--txt)}
+ol.dzlist li{margin-bottom:5px;line-height:1.45;break-inside:avoid}
+@media(max-width:560px){ol.dzlist{columns:1}}
+@media print{ol.dzlist{columns:2}details.dz>summary{display:none}details.dz{border:none}.dzgrp{padding:0}}
+@media print{.vtsection{break-before:page;page-break-before:always}.vt-wrap{overflow:visible;break-inside:avoid}}
+
+.sech{font-size:15px;color:var(--navy);font-weight:700;margin:22px 0 4px;display:flex;align-items:center;gap:8px}
+.sech .bar{width:4px;height:18px;background:var(--accent);border-radius:3px}
+
+.placeholder{text-align:center;padding:60px 20px;color:var(--muted)}
+.placeholder svg{width:64px;height:64px;opacity:.3;margin-bottom:12px}
+
+.foot{text-align:center;font-size:11.5px;color:var(--muted);margin:22px 0 6px;line-height:1.7}
+.foot .ver-ok{color:#1b8a5a;font-weight:700}
+.mini{font-size:11px;color:var(--muted)}
+.pillrow{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.toolbar{display:flex;gap:10px;margin-bottom:14px}
+.toolbar .az-btn{margin-top:0;padding:9px 18px;font-size:14px}
+
+@media print{
+  body{background:#fff;font-size:11.5px}
+  #screenInput,.toolbar,.resbar{display:none!important}
+  .illus-wrap{max-height:none;overflow:visible}
+  table.tb th{position:static}
+  .printhead{display:block!important}
+}
+.printhead{display:none;text-align:center;margin-bottom:10px}
+.printhead h1{font-size:18px;color:var(--navy)}
+
+/* small utility class replacing a removed inline style="" attribute in the markup.
+   (the two style="margin-top:16px" instances on stacked cards were dropped outright —
+   .az-card already carries margin-bottom:16px, so the old rule was redundant.) */
+.is-mb13{margin-bottom:13px}

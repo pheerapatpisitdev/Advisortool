@@ -6,152 +6,43 @@
   <meta name="description" content="iShield ประกันชีวิตควบโรคร้ายแรงตลอดชีพ — คำนวณเบี้ยสองทางและตารางมูลค่ากรมธรรม์" />
   <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg" />
 <title>โปรแกรมคำนวณเบี้ยประกัน iShield</title>
-<style>
-:root{
-  --navy:#0b2942; --blue:#1c5d99; --teal:#0e9aa7; --accent:#e8821e;
-  --bg:#f4f6f9; --card:#ffffff; --line:#dde3ea; --txt:#1f2a37; --muted:#65748b;
-  --good:#1b8a5a; --bad:#c0392b; --soft:#eef3f8;
-}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:"Sarabun","Segoe UI",Tahoma,sans-serif;background:var(--bg);color:var(--txt);font-size:15px;line-height:1.5}
-.wrap{max-width:1180px;margin:0 auto;padding:18px}
-header.top{background:linear-gradient(120deg,var(--navy),var(--blue));color:#fff;border-radius:16px;padding:22px 26px;display:flex;align-items:center;gap:16px;box-shadow:0 6px 20px rgba(11,41,66,.18)}
-header.top .logo{width:52px;height:52px;border-radius:13px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:22px;letter-spacing:-1px}
-header.top h1{font-size:22px;font-weight:700}
-header.top p{font-size:13px;opacity:.85;margin-top:2px}
-#screenInput{max-width:760px;margin:18px auto 0}
-#screenResult{margin-top:18px}
-.resbar{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap}
-.resbar .btn{margin-top:0;width:auto;flex:1;min-width:170px}
-.navback{background:var(--navy)}
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:0 2px 8px rgba(20,40,70,.04)}
-.card h2{font-size:15px;color:var(--navy);margin-bottom:14px;padding-bottom:9px;border-bottom:2px solid var(--soft);display:flex;align-items:center;gap:8px}
-.card h2 .dot{width:8px;height:8px;border-radius:50%;background:var(--teal)}
-label.fld{display:block;margin-bottom:13px}
-label.fld .lab{font-size:13px;color:var(--muted);margin-bottom:5px;display:block;font-weight:600}
-input[type=text],input[type=number],select{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:9px;font-size:15px;font-family:inherit;background:#fff;color:var(--txt)}
-input:focus,select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(28,93,153,.12)}
-.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.seg{display:flex;background:var(--soft);border-radius:9px;padding:3px;gap:3px}
-.seg button{flex:1;border:none;background:transparent;padding:8px 6px;border-radius:7px;font-family:inherit;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;transition:.15s}
-.seg button.on{background:#fff;color:var(--navy);box-shadow:0 1px 4px rgba(0,0,0,.1)}
-.rider{border:1px solid var(--line);border-radius:10px;padding:11px 12px;margin-bottom:10px;background:#fbfcfe}
-.rider .rh{display:flex;align-items:center;justify-content:space-between;gap:8px}
-.rider .rh .name{font-weight:700;font-size:14px;color:var(--navy)}
-.rider .rh .desc{font-size:11.5px;color:var(--muted)}
-.rider .body{margin-top:10px;display:none}
-.rider.open .body{display:block}
-.switch{position:relative;width:42px;height:23px;flex:none}
-.switch input{opacity:0;width:0;height:0}
-.slider{position:absolute;inset:0;background:#c4ccd6;border-radius:30px;transition:.2s;cursor:pointer}
-.slider:before{content:"";position:absolute;height:17px;width:17px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}
-.switch input:checked + .slider{background:var(--teal)}
-.switch input:checked + .slider:before{transform:translateX(19px)}
-.btn{width:100%;padding:13px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;margin-top:6px;transition:.15s}
-.btn:hover{filter:brightness(1.07)}
-.btn.sec{background:var(--navy)}
-.warn{background:#fff4e5;border:1px solid #f0c987;color:#92590f;border-radius:9px;padding:9px 11px;font-size:13px;margin-bottom:11px;display:none}
-.warn.show{display:block}
-.warn.err{background:#fdecea;border-color:#e8a39c;color:#a02c20}
-/* results */
-.sumgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
-@media(max-width:620px){.sumgrid{grid-template-columns:1fr}}
-.kpi{background:linear-gradient(135deg,var(--soft),#fff);border:1px solid var(--line);border-radius:12px;padding:14px}
-.kpi .t{font-size:12px;color:var(--muted);font-weight:600}
-.kpi .v{font-size:24px;font-weight:800;color:var(--navy);margin-top:3px}
-.kpi .u{font-size:12px;color:var(--muted)}
-.kpi.hi{background:linear-gradient(135deg,#103a5e,#1c5d99);border:none}
-.kpi.hi .t,.kpi.hi .u{color:#cfe0f0}.kpi.hi .v{color:#fff}
-table.tb{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:6px}
-table.tb th,table.tb td{padding:8px 10px;text-align:right;border-bottom:1px solid var(--line);border-right:1px solid var(--line)}
-table.tb th:last-child,table.tb td:last-child{border-right:none}
-table.tb th{border-right-color:rgba(255,255,255,.18)}
-table.tb th{background:var(--navy);color:#fff;font-weight:600;font-size:12.5px;text-align:right;position:sticky;top:0}
-table.tb th:first-child,table.tb td:first-child{text-align:left}
-table.tb tr:nth-child(even) td{background:#f8fafc}
-table.tb tfoot td,table.tb .total td{font-weight:800;background:var(--soft)!important;color:var(--navy);border-top:2px solid var(--blue)}
-.tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:20px;background:var(--soft);color:var(--blue);font-weight:600}
-.illus-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;margin-top:8px}
-.vt-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;margin-top:8px}
-table.vt th{font-size:11.5px;line-height:1.2;text-align:center;border-left:1px solid rgba(255,255,255,.18)}
-table.vt th.grp{background:#143a5e;font-size:12.5px}
-table.vt td{font-size:12.5px}
-table.vt th.gp2,table.vt td:nth-child(5),table.vt td:nth-child(6),table.vt td:nth-child(7){background:rgba(14,154,167,.05)}
-table.vt thead tr:first-child th.gp2{background:#0e6a73}
-.vtsection{margin-top:18px}
-.subtle{font-size:12px;color:var(--muted);margin-top:6px}
-.ci{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
-@media(max-width:620px){.ci{grid-template-columns:1fr}}
-.cibox{border:1px solid var(--line);border-radius:11px;padding:14px;background:#fbfcfe}
-.cibox .h{font-weight:700;color:var(--navy);font-size:14px;margin-bottom:6px}
-.cibox .amt{font-size:21px;font-weight:800;color:var(--teal)}
-.cibox p{font-size:12.5px;color:var(--muted);margin-top:5px}
-.cinote{margin-top:14px;background:#f8fbfd;border:1px solid var(--line);border-left:4px solid var(--teal);border-radius:9px;padding:12px 14px;font-size:12.5px;color:var(--txt)}
-.cinote b{color:var(--navy);font-size:13px}
-.cinote ul{margin:7px 0 0 18px;color:var(--muted)}
-.cinote li{margin-bottom:5px;line-height:1.5}
-details.dz{margin-top:14px;border:1px solid var(--line);border-radius:11px;overflow:hidden;background:#fff}
-details.dz>summary{cursor:pointer;padding:13px 16px;font-weight:700;color:var(--navy);background:var(--soft);list-style:none;user-select:none;font-size:14px}
-details.dz>summary::-webkit-details-marker{display:none}
-details.dz>summary:before{content:"▸ ";color:var(--accent)}
-details.dz[open]>summary:before{content:"▾ "}
-.dzgrp{padding:6px 16px 14px}
-.dzh{font-weight:700;font-size:13px;margin:12px 0 8px;padding:7px 11px;border-radius:7px}
-.dzh.early{background:#fff4e8;color:#a85d12;border:1px solid #f0c987}
-.dzh.major{background:#fdeceb;color:#a02c20;border:1px solid #e8a39c}
-ol.dzlist{columns:2;column-gap:26px;margin:0;padding-left:20px;font-size:12.5px;color:var(--txt)}
-ol.dzlist li{margin-bottom:5px;line-height:1.45;break-inside:avoid}
-@media(max-width:560px){ol.dzlist{columns:1}}
-@media print{ol.dzlist{columns:2}details.dz>summary{display:none}details.dz{border:none}.dzgrp{padding:0}}
-@media print{.vtsection{break-before:page;page-break-before:always}.vt-wrap{overflow:visible;break-inside:avoid}}
-.sech{font-size:15px;color:var(--navy);font-weight:700;margin:22px 0 4px;display:flex;align-items:center;gap:8px}
-.sech .bar{width:4px;height:18px;background:var(--accent);border-radius:3px}
-.placeholder{text-align:center;padding:60px 20px;color:var(--muted)}
-.placeholder svg{width:64px;height:64px;opacity:.3;margin-bottom:12px}
-.foot{text-align:center;font-size:11.5px;color:var(--muted);margin:22px 0 6px;line-height:1.7}
-.mini{font-size:11px;color:var(--muted)}
-.pillrow{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
-.toolbar{display:flex;gap:10px;margin-bottom:14px}
-.toolbar .btn{margin-top:0;width:auto;padding:9px 18px;font-size:14px}
-@media print{
-  body{background:#fff;font-size:11.5px}
-  #screenInput,.az-gh,.resbar,.toolbar,.btn,header.top .logo{display:none!important}
-  .card{box-shadow:none;border:1px solid #ccc;break-inside:avoid}
-  .illus-wrap{max-height:none;overflow:visible}
-  table.tb th{position:static}
-  .printhead{display:block!important}
-}
-.printhead{display:none;text-align:center;margin-bottom:10px}
-.printhead h1{font-size:18px;color:var(--navy)}
-
-</style>
 <link rel="stylesheet" href="../assets/global-header.css" />
+<link rel="stylesheet" href="../assets/theme.css?v=1" />
+<link rel="stylesheet" href="css/styles.css?v=1" />
 </head>
-<body>
+<body class="az-theme">
 <script src="../assets/global-header.js?v=2"></script>
 
-<div class="wrap">
-  <header class="top">
-    <div class="logo">iS</div>
-    <div>
-      <h1>โปรแกรมคำนวณเบี้ยประกัน iShield</h1>
-      <p>แบบประกันคุ้มครองชีวิตและโรคร้ายแรงตลอดชีพ • คำนวณสองทาง + ตารางผลประโยชน์ครบ</p>
+<header class="az-hero">
+  <div class="az-hero__in">
+    <div class="az-hero__brand">
+      <span class="az-hero__logo">iS</span>
+      <span><span class="az-hero__ttl">โปรแกรมคำนวณเบี้ยประกัน iShield</span><span class="az-hero__sub">แบบประกันคุ้มครองชีวิตและโรคร้ายแรงตลอดชีพ • คำนวณสองทาง + ตารางผลประโยชน์ครบ</span></span>
     </div>
-  </header>
+    <div class="az-hero__badge"><b>เวอร์ชัน A2026-1</b></div>
+  </div>
+</header>
+<div class="az-wrap">
+  <div class="az-steps" id="isSteps" style="max-width:760px;margin:0 auto">
+    <div class="az-s az-active" id="stepA"><span class="az-n">1</span> กรอกข้อมูล</div>
+    <div class="az-bar" id="stepBar"></div>
+    <div class="az-s" id="stepB"><span class="az-n">2</span> ผลการคำนวณ</div>
+  </div>
 
   <!-- ============ SCREEN 1: INPUT ============ -->
   <div id="screenInput">
     <div id="warnBoxInput"></div>
     <div class="inputcol">
-      <div class="card">
-        <h2><span class="dot"></span>ข้อมูลผู้เอาประกันภัย</h2>
+      <div class="az-card">
+        <div class="az-card__h"><span class="az-card__n">1</span><h2>ข้อมูลผู้เอาประกันภัย</h2></div>
+        <div class="az-card__b">
         <label class="fld"><span class="lab">ชื่อผู้เอาประกันภัย</span>
           <input type="text" id="name" placeholder="เช่น คุณคนพิเศษ" value=""></label>
-        <div class="row2">
+        <div class="az-grid2">
           <label class="fld"><span class="lab">อายุ (ปี)</span>
             <select id="age"></select></label>
           <label class="fld"><span class="lab">เพศ</span>
-            <div class="seg" id="sexSeg">
+            <div class="az-seg" id="sexSeg">
               <button data-v="ชาย" class="on">ชาย</button>
               <button data-v="หญิง">หญิง</button>
             </div></label>
@@ -168,11 +59,13 @@ ol.dzlist li{margin-bottom:5px;line-height:1.45;break-inside:avoid}
             <option>รายปี</option><option>ราย 6 เดือน</option>
             <option>ราย 3 เดือน</option><option>รายเดือน</option>
           </select></label>
+        </div>
       </div>
 
-      <div class="card" style="margin-top:16px">
-        <h2><span class="dot"></span>วิธีคำนวณ</h2>
-        <div class="seg" id="dirSeg" style="margin-bottom:13px">
+      <div class="az-card">
+        <div class="az-card__h"><span class="az-card__n">2</span><h2>วิธีคำนวณ</h2></div>
+        <div class="az-card__b">
+        <div class="az-seg is-mb13" id="dirSeg">
           <button data-v="sa" class="on">จากทุนประกัน</button>
           <button data-v="prem">จากเบี้ยประกัน</button>
         </div>
@@ -181,10 +74,12 @@ ol.dzlist li{margin-bottom:5px;line-height:1.45;break-inside:avoid}
         <label class="fld" id="premFld" style="display:none"><span class="lab">เบี้ยประกันภัยที่ต้องการ (ต่องวด, บาท)</span>
           <input type="text" inputmode="numeric" class="money" id="targetPrem" value="100,000"></label>
         <div class="mini">ทุนประกัน 100,000 – 5,000,000 บาท</div>
+        </div>
       </div>
 
-      <div class="card" style="margin-top:16px">
-        <h2><span class="dot"></span>สัญญาเพิ่มเติม (ไม่บังคับ)</h2>
+      <div class="az-card">
+        <div class="az-card__h"><span class="az-card__n">3</span><h2>สัญญาเพิ่มเติม (ไม่บังคับ)</h2></div>
+        <div class="az-card__b">
         <label class="fld"><span class="lab">ขั้นอาชีพ (สำหรับ AP / ECARE / MEB)</span>
           <select id="occ"><option value="1">ขั้น 1</option><option value="2">ขั้น 2</option>
           <option value="3">ขั้น 3</option><option value="4">ขั้น 4</option></select></label>
@@ -196,8 +91,8 @@ ol.dzlist li{margin-bottom:5px;line-height:1.45;break-inside:avoid}
             <label class="switch"><input type="checkbox" data-r="pb"><span class="slider"></span></label></div>
           <div class="body">
             <label class="fld"><span class="lab">แผน</span>
-              <div class="seg" id="pbPlan"><button data-v="fit" class="on">PB Fit</button><button data-v="beyond">PB Beyond</button></div></label>
-            <div class="row2">
+              <div class="az-seg" id="pbPlan"><button data-v="fit" class="on">PB Fit</button><button data-v="beyond">PB Beyond</button></div></label>
+            <div class="az-grid2">
               <label class="fld"><span class="lab">อายุผู้ชำระเบี้ย</span><input type="number" id="payerAge" min="20" max="70" value="35"></label>
               <label class="fld"><span class="lab">เพศผู้ชำระเบี้ย</span>
                 <select id="payerSex"><option value="ชาย">ชาย</option><option value="หญิง">หญิง</option></select></label>
@@ -238,18 +133,20 @@ ol.dzlist li{margin-bottom:5px;line-height:1.45;break-inside:avoid}
           <div class="body"><label class="fld"><span class="lab">จำนวนเงินเอาประกันภัย PLS (บาท)</span>
             <input type="text" inputmode="numeric" class="money" id="plsSA" value="500,000"></label></div>
         </div>
+        </div>
       </div>
-      <button class="btn" id="calcBtn">คำนวณ &nbsp;→</button>
+      <button class="az-btn-calc" id="calcBtn">คำนวณ &nbsp;→</button>
     </div>
   </div>
 
   <!-- ============ SCREEN 2: RESULTS ============ -->
   <div id="screenResult" style="display:none">
     <div class="resbar">
-      <button class="btn navback" id="backBtn">←&nbsp; แก้ไขข้อมูล / คำนวณใหม่</button>
-      <button class="btn sec" id="printBtn">🖨️ พิมพ์ / บันทึก PDF</button>
+      <button class="az-btn az-btn-back" id="backBtn">←&nbsp; แก้ไขข้อมูล / คำนวณใหม่</button>
+      <button class="az-btn az-btn-ghost" id="printBtn">🖨️ พิมพ์ / บันทึก PDF</button>
     </div>
-    <div class="card" id="results">
+    <div class="az-card" id="results">
+      <div class="az-card__b">
       <div class="printhead">
         <h1>ตารางแสดงผลประโยชน์ – iShield</h1>
         <div id="phSub" class="mini"></div>
@@ -261,12 +158,13 @@ ol.dzlist li{margin-bottom:5px;line-height:1.45;break-inside:avoid}
           <div>กรอกข้อมูล แล้วกด <b>คำนวณ</b> เพื่อแสดงเบี้ยประกัน<br>และตารางผลประโยชน์</div>
         </div>
       </div>
+      </div>
     </div>
   </div>
   <div class="foot">
     เอกสารนี้เป็นเพียงเครื่องมือช่วยคำนวณเบื้องต้น มิใช่ส่วนหนึ่งของสัญญาประกันภัย โปรดศึกษารายละเอียดและเงื่อนไขในกรมธรรม์<br>
     คำนวณตามตารางเบี้ย/มูลค่า iShield เวอร์ชัน A2026-1 • ผู้เอาประกันควรทำความเข้าใจรายละเอียดความคุ้มครองและเงื่อนไขก่อนตัดสินใจ<br>
-    <span style="color:#1b8a5a;font-weight:700">เวอร์ชันโปรแกรม: BUILD-2026-06-27g (+ตารางมูลค่า)</span>
+    <span class="ver-ok">เวอร์ชันโปรแกรม: BUILD-2026-06-27g (+ตารางมูลค่า)</span>
 </div>
 </div>
 
