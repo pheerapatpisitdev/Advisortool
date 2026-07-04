@@ -17,9 +17,6 @@
   <!-- SweetAlert2 (self-hosted) -->
   <script src="sweetalert2.min.js" defer></script>
 
-  <!-- Supabase JS (self-hosted, สำหรับบันทึกคำตอบ) -->
-  <script src="supabase.min.js" defer></script>
-
   <style>
     /* แอนิเมชันเดิมจาก career.css */
     @keyframes caq-fadeIn {
@@ -43,19 +40,9 @@
 
   <script>
   /* =========================================================================
-   * CONFIG — กรอกค่าตรงนี้เมื่อพร้อมใช้ Supabase / อีเมล
-   * ปล่อยว่างได้: ถ้าไม่กรอก แบบสอบถามจะยังทำงานครบ แค่ข้ามการบันทึก (graceful)
+   * CONFIG
    * ========================================================================= */
   const CONFIG = {
-    // จาก Supabase: Project Settings → API
-    SUPABASE_URL: "https://jkobdgurhxfmscloduhw.supabase.co",
-    SUPABASE_ANON_KEY: "sb_publishable_ACfHyPhgcrKCM72m4bkv3A_--cEb0yV", // publishable key (ใส่ในหน้าเว็บได้)
-    SUPABASE_TABLE: "career_responses",
-
-    // (ทางเลือก) URL ของ Supabase Edge Function ที่ส่งอีเมลผลลัพธ์
-    // ถ้าปล่อยว่างจะข้ามการส่งอีเมล
-    SEND_RESULTS_URL: "",
-
     LOGO_URL: "logo.png",        // คัดลอก public/career-agent/logo.png มาวางข้างไฟล์นี้
   };
 
@@ -197,62 +184,8 @@
     return { key: 'red', label: 'แดง' };
   }
 
-  /* ===================== ส่ง + บันทึก ===================== */
-  let _supabase = null;
-  function getSupabase() {
-    if (_supabase) return _supabase;
-    if (CONFIG.SUPABASE_URL && CONFIG.SUPABASE_ANON_KEY && window.supabase) {
-      _supabase = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
-    }
-    return _supabase;
-  }
-
-  async function submitAndShowResults() {
-    const score = calculateScore();
-    const payload = { formData: state.formData, score };
-
-    Swal.fire({
-      title: 'กำลังบันทึกข้อมูล...',
-      text: 'กรุณารอสักครู่',
-      allowOutsideClick: false,
-      allowEscapeKey: false,
-      didOpen: () => Swal.showLoading(),
-    });
-
-    try {
-      // 1) บันทึกลง Supabase (ถ้าตั้งค่าไว้)
-      const sb = getSupabase();
-      if (sb) {
-        const { error } = await sb.from(CONFIG.SUPABASE_TABLE).insert({
-          created_at: new Date().toISOString(),
-          form_data: state.formData,
-          score,
-          total: score.total,
-          category: getScoreCategory(score.total).label,
-        });
-        if (error) throw new Error(error.message || 'บันทึกไม่สำเร็จ');
-      }
-
-      // 2) ส่งอีเมลผลลัพธ์ผ่าน Edge Function (ถ้าตั้งค่าไว้) — ไม่ขว้าง error
-      if (CONFIG.SEND_RESULTS_URL) {
-        try {
-          await fetch(CONFIG.SEND_RESULTS_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-          });
-        } catch { /* เงียบไว้ ให้แบบสอบถามสำเร็จต่อได้ */ }
-      }
-
-      Swal.close();
-    } catch (err) {
-      await Swal.fire({
-        icon: 'error',
-        title: 'บันทึกไม่สำเร็จ',
-        text: (err && err.message) || 'เกิดข้อผิดพลาด กรุณาลองใหม่',
-      });
-    }
-
+  /* ===================== ส่ง ===================== */
+  function submitAndShowResults() {
     state.step = 3;
     render();
   }

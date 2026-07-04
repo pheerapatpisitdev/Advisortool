@@ -320,12 +320,6 @@
 </div>
 
 <script>
-/* ===== CONFIG (Supabase: โปรเจกต์ AdvisorTool, ตาราง fhc_responses) ===== */
-const CONFIG = {
-  SUPA_URL: "https://jkobdgurhxfmscloduhw.supabase.co/rest/v1/fhc_responses",
-  SUPA_KEY: "sb_publishable_ACfHyPhgcrKCM72m4bkv3A_--cEb0yV", // publishable key
-};
-
 /* ===== helpers (เหมือนต้นฉบับ) ===== */
 const range = (a, b) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
 const num = (s) => parseFloat((s || "").replace(/,/g, "")) || 0;
@@ -461,44 +455,14 @@ function buildSummary() {
   return { text: lines.join("\n"), c, ps };
 }
 
-function saveToSupabase(c, ps) {
-  const payload = {
-    interviewer: $("interviewer").value || null,
-    interview_date: $("idate").value || null,
-    cur_age: $("ac").value ? parseInt($("ac").value) : null,
-    ret_age: $("ar").value ? parseInt($("ar").value) : null,
-    exp_age: $("ae").value ? parseInt($("ae").value) : null,
-    work_ability: WA_LABELS[$("wa").value] || null,
-    work_years: c.wy || null,
-    money_years: c.my || null,
-    income: c.imN || null,
-    expense: c.exN || null,
-    total_income: c.ti || null,
-    savings: c.sav || null,
-    debt: c.dbt || null,
-    investment: c.inv || null,
-    net_asset: c.net || null,
-    dependents: ps.length ? ps.join(", ") : null,
-  };
-  const box = $("result-box");
-  fetch(CONFIG.SUPA_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", apikey: CONFIG.SUPA_KEY, Authorization: "Bearer " + CONFIG.SUPA_KEY, Prefer: "return=minimal" },
-    body: JSON.stringify(payload),
-  })
-    .then((res) => { if (res.ok) box.textContent += "\n\n✅ บันทึกข้อมูลลง Supabase เรียบร้อยแล้ว"; else res.text().then((t) => box.textContent += "\n\n⚠️ บันทึกไม่สำเร็จ: " + t); })
-    .catch((err) => box.textContent += "\n\n⚠️ เชื่อมต่อ Supabase ไม่ได้: " + err.message);
-}
-
 let lastSummary = "";
 $("analyze").addEventListener("click", () => {
-  const { text, c, ps } = buildSummary();
+  const { text } = buildSummary();
   lastSummary = text;
   const box = $("result-box");
   box.style.display = "block";
   box.textContent = text;
   setTimeout(() => box.scrollIntoView({ behavior: "smooth" }), 0);
-  saveToSupabase(c, ps);
 });
 
 $("share").addEventListener("click", () => {
