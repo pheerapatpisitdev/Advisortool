@@ -120,10 +120,11 @@
 
     .grid {
       display: grid; gap: clamp(16px, 1.8vw, 26px);
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       max-width: 1320px; margin: 0 auto; padding: 0 clamp(18px, 4vw, 54px) 80px;
     }
-    @media (max-width: 940px) { .grid { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+    @media (max-width: 1180px) { .grid { grid-template-columns: repeat(3, minmax(0,1fr)); } }
+    @media (max-width: 900px)  { .grid { grid-template-columns: repeat(2, minmax(0,1fr)); } }
     @media (max-width: 560px) { .grid { grid-template-columns: 1fr; gap: 16px; } }
 
     .card {
