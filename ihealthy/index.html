@@ -239,7 +239,7 @@
       cellContent += "</ul>";
     }
 
-    var html = '<tr class="border-border/60">';
+    var html = '<tr class="border-b border-border/60">';
     html += '<td class="font-medium w-[40%] p-0 pl-1 pr-1 md:pl-[25px] border-r border-border/60 py-1.5 md:pt-[13px] md:pb-[13px] mt-0 mb-0 align-top text-left">' + cellContent + "</td>";
 
     if (allPlansSpan > 0) {
@@ -365,7 +365,7 @@
     }).join("");
 
     // ---- table header ----
-    var headHtml = '<tr class="hover:bg-transparent border-border/60">' +
+    var headHtml = '<tr class="hover:bg-transparent border-b border-border/60">' +
       '<th class="font-semibold text-left bg-gradient-to-b from-brand-ink to-brand-blue-deep text-brand-cream w-[40%] pl-1 pr-1 md:pl-6 border-r border-white/20 text-[9px] sm:text-[10px] md:text-sm tracking-wide py-0.5 md:py-0">' + esc(t("benefit_header")) + "</th>";
     displayedPlans.forEach(function (plan) {
       headHtml += '<th class="font-semibold text-center w-[12%] sm:w-[14%] md:w-[15%] ' + planHeaderStyles[plan] + ' border-l border-white/20 p-0">' +
@@ -376,7 +376,7 @@
 
     // ---- premium + total rows ----
     var freqLabel = state.frequency === "yearly" ? t("yearly_short") : state.frequency === "six-monthly" ? t("six_monthly_short") : t("monthly_short");
-    var premiumRow = '<tr class="border-border/60"><td class="font-bold text-left bg-brand-cream w-[40%] pl-1 pr-1 md:pl-6 border-r border-border/60 text-[9px] sm:text-[10px] md:text-sm h-[36px] md:h-[50px] py-1">' + esc(t("premium_header")) + "</td>";
+    var premiumRow = '<tr class="border-b border-border/60"><td class="font-bold text-left bg-brand-cream w-[40%] pl-1 pr-1 md:pl-6 border-r border-border/60 text-[9px] sm:text-[10px] md:text-sm h-[36px] md:h-[50px] py-1">' + esc(t("premium_header")) + "</td>";
     displayedPlans.forEach(function (plan) {
       var premium = calculatePremium(state.age, state.gender, plan, state.frequency);
       premiumRow += '<td class="w-[12%] sm:w-[14%] md:w-[15%] p-0.5 md:p-2 bg-brand-ink text-brand-cream border-l border-border/40">' +
@@ -386,7 +386,7 @@
     });
     premiumRow += "</tr>";
 
-    var totalRow = '<tr class="border-border/60"><td class="font-bold text-[9px] sm:text-[10px] md:text-base bg-brand-cream pl-1 pr-1 md:pl-6 w-[40%] border-r border-border/60 py-1 md:pt-0">' + esc(t("total_benefit_header")) + "</td>";
+    var totalRow = '<tr class="border-b border-border/60"><td class="font-bold text-[9px] sm:text-[10px] md:text-base bg-brand-cream pl-1 pr-1 md:pl-6 w-[40%] border-r border-border/60 py-1 md:pt-0">' + esc(t("total_benefit_header")) + "</td>";
     displayedPlans.forEach(function (plan) {
       totalRow += '<td class="text-center font-bold text-[9px] sm:text-[10px] md:text-base w-[12%] sm:w-[14%] md:w-[15%] p-0.5 md:p-4 ' + PLAN_CELL_BG + ' border-l border-border/40">' + esc(overallBenefitFor(plan)) + "</td>";
     });
@@ -398,7 +398,7 @@
       var rowSpansByPlan = {};
       displayedPlans.forEach(function (plan) { rowSpansByPlan[plan] = getMergedRowSpans(category.benefits, plan); });
       var allPlansMergedSpans = getAllPlanMergedSpans(category.benefits, displayedPlans);
-      bodyHtml += '<tr class="border-border/60"><td colspan="' + (displayedPlans.length + 1) +
+      bodyHtml += '<tr class="border-b border-border/60"><td colspan="' + (displayedPlans.length + 1) +
         '" class="bg-gradient-to-r from-brand-ink to-brand-blue text-brand-cream text-[9px] sm:text-xs md:text-lg font-medium px-1 md:px-6 py-0.5 md:py-2 tracking-wide">' +
         esc(category.category[lang]) + "</td></tr>";
       category.benefits.forEach(function (benefit, index) {
