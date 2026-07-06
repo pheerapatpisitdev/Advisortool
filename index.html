@@ -12,307 +12,299 @@
   <title>Advisortool — Hub</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
-    /* ============================================================
-       Advisortool — Hub · Editorial / Swiss monochrome system
-       ink on paper · IBM Plex superfamily · hairline grid
-       ============================================================ */
+    /* ============ Aurora Glass ============ */
     :root {
-      --ink:        #0b0b0c;   /* near-black */
-      --ink-soft:   #2a2a2e;
-      --gray-1:     #55555b;
-      --gray-2:     #86868c;
-      --gray-3:     #b6b5b0;
-      --paper:      #f4f2ec;   /* warm off-white canvas */
-      --card:       #fbfaf7;   /* card surface */
-      --line:       #d8d5cc;   /* hairline */
-      --line-mid:   #b2afa6;
-      --header-h:   66px;
-      --easing:     cubic-bezier(.2,.7,.2,1);
-      --mono:       'IBM Plex Mono', ui-monospace, 'SFMono-Regular', monospace;
-      --sans:       'IBM Plex Sans Thai', system-ui, sans-serif;
+      --font-display: 'Kanit', 'IBM Plex Sans Thai', sans-serif;
+      --font-body: 'IBM Plex Sans Thai', system-ui, sans-serif;
+      --font-num: 'Kanit', sans-serif;
+      --r: 22px;
+      --dur: .55s;
+      --ease: cubic-bezier(.2,.7,.15,1);
+
+      --bg: #0a0a1a;
+      --ink: #f4f1ff;
+      --ink-soft: #bcb4d6;
+      --ink-faint: #7d7597;
+      --surface: rgba(255,255,255,.055);
+      --surface-2: rgba(255,255,255,.08);
+      --line: rgba(255,255,255,.12);
+      --line-strong: rgba(255,255,255,.24);
+      --accent: #ff5ea8;
+      --accent-ink: #ff8cc2;
+      --gold: #7cf0ff;
+      --emerald: #5ef2c0;
+      --shadow: 0 34px 70px -30px rgba(0,0,0,.8);
+      --shadow-soft: 0 2px 18px -8px rgba(0,0,0,.5);
+      --media-overlay: linear-gradient(180deg, rgba(8,6,20,0) 25%, rgba(8,6,20,.7) 100%);
     }
+
     * { box-sizing: border-box; }
-    html, body { margin: 0; }
+    html { scroll-behavior: smooth; }
     body {
-      font-family: var(--sans);
-      background: var(--paper);
-      color: var(--ink);
-      -webkit-font-smoothing: antialiased;
-      text-rendering: optimizeLegibility;
+      margin: 0; background: var(--bg); color: var(--ink);
+      font-family: var(--font-body); -webkit-font-smoothing: antialiased;
+      position: relative; overflow-x: hidden;
     }
-    /* fine print-grain overlay for editorial atmosphere */
+    /* color mesh + grain */
     body::before {
-      content: ""; position: fixed; inset: 0; z-index: 1; pointer-events: none;
-      opacity: .05; mix-blend-mode: multiply;
-      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+      content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background:
+        radial-gradient(45% 40% at 82% -8%, rgba(255,90,180,.42), transparent 68%),
+        radial-gradient(42% 42% at 4% 6%, rgba(80,220,255,.34), transparent 70%),
+        radial-gradient(50% 45% at 55% 108%, rgba(150,90,255,.4), transparent 70%),
+        radial-gradient(38% 38% at 100% 60%, rgba(255,180,80,.18), transparent 70%);
     }
+    body::after {
+      content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: .5;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.045'/%3E%3C/svg%3E");
+      mix-blend-mode: overlay;
+    }
+    .wrap { position: relative; z-index: 1; }
 
-    /* ---------- Header ---------- */
-    .az-header {
-      position: sticky; top: 0; z-index: 120;
+    /* ============ HEADER ============ */
+    .hd {
+      position: sticky; top: 0; z-index: 50;
       display: flex; align-items: center; justify-content: space-between;
-      height: var(--header-h); padding: 0 clamp(16px, 4vw, 40px);
-      background: rgba(244,242,236,.86); backdrop-filter: blur(10px) saturate(1.1);
-      border-bottom: 1px solid var(--ink);
+      padding: 16px clamp(18px, 4vw, 54px);
+      background: rgba(10,10,26,.55);
+      backdrop-filter: blur(14px) saturate(1.1); -webkit-backdrop-filter: blur(14px) saturate(1.1);
+      border-bottom: 1px solid var(--line);
     }
-    .az-header__left { display: flex; align-items: center; gap: 16px; }
-    .az-header__right { display: flex; align-items: center; gap: 14px; }
-    .az-header__icon {
-      display: inline-flex; align-items: center; justify-content: center;
-      width: 40px; height: 40px; color: var(--ink);
-      border: 1px solid var(--ink); background: transparent; text-decoration: none;
-      transition: background .18s var(--easing), color .18s var(--easing);
+    .hd__brand { display: flex; align-items: center; gap: 13px; text-decoration: none; color: var(--ink); }
+    .hd__mark {
+      width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center;
+      background: var(--accent); color: #fff; font-family: var(--font-num);
+      font-weight: 700; font-size: 22px; box-shadow: 0 6px 18px -6px var(--accent);
     }
-    .az-header__icon:hover { background: var(--ink); color: var(--paper); }
-    .az-brand {
-      font-family: var(--mono); font-weight: 600; font-size: 15px;
-      letter-spacing: .22em; text-transform: uppercase; color: var(--ink); text-decoration: none;
-      display: inline-flex; align-items: baseline; gap: 8px;
+    .hd__name { font-family: var(--font-display); font-weight: 600; font-size: 21px; letter-spacing: .2px; }
+    .hd__name b { color: var(--accent); font-weight: 700; }
+    .hd__right { display: flex; align-items: center; gap: 10px; }
+    .hd__badge {
+      display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%;
+      background: var(--surface-2); border: 1px solid var(--line); color: var(--emerald);
     }
-    .az-brand small { font-weight: 400; font-size: 11px; letter-spacing: .18em; color: var(--gray-2); }
-    @media (max-width: 560px) { .az-brand small { display: none; } }
-    .az-header__avatar {
-      position: relative; width: 40px; height: 40px; border: 1px solid var(--ink);
-      display: inline-flex; align-items: center; justify-content: center;
-      background: var(--ink); color: var(--paper);
-    }
-    .az-header__check {
-      position: absolute; right: -6px; bottom: -6px; width: 16px; height: 16px;
-      background: var(--paper); color: var(--ink); display: inline-flex;
-      align-items: center; justify-content: center; border: 1px solid var(--ink);
-    }
-    .az-header__icon:focus-visible, .az-card:focus-visible,
-    .az-header__avatar:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+    @media (max-width: 460px) { .hd__name { font-size: 18px; } }
 
-    /* ---------- Masthead ---------- */
-    .az-main { position: relative; z-index: 2; max-width: 1320px; margin: 0 auto; padding: clamp(28px, 5vw, 56px) clamp(16px, 4vw, 40px) 80px; }
+    /* ============ HERO ============ */
+    .hero { padding: clamp(46px, 8vw, 88px) clamp(18px, 4vw, 54px) clamp(26px, 3vw, 40px); max-width: 1320px; margin: 0 auto; }
+    .hero__eyebrow {
+      display: inline-flex; align-items: center; gap: 9px;
+      font-size: 12.5px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 22px;
+    }
+    .hero__eyebrow::before { content: ""; width: 32px; height: 1px; background: var(--gold); display: inline-block; }
+    .hero__title {
+      font-family: var(--font-display); font-weight: 600;
+      font-size: clamp(36px, 6.6vw, 76px); line-height: 1.05; letter-spacing: -.5px;
+      margin: 0; max-width: 15ch;
+    }
+    .hero__title em { font-style: normal; color: var(--accent); }
+    .hero__sub {
+      margin: 26px 0 0; max-width: 52ch; font-size: clamp(15px, 1.7vw, 18px);
+      line-height: 1.7; color: var(--ink-soft);
+    }
+    .hero__meta { display: flex; flex-wrap: wrap; gap: 30px; margin-top: 34px; padding-top: 26px; border-top: 1px solid var(--line); }
+    .hero__stat { display: flex; flex-direction: column; gap: 3px; }
+    .hero__stat b { font-family: var(--font-num); font-weight: 600; font-size: 30px; color: var(--ink); line-height: 1; }
+    .hero__stat span { font-size: 12.5px; color: var(--ink-faint); font-weight: 600; letter-spacing: .3px; }
 
-    .az-masthead { margin-bottom: clamp(30px, 5vw, 52px); }
-    .az-kicker {
-      font-family: var(--mono); font-size: 12px; letter-spacing: .32em; text-transform: uppercase;
-      color: var(--gray-1); display: flex; align-items: center; gap: 14px;
-      opacity: 0; animation: az-fade .7s var(--easing) .05s forwards;
-    }
-    .az-kicker::before { content: ""; width: 34px; height: 1px; background: var(--ink); display: inline-block; }
-    .az-title {
-      font-weight: 700; font-size: clamp(34px, 6.6vw, 76px); line-height: .98; letter-spacing: -.02em;
-      margin: 20px 0 0; max-width: 15ch;
-      opacity: 0; animation: az-rise .8s var(--easing) .12s forwards;
-    }
-    .az-title em { font-style: normal; position: relative; }
-    .az-lede {
-      margin: 22px 0 0; font-size: clamp(15px, 1.8vw, 18px); line-height: 1.6; color: var(--gray-1);
-      max-width: 52ch; font-weight: 400;
-      opacity: 0; animation: az-rise .8s var(--easing) .2s forwards;
-    }
-    .az-meta {
-      margin-top: 30px; padding-top: 14px; border-top: 1px solid var(--ink);
+    /* ============ GRID ============ */
+    .index-row {
       display: flex; align-items: baseline; justify-content: space-between; gap: 16px;
-      font-family: var(--mono); font-size: 12.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--gray-1);
-      transform-origin: left; opacity: 0; animation: az-fade .8s var(--easing) .28s forwards;
+      max-width: 1320px; margin: 8px auto 20px; padding: 0 clamp(18px, 4vw, 54px);
     }
-    .az-meta b { color: var(--ink); font-weight: 600; }
+    .index-row h2 { font-family: var(--font-display); font-weight: 600; font-size: 22px; margin: 0; }
+    .index-row span { font-size: 13px; color: var(--ink-faint); font-weight: 600; }
 
-    /* ---------- Grid ---------- */
-    .az-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; }
-    @media (max-width: 1080px) { .az-grid { grid-template-columns: repeat(3, minmax(0,1fr)); } }
-    @media (max-width: 820px)  { .az-grid { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 14px; } }
-    @media (max-width: 440px)  { .az-grid { grid-template-columns: 1fr; } }
+    .grid {
+      display: grid; gap: clamp(16px, 1.8vw, 26px);
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      max-width: 1320px; margin: 0 auto; padding: 0 clamp(18px, 4vw, 54px) 80px;
+    }
+    @media (max-width: 940px) { .grid { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+    @media (max-width: 560px) { .grid { grid-template-columns: 1fr; gap: 16px; } }
 
-    /* ---------- Card ---------- */
-    .az-card {
-      display: flex; flex-direction: column; background: var(--card); color: var(--ink);
-      text-decoration: none; border: 1px solid var(--ink); position: relative;
-      transition: transform .28s var(--easing), box-shadow .28s var(--easing);
-      opacity: 0; transform: translateY(16px); animation: az-rise .6s var(--easing) forwards;
+    .card {
+      position: relative; display: flex; flex-direction: column; text-decoration: none;
+      background: var(--surface); border: 1px solid var(--line); border-radius: var(--r);
+      overflow: hidden; color: var(--ink); box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(20px) saturate(1.3); -webkit-backdrop-filter: blur(20px) saturate(1.3);
+      transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease), border-color var(--dur) var(--ease);
+      opacity: 0; transform: translateY(20px);
+      animation: rise .7s var(--ease) forwards;
     }
-    .az-card:hover { transform: translateY(-6px); box-shadow: 10px 12px 0 var(--ink); }
+    @keyframes rise { to { opacity: 1; transform: none; } }
+    .card:hover { transform: translateY(-8px); box-shadow: var(--shadow); border-color: var(--line-strong); }
+    .card:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
 
-    .az-index {
-      position: absolute; top: 10px; left: 12px; z-index: 3;
-      font-family: var(--mono); font-size: 12px; font-weight: 500; letter-spacing: .1em;
-      color: var(--paper); mix-blend-mode: difference;
-    }
-    .az-new {
-      position: absolute; top: 10px; right: 12px; z-index: 3;
-      font-family: var(--mono); font-size: 11px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase;
-      color: var(--ink); background: var(--paper); border: 1px solid var(--ink); padding: 3px 8px;
-    }
+    .card__media { position: relative; aspect-ratio: 16 / 10; overflow: hidden; }
+    .card__media > .g { position: absolute; inset: 0; }
+    .card__media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .8s var(--ease); }
+    .card:hover .card__media img { transform: scale(1.06); }
+    .card__media::after { content: ""; position: absolute; inset: 0; background: var(--media-overlay); }
+    .card__ic { position: absolute; inset: 0; display: grid; place-items: center; color: rgba(255,255,255,.6); }
 
-    .az-card__media {
-      position: relative; aspect-ratio: 16 / 11; overflow: hidden;
-      background: var(--ink); display: flex; align-items: center; justify-content: center;
-      border-bottom: 1px solid var(--ink);
+    .card__no {
+      position: absolute; top: 12px; left: 14px; z-index: 2;
+      font-family: var(--font-num); font-weight: 600; font-size: 15px;
+      color: rgba(255,255,255,.92); letter-spacing: .5px; text-shadow: 0 1px 6px rgba(0,0,0,.4);
     }
-    .az-card__media img {
-      position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
-      filter: grayscale(1) contrast(1.02) brightness(.98);
-      transition: filter .4s var(--easing), transform .5s var(--easing);
+    .tag {
+      position: absolute; top: 12px; right: 12px; z-index: 2;
+      font-size: 11px; font-weight: 800; letter-spacing: 1.4px; text-transform: uppercase;
+      padding: 5px 11px; border-radius: 999px; backdrop-filter: blur(6px);
     }
-    .az-card:hover .az-card__media img { filter: grayscale(1) contrast(1.12) brightness(1.04); transform: scale(1.035); }
-    .az-card__icon { position: relative; color: rgba(255,255,255,.42); }
-    .az-card__icon svg { width: 52px; height: 52px; }
+    .tag--new { background: var(--gold); color: #0a0a1a; }
+    .tag--soon { background: rgba(30,24,32,.7); color: #fff; }
 
-    .az-body { padding: 16px 16px 18px; display: flex; flex-direction: column; gap: 9px; flex: 1; }
-    .az-band {
-      margin: 0; font-weight: 700; font-size: 17px; line-height: 1.22; letter-spacing: -.01em; color: var(--ink);
+    .card__body { padding: 20px 20px 22px; display: flex; flex-direction: column; gap: 11px; flex: 1; }
+    .card__kicker { font-size: 11.5px; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase; color: var(--accent); }
+    .card__title { font-family: var(--font-display); font-weight: 600; font-size: 21px; line-height: 1.2; margin: 0; letter-spacing: -.2px; }
+    .card__desc { font-size: 14px; line-height: 1.6; color: var(--ink-soft); margin: 0; }
+    .card__list { list-style: none; margin: 4px 0 0; padding: 0; display: flex; flex-direction: column; gap: 7px; }
+    .card__list li { position: relative; padding-left: 20px; font-size: 13.3px; line-height: 1.5; color: var(--ink-soft); }
+    .card__list li::before {
+      content: ""; position: absolute; left: 0; top: 7px; width: 11px; height: 1px; background: var(--gold);
     }
-    .az-tagline { margin: 0; font-size: 14px; line-height: 1.5; color: var(--gray-1); font-weight: 400; }
-    .az-bullets { list-style: none; margin: 4px 0 0; padding: 0; display: flex; flex-direction: column; gap: 7px; }
-    .az-bullets li { position: relative; padding-left: 18px; font-size: 13px; line-height: 1.5; color: var(--ink-soft); }
-    .az-bullets li::before {
-      content: ""; position: absolute; left: 0; top: 9px; width: 9px; height: 1px; background: var(--ink);
+    .card__cta {
+      margin-top: auto; padding-top: 14px; display: inline-flex; align-items: center; gap: 8px;
+      font-size: 13.5px; font-weight: 700; color: var(--accent);
+      border-top: 1px solid var(--line);
     }
-    .az-cta {
-      margin-top: auto; padding-top: 12px; display: flex; align-items: center; justify-content: space-between;
-      font-family: var(--mono); font-size: 12px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase;
-      color: var(--ink); border-top: 1px solid var(--line);
+    .card__cta .ar { transition: transform .4s var(--ease); }
+    .card:hover .card__cta .ar { transform: translateX(5px); }
+    .card__cta::after {
+      content: ""; flex: 1; height: 1px; margin-left: 2px;
+      background: linear-gradient(90deg, var(--line), transparent);
     }
-    .az-cta svg { transition: transform .28s var(--easing); }
-    .az-card:hover .az-cta svg { transform: translateX(5px); }
+    .card--soon { pointer-events: none; }
+    .card--soon .card__media, .card--soon .card__body { filter: grayscale(.4); opacity: .8; }
+    .card__cta--soon { color: var(--ink-faint); }
 
-    /* soon / not-ready */
-    .az-card--soon { cursor: default; }
-    .az-card--soon:hover { transform: none; box-shadow: none; }
-    .az-card--soon .az-card__media img { filter: grayscale(1) brightness(.7) contrast(.9); }
-    .az-status {
-      position: absolute; top: 10px; right: 12px; z-index: 3;
-      font-family: var(--mono); font-size: 11px; letter-spacing: .16em; text-transform: uppercase;
-      color: var(--paper); background: var(--ink); padding: 3px 8px;
-    }
-    .az-cta--soon { color: var(--gray-2); }
+    footer { text-align: center; padding: 30px 20px 60px; color: var(--ink-faint); font-size: 12.5px; }
 
-    /* ---------- Footer ---------- */
-    .az-foot {
-      position: relative; z-index: 2; max-width: 1320px; margin: 0 auto;
-      padding: 24px clamp(16px, 4vw, 40px) 48px; border-top: 1px solid var(--line);
-      display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap;
-      font-family: var(--mono); font-size: 11.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--gray-2);
-    }
-
-    /* ---------- Motion keyframes ---------- */
-    @keyframes az-rise { to { opacity: 1; transform: translateY(0); } }
-    @keyframes az-fade { to { opacity: 1; } }
     @media (prefers-reduced-motion: reduce) {
-      .az-card, .az-kicker, .az-title, .az-lede, .az-meta { animation: none; opacity: 1; transform: none; }
-      .az-card, .az-header__icon, .az-card__media img, .az-cta svg { transition: none; }
+      .card { animation: none; opacity: 1; transform: none; }
+      * { transition: none !important; }
     }
   </style>
 </head>
 <body>
-  <header class="az-header">
-    <div class="az-header__left">
-      <a href="./" class="az-header__icon" aria-label="หน้าแรก">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg>
-      </a>
-      <a href="./" class="az-brand">Advisortool<small>/ HUB</small></a>
-    </div>
-    <div class="az-header__right">
-      <span class="az-header__avatar" aria-label="โปรไฟล์">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        <span class="az-header__check"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+<div class="wrap">
+  <header class="hd">
+    <a href="./" class="hd__brand" aria-label="หน้าแรก Advisortool">
+      <span class="hd__mark">A</span>
+      <span class="hd__name">Advisor<b>tool</b></span>
+    </a>
+    <div class="hd__right">
+      <span class="hd__badge" aria-label="เข้าสู่ระบบแล้ว">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
       </span>
     </div>
   </header>
 
-  <main class="az-main">
-    <section class="az-masthead">
-      <p class="az-kicker">Advisor Toolkit · เวอร์ชัน 2026</p>
-      <h1 class="az-title">เครื่องมือที่ปรึกษา<br />ประกันและการเงิน</h1>
-      <p class="az-lede">คำนวณเบี้ย ผลประโยชน์ และแบบประเมิน ครบในที่เดียว — ออกแบบสำหรับที่ปรึกษาการเงินและตัวแทน</p>
-      <div class="az-meta">
-        <span>เครื่องมือทั้งหมด</span>
-        <span><b id="count">—</b> / TOOLS</span>
-      </div>
-    </section>
+  <section class="hero">
+    <span class="hero__eyebrow">เครื่องมือที่ปรึกษา</span>
+    <h1 class="hero__title">ทุกเครื่องมือการเงิน<br>อยู่ใน<em>ที่เดียว</em></h1>
+    <p class="hero__sub">คำนวณเบี้ย ประเมินผลประโยชน์ และแบบสอบถาม — ครบทุกแบบประกันและการวางแผน พร้อมพิมพ์ PDF และส่งต่อลูกค้าได้ทันที</p>
+    <div class="hero__meta">
+      <div class="hero__stat"><b id="stat-total">–</b><span>เครื่องมือพร้อมใช้</span></div>
+      <div class="hero__stat"><b id="stat-new">–</b><span>อัปเดตใหม่ล่าสุด</span></div>
+      <div class="hero__stat"><b>PDF</b><span>พิมพ์ · บันทึก · ส่ง LINE</span></div>
+    </div>
+  </section>
 
-    <div class="az-grid" id="grid"></div>
-  </main>
+  <div class="index-row">
+    <h2>เลือกเครื่องมือ</h2>
+    <span id="index-count"></span>
+  </div>
+  <main class="grid" id="grid"></main>
 
-  <footer class="az-foot">
-    <span>© 2026 Advisortool</span>
-    <span>Editorial · Monochrome</span>
-  </footer>
+  <footer>Advisortool · ศูนย์รวมเครื่องมือที่ปรึกษาประกันและการเงิน</footer>
+</div>
 
-  <script>
-  // icon (inline SVG) fallback เมื่อไม่มีรูป cover
+<script>
   const ICONS = {
-    piggy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M19 5c-1.5 0-2.8 1.4-3 2-3.5-1.5-11-.3-11 5 0 1.8 0 3 2 4.5V20h4v-2h3v2h4v-4c1-.5 1.4-1 2-2h2v-4h-2c0-1-.5-1.5-1-2V5z"/><path d="M2 9v1c0 1.1.9 2 2 2h1"/><circle cx="16" cy="11" r="1"/></svg>',
-    heart: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/><path d="M3.22 12H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27"/></svg>',
-    activity: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M17 12h-2l-2 5-2-10-2 5H7"/></svg>',
-    users: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
-    clipboard: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect width="8" height="4" x="8" y="2" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/></svg>',
-    briefcase: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect width="20" height="14" x="2" y="7" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>',
-    network: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="9" y="2" width="6" height="6" rx="1"/><rect x="2" y="16" width="6" height="6" rx="1"/><rect x="16" y="16" width="6" height="6" rx="1"/><path d="M12 8v4M5 16v-2a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v2"/></svg>',
-    shield: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>',
+    piggy: '<svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M19 5c-1.5 0-2.8 1.4-3 2-3.5-1.5-11-.3-11 5 0 1.8 0 3 2 4.5V20h4v-2h3v2h4v-4c1-.5 1.4-1 2-2h2v-4h-2c0-1-.5-1.5-1-2V5z"/><path d="M2 9v1c0 1.1.9 2 2 2h1"/><circle cx="16" cy="11" r="1"/></svg>',
+    heart: '<svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>',
+    activity: '<svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M17 12h-2l-2 5-2-10-2 5H7"/></svg>',
+    users: '<svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+    clipboard: '<svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect width="8" height="4" x="8" y="2" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/></svg>',
+    briefcase: '<svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect width="20" height="14" x="2" y="7" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>',
+    network: '<svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="9" y="2" width="6" height="6" rx="1"/><rect x="2" y="16" width="6" height="6" rx="1"/><rect x="16" y="16" width="6" height="6" rx="1"/><path d="M12 8v4M5 16v-2a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v2"/></svg>',
+    shield: '<svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>',
   };
-  const arrow = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>';
+  const arrow = '<svg class="ar" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>';
 
-  // ready: true → ลิงก์ไปหน้าวานิลลา | false → ยังเป็น React (เร็วๆ นี้)
+  // ready: true → ลิงก์ไปหน้าวานิลลา | false → เร็วๆ นี้
   const products = [
-    { ready: true, href: "lifeready/", band: "ไลฟ์เรดดี้ Life Ready", tagline: "ประกันชีวิตตลอดชีพ ไลฟ์เรดดี้ (ไม่มีเงินปันผล) — คำนวณเบี้ยและผลประโยชน์ครบในเครื่องเดียว",
-      bullets: ["คำนวณเบี้ยสองทาง: จากทุนประกัน ↔ จากเบี้ย พร้อมสัญญาเพิ่มเติม","ตารางผลประโยชน์ความคุ้มครอง + ตารางมูลค่ากรมธรรม์รายปี","พิมพ์/บันทึก PDF ได้ — อัตราเบี้ยเวอร์ชัน A2026-1"],
-      isNew: true, image: "hub/lifeready.png", icon: ICONS.heart },
-    { ready: true, href: "global-saving/", band: "Global Saving Plus 15/8", tagline: "ยกระดับแผนการเงินเพื่ออนาคต สู่โอกาสรับผลตอบแทนระดับโลก",
-      bullets: ["ชำระเบี้ยฯ 8 ปี ให้ความคุ้มครอง 15 ปี","รับเงินคืนทุกปี พร้อมโอกาสรับผลตอบแทนเพิ่มจากดัชนี Citi Grandmaster RC 5 Index","ผลประโยชน์การันตีเงินคืนรวมสูงสุด 815% ของจำนวนเงินเอาประกันภัย"],
-      isNew: true, image: "hub/global-saving.png", icon: ICONS.piggy },
-    { ready: true, href: "pension-smart95/", band: "บำนาญ สมาร์ท 95", tagline: "บำนาญแบบลดหย่อนภาษีได้ — คำนวณเบี้ยและผลประโยชน์บำนาญครบในเครื่องเดียว",
-      bullets: ["คำนวณเบี้ยสองทาง: จากทุนประกัน ↔ จากเบี้ย/บำนาญรายเดือน พร้อมสัญญาเพิ่มเติม","ตารางผลประโยชน์รายปี + มูลค่ากรมธรรม์ + บำนาญถึงอายุ 95","อัตราเบี้ยเวอร์ชัน A2026-1"],
-      isNew: true, image: "hub/pension-smart95.png", icon: ICONS.piggy },
-    { ready: true, href: "ihealthy/", band: "iHealthy Ultra", tagline: "ประกันสุขภาพเหมาจ่าย ดูแลครบ จบทุกความกังวล",
-      bullets: ["เปรียบเทียบแผนประกันสุขภาพและคำนวณเบี้ยรายบุคคล","ความคุ้มครองค่ารักษาพยาบาลแบบเหมาจ่าย","ลดหย่อนภาษีได้"],
-      image: "hub/ihealthy.png", icon: ICONS.heart },
-    { ready: true, href: "ci123/", band: "CI 123 ประกันโรคร้ายแรง", tagline: "เจอ จ่าย ครบ — ดูแลค่าใช้จ่ายเมื่อตรวจพบโรคร้าย",
-      bullets: ["คุ้มครองโรคร้ายแรงครอบคลุมหลายระยะ","เครื่องคำนวณเบี้ยในตัว เลือกแผนได้เอง","ลดหย่อนภาษีได้"],
-      image: "hub/ci123.png", icon: ICONS.activity },
-    { ready: true, href: "ishield/", band: "iShield", tagline: "ประกันชีวิตควบคุ้มครองโรคร้ายแรงตลอดชีพ คุ้มครองถึงอายุ 85 ปี",
-      bullets: ["คำนวณเบี้ยสองทาง: จากทุนประกัน ↔ จากเบี้ย","iShield 5/10/15/20 + สัญญาเพิ่มเติม PB/AP/ECARE/MEB/PLS10","ผลประโยชน์โรคร้ายแรง 70 โรค + ตารางมูลค่ากรมธรรม์ พิมพ์ PDF ได้"],
-      isNew: true, image: "hub/ishield.png", icon: ICONS.shield },
-    { ready: true, href: "group-insurance/", band: "ประกันกลุ่ม Group Insurance", tagline: "แผนความคุ้มครองสำหรับองค์กร พร้อมใบเสนอราคา",
-      bullets: ["ประกันสุขภาพกลุ่ม / อุบัติเหตุกลุ่ม","สร้างใบเสนอราคาและดาวน์โหลด PDF ได้ทันที","เลือกแผนตามประเภทธุรกิจ"],
-      image: "hub/group-insurance.png", icon: ICONS.users },
-    { ready: true, href: "fhc/", band: "FHC", tagline: "แบบสอบถามคุณภาพชีวิต — ประเมินสุขภาพการเงินอย่างรอบด้าน",
-      bullets: ["กรอกอายุ รายได้ เงินเก็บ หนี้สิน คำนวณสดทันที","สรุปภาพรวมสินทรัพย์สุทธิและค่าความสามารถ","ส่งสรุปไป LINE ได้ทันที"],
-      image: "hub/fhc.png", icon: ICONS.clipboard },
-    { ready: true, href: "career-agent/", band: "Career-Agent-Question", tagline: "แบบสอบถามความถนัดในอาชีพตัวแทน — ประเมินและส่งผลอัตโนมัติ",
-      bullets: ["แบบสอบถามหลายส่วน + คำถามปลายเปิด","ให้คะแนนและจัดระดับ (เขียว/ส้ม/แดง) อัตโนมัติ","ส่งผลทางอีเมล/LINE และบันทึกคำตอบได้"],
-      image: "hub/career-agent.png", icon: ICONS.briefcase },
-    { ready: true, href: "agency/", band: "Agency Blueprint", tagline: "ชุดเครื่องมือตัวแทน — คำนวณค่าบริหาร/รายได้ + แบบทดสอบผู้จัดการ",
-      bullets: ["เครื่องคำนวณค่าบริหาร (commission)","เครื่องคำนวณรายได้ตัวแทน + โบนัส","แบบทดสอบความพร้อมผู้จัดการ"],
-      image: "hub/agency.png", icon: ICONS.network },
+    { ready:true, href:"lifeready/", kicker:"ประกันชีวิตตลอดชีพ", band:"ไลฟ์เรดดี้ Life Ready", tagline:"คำนวณเบี้ยและผลประโยชน์ครบในเครื่องเดียว ไม่มีเงินปันผล",
+      bullets:["คำนวณเบี้ยสองทาง: ทุนประกัน ↔ เบี้ย","ตารางผลประโยชน์ + มูลค่ากรมธรรม์รายปี","พิมพ์ PDF · อัตราเบี้ย A2026-1"],
+      isNew:true, gradient:"linear-gradient(135deg,#047857,#10b981 55%,#6ee7b7)", image:"hub/lifeready.png", icon:ICONS.heart },
+    { ready:true, href:"global-saving/", kicker:"ออมทรัพย์ระดับโลก", band:"Global Saving Plus 15/8", tagline:"ยกระดับแผนการเงินสู่โอกาสรับผลตอบแทนระดับโลก",
+      bullets:["ชำระเบี้ย 8 ปี คุ้มครอง 15 ปี","รับเงินคืนทุกปี + ผลตอบแทนจากดัชนี Citi","การันตีเงินคืนรวมสูงสุด 815%"],
+      isNew:true, gradient:"linear-gradient(135deg,#1f3aa0,#2b6cc4 55%,#4f9be0)", image:"hub/global-saving.png", icon:ICONS.piggy },
+    { ready:true, href:"pension-smart95/", kicker:"บำนาญลดหย่อนภาษี", band:"บำนาญ สมาร์ท 95", tagline:"คำนวณเบี้ยและผลประโยชน์บำนาญครบในเครื่องเดียว",
+      bullets:["คำนวณสองทาง: ทุนประกัน ↔ บำนาญ/เดือน","ผลประโยชน์รายปี + บำนาญถึงอายุ 95","อัตราเบี้ย A2026-1"],
+      isNew:true, gradient:"linear-gradient(135deg,#0f4c5c,#0f766e 55%,#e09f3e)", image:"hub/pension-smart95.png", icon:ICONS.piggy },
+    { ready:true, href:"ihealthy/", kicker:"สุขภาพเหมาจ่าย", band:"iHealthy Ultra", tagline:"ประกันสุขภาพเหมาจ่าย ดูแลครบ จบทุกความกังวล",
+      bullets:["เปรียบเทียบแผน + คำนวณเบี้ยรายบุคคล","ค่ารักษาพยาบาลแบบเหมาจ่าย","ลดหย่อนภาษีได้"],
+      gradient:"linear-gradient(135deg,#0f766e,#14a89a 55%,#5fd3c4)", image:"hub/ihealthy.png", icon:ICONS.heart },
+    { ready:true, href:"ci123/", kicker:"โรคร้ายแรง", band:"CI 123 ประกันโรคร้ายแรง", tagline:"เจอ จ่าย ครบ — ดูแลค่าใช้จ่ายเมื่อตรวจพบโรคร้าย",
+      bullets:["คุ้มครองโรคร้ายหลายระยะ","เครื่องคำนวณเบี้ยในตัว","ลดหย่อนภาษีได้"],
+      gradient:"linear-gradient(135deg,#b91c1c,#e2231a 55%,#f97316)", image:"hub/ci123.png", icon:ICONS.activity },
+    { ready:true, href:"ishield/", kicker:"ชีวิตควบโรคร้าย", band:"iShield", tagline:"ประกันชีวิตควบคุ้มครองโรคร้ายแรงตลอดชีพ ถึงอายุ 85 ปี",
+      bullets:["คำนวณสองทาง: ทุนประกัน ↔ เบี้ย","iShield 5/10/15/20 + สัญญาเพิ่มเติม","คุ้มครองโรคร้าย 70 โรค · พิมพ์ PDF"],
+      isNew:true, gradient:"linear-gradient(135deg,#0b2942,#1c5d99 55%,#0e9aa7)", image:"hub/ishield.png", icon:ICONS.shield },
+    { ready:true, href:"group-insurance/", kicker:"ประกันองค์กร", band:"ประกันกลุ่ม Group Insurance", tagline:"แผนความคุ้มครองสำหรับองค์กร พร้อมใบเสนอราคา",
+      bullets:["สุขภาพกลุ่ม / อุบัติเหตุกลุ่ม","สร้างใบเสนอราคา PDF ทันที","เลือกแผนตามประเภทธุรกิจ"],
+      gradient:"linear-gradient(135deg,#3b3fb6,#6d5ae0 55%,#9a7af0)", image:"hub/group-insurance.png", icon:ICONS.users },
+    { ready:true, href:"fhc/", kicker:"สุขภาพการเงิน", band:"FHC", tagline:"แบบสอบถามคุณภาพชีวิต — ประเมินสุขภาพการเงินรอบด้าน",
+      bullets:["กรอกรายได้ เงินเก็บ หนี้สิน คำนวณสด","สรุปสินทรัพย์สุทธิและค่าความสามารถ","ส่งสรุปไป LINE ได้ทันที"],
+      gradient:"linear-gradient(135deg,#b45309,#d97757 55%,#fbbf24)", image:"hub/fhc.png", icon:ICONS.clipboard },
+    { ready:true, href:"career-agent/", kicker:"ประเมินอาชีพตัวแทน", band:"Career-Agent-Question", tagline:"แบบสอบถามความถนัดในอาชีพตัวแทน — ประเมินและส่งผลอัตโนมัติ",
+      bullets:["หลายส่วน + คำถามปลายเปิด","ให้คะแนน จัดระดับ เขียว/ส้ม/แดง","ส่งผลอีเมล/LINE + บันทึกคำตอบ"],
+      gradient:"linear-gradient(135deg,#1C1B1A,#4a4641 55%,#d97757)", image:"hub/career-agent.png", icon:ICONS.briefcase },
+    { ready:true, href:"agency/", kicker:"ชุดเครื่องมือตัวแทน", band:"Agency Blueprint", tagline:"คำนวณค่าบริหาร/รายได้ + แบบทดสอบผู้จัดการ",
+      bullets:["เครื่องคำนวณค่าบริหาร (commission)","คำนวณรายได้ตัวแทน + โบนัส","แบบทดสอบความพร้อมผู้จัดการ"],
+      gradient:"linear-gradient(135deg,#314059,#5A8282 55%,#B48749)", image:"hub/agency.png", icon:ICONS.network },
   ];
 
   const esc = (s) => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  const pad = (n) => String(n).padStart(2, '0');
+  const pad = (n) => String(n).padStart(2,'0');
   const grid = document.getElementById('grid');
 
-  grid.innerHTML = products.map((p, i) => {
+  grid.innerHTML = products.map((p,i) => {
+    const tag = p.isNew ? '<span class="tag tag--new">ใหม่</span>' : (p.ready ? '' : '<span class="tag tag--soon">เร็วๆ นี้</span>');
     const inner = `
-      <span class="az-index">N°${pad(i + 1)}</span>
-      ${p.ready
-        ? (p.isNew ? '<span class="az-new">New</span>' : '')
-        : '<span class="az-status">เร็วๆ นี้</span>'}
-      <div class="az-card__media">
-        <img src="${esc(p.image)}" alt="" loading="lazy" decoding="async" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
-        <span class="az-card__icon" style="display:none">${p.icon}</span>
+      <div class="card__media">
+        <div class="g" style="background:${p.gradient}"></div>
+        <img src="${esc(p.image)}" alt="" loading="lazy" decoding="async" onerror="this.style.display='none'" />
+        <span class="card__ic">${p.icon}</span>
+        <span class="card__no">${pad(i+1)}</span>
+        ${tag}
       </div>
-      <div class="az-body">
-        <h2 class="az-band">${esc(p.band)}</h2>
-        <p class="az-tagline">${esc(p.tagline)}</p>
-        <ul class="az-bullets">${p.bullets.map(b => `<li>${esc(b)}</li>`).join('')}</ul>
+      <div class="card__body">
+        <span class="card__kicker">${esc(p.kicker)}</span>
+        <h3 class="card__title">${esc(p.band)}</h3>
+        <p class="card__desc">${esc(p.tagline)}</p>
+        <ul class="card__list">${p.bullets.map(b=>`<li>${esc(b)}</li>`).join('')}</ul>
         ${p.ready
-          ? `<span class="az-cta">เปิดเครื่องมือ ${arrow}</span>`
-          : `<span class="az-cta az-cta--soon">React · เร็วๆ นี้</span>`}
+          ? `<span class="card__cta">เปิดเครื่องมือ ${arrow}</span>`
+          : `<span class="card__cta card__cta--soon">เร็วๆ นี้</span>`}
       </div>`;
-    const delay = `style="animation-delay:${i * 70}ms"`;
+    const delay = `style="animation-delay:${i*70}ms"`;
     return p.ready
-      ? `<a href="${esc(p.href)}" class="az-card" ${delay}>${inner}</a>`
-      : `<div class="az-card az-card--soon" ${delay} title="ยังไม่ได้แปลงเป็นวานิลลา">${inner}</div>`;
+      ? `<a href="${esc(p.href)}" class="card" ${delay}>${inner}</a>`
+      : `<div class="card card--soon" ${delay}>${inner}</div>`;
   }).join('');
 
-  document.getElementById('count').textContent = pad(products.filter(p => p.ready).length);
-  </script>
+  // stats
+  document.getElementById('stat-total').textContent = products.filter(p=>p.ready).length;
+  document.getElementById('stat-new').textContent = products.filter(p=>p.isNew).length;
+  document.getElementById('index-count').textContent = 'ทั้งหมด ' + products.length + ' รายการ';
+</script>
 </body>
 </html>
