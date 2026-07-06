@@ -1,23 +1,95 @@
-/* Advisortool — shared global header (injected by assets/global-header.js) */
+/* Advisortool — shared global header (injected by assets/global-header.js)
+   Aurora Glass topbar: dark bar, pink "A" mark, glass check badge.
+   Self-contained (opaque dark) so it looks right on any page background. */
+@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@500;600;700&display=swap');
+
 :root { --az-header-h: 64px; }
-.az-gh { position: sticky; top: 0; z-index: 50; display:flex; align-items:center; justify-content:space-between; height: var(--az-header-h); padding:0 22px; background:#fff; border-bottom:1px solid #e9eaee; font-family:'IBM Plex Sans Thai','Sarabun',system-ui,sans-serif; box-sizing:border-box; }
-.az-gh *{ box-sizing:border-box; }
-.az-gh__left{ display:flex; align-items:center; gap:14px; }
-.az-gh__right{ display:flex; align-items:center; gap:12px; }
-.az-gh__home{ display:inline-flex; align-items:center; justify-content:center; width:44px; height:44px; border-radius:12px; color:#1f3aa0; border:1px solid #e5e7eb; background:#fff; text-decoration:none; transition:background .15s; }
-.az-gh__home:hover{ background:#f1f4fb; }
-.az-gh__home:focus-visible, .az-gh__btn:focus-visible, .az-gh__panel a:focus-visible{ outline:3px solid #2b6cc4; outline-offset:2px; }
-.az-gh__brand{ font-weight:800; font-size:18px; letter-spacing:-.3px; color:#14266b; text-decoration:none; }
-.az-gh__avatar{ position:relative; width:44px;height:44px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:#eef2fb;color:#1f3aa0; }
-.az-gh__check{ position:absolute; right:-2px; bottom:-2px; width:16px;height:16px;border-radius:50%;background:#16a34a;color:#fff;display:inline-flex;align-items:center;justify-content:center;border:2px solid #fff; }
-.az-gh__menu{ position:relative; }
-.az-gh__btn{ display:inline-flex; align-items:center; gap:7px; height:40px; padding:0 14px; border:1px solid #e5e7eb; background:#fff; border-radius:10px; color:#1f3aa0; font-family:inherit; font-size:14px; font-weight:600; cursor:pointer; transition:background .15s; }
-.az-gh__btn:hover{ background:#f1f4fb; }
-.az-gh__chev{ transition: transform .18s; }
-.az-gh__menu.open .az-gh__chev{ transform: rotate(180deg); }
-.az-gh__panel{ position:absolute; top:50px; right:0; min-width:264px; background:#fff; border:1px solid #e9eaee; border-radius:12px; box-shadow:0 14px 36px rgba(20,38,107,.18); padding:6px; display:none; z-index:300; }
-.az-gh__menu.open .az-gh__panel{ display:block; }
-.az-gh__panel a{ display:flex; align-items:center; gap:9px; padding:9px 12px; border-radius:8px; color:#33415c; text-decoration:none; font-size:14px; white-space:nowrap; font-family:inherit; }
-.az-gh__panel a:hover{ background:#f1f4fb; color:#1f3aa0; }
-.az-gh__dot{ width:7px;height:7px;border-radius:50%;background:#2b6cc4;flex-shrink:0; }
-@media (max-width:520px){ .az-gh__brand{display:none} .az-gh__btn span{display:none} .az-gh__btn{padding:0 11px} }
+
+.az-gh {
+  position: sticky; top: 0; z-index: 50; overflow: hidden;
+  display: flex; align-items: center; justify-content: space-between;
+  height: var(--az-header-h); padding: 0 clamp(16px, 4vw, 40px);
+  background: linear-gradient(100deg, #0b0a1a 0%, #141026 50%, #1b1330 100%);
+  border-bottom: 1px solid rgba(255,255,255,.10);
+  font-family: 'IBM Plex Sans Thai', 'Sarabun', system-ui, sans-serif;
+  box-sizing: border-box;
+}
+/* soft aurora glow bleeding in from the corners */
+.az-gh::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(45% 130% at 0% 100%, rgba(255,94,168,.20), transparent 70%),
+    radial-gradient(40% 130% at 100% 0%, rgba(80,220,255,.13), transparent 70%);
+}
+.az-gh > * { position: relative; z-index: 1; }
+.az-gh * { box-sizing: border-box; }
+
+.az-gh__left { display: flex; align-items: center; gap: 13px; }
+.az-gh__right { display: flex; align-items: center; gap: 12px; }
+
+/* pink "A" mark (home link) */
+.az-gh__home {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 42px; height: 42px; border-radius: 12px;
+  background: linear-gradient(145deg, #ff77b5, #ff3d8f);
+  color: #fff; text-decoration: none;
+  font-family: 'Kanit', 'IBM Plex Sans Thai', sans-serif; font-weight: 700; font-size: 22px; line-height: 1;
+  box-shadow: 0 6px 18px -6px rgba(255,60,140,.7);
+  transition: transform .18s, box-shadow .18s;
+}
+.az-gh__home:hover { transform: translateY(-1px); box-shadow: 0 10px 24px -8px rgba(255,60,140,.9); }
+
+.az-gh__brand {
+  font-family: 'Kanit', 'IBM Plex Sans Thai', sans-serif; font-weight: 600;
+  font-size: 20px; letter-spacing: .2px; color: #f4f1ff; text-decoration: none;
+}
+.az-gh__brand b { color: #ff5ea8; font-weight: 700; }
+
+/* glass check badge (right) */
+.az-gh__badge {
+  width: 40px; height: 40px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.14); color: #5ef2c0;
+}
+/* legacy avatar (still styled dark in case a page ships its own markup) */
+.az-gh__avatar {
+  position: relative; width: 40px; height: 40px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.14); color: #bcb4d6;
+}
+.az-gh__check {
+  position: absolute; right: -2px; bottom: -2px; width: 16px; height: 16px; border-radius: 50%;
+  background: #5ef2c0; color: #0a0a1a; display: inline-flex; align-items: center; justify-content: center;
+  border: 2px solid #141026;
+}
+
+.az-gh__home:focus-visible, .az-gh__brand:focus-visible, .az-gh__badge:focus-visible,
+.az-gh__btn:focus-visible, .az-gh__panel a:focus-visible { outline: 3px solid #ff5ea8; outline-offset: 2px; }
+
+/* dropdown "เครื่องมือ" menu (used by agency pages) */
+.az-gh__menu { position: relative; }
+.az-gh__btn {
+  display: inline-flex; align-items: center; gap: 7px; height: 40px; padding: 0 14px;
+  border: 1px solid rgba(255,255,255,.16); background: rgba(255,255,255,.06); border-radius: 10px;
+  color: #f4f1ff; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer;
+  transition: background .15s, border-color .15s;
+}
+.az-gh__btn:hover { background: rgba(255,255,255,.12); border-color: rgba(255,255,255,.28); }
+.az-gh__chev { transition: transform .18s; }
+.az-gh__menu.open .az-gh__chev { transform: rotate(180deg); }
+.az-gh__panel {
+  position: absolute; top: 50px; right: 0; min-width: 264px;
+  background: #16121f; border: 1px solid rgba(255,255,255,.14); border-radius: 12px;
+  box-shadow: 0 20px 50px -18px rgba(0,0,0,.75); padding: 6px; display: none; z-index: 300;
+  backdrop-filter: blur(12px);
+}
+.az-gh__menu.open .az-gh__panel { display: block; }
+.az-gh__panel a {
+  display: flex; align-items: center; gap: 9px; padding: 9px 12px; border-radius: 8px;
+  color: #d5cfe4; text-decoration: none; font-size: 14px; white-space: nowrap; font-family: inherit;
+}
+.az-gh__panel a:hover { background: rgba(255,94,168,.14); color: #ff8cc2; }
+.az-gh__dot { width: 7px; height: 7px; border-radius: 50%; background: #ff5ea8; flex-shrink: 0; }
+
+@media (max-width: 520px) { .az-gh__btn span { display: none; } .az-gh__btn { padding: 0 11px; } }
+@media (max-width: 460px) { .az-gh__brand { font-size: 18px; } }

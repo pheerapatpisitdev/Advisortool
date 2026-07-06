@@ -22,20 +22,18 @@
     setTimeout(function () { try { window.print(); } catch (e) {} }, 0);
   };
 
-  var ICON_HOME = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg>';
-  var ICON_USER = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>';
-  var ICON_CHECK = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+  var ICON_CHECK = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
 
   var header = document.createElement('header');
   header.className = 'az-gh';
   header.setAttribute('data-az-global-header', '');
   header.innerHTML =
     '<div class="az-gh__left">' +
-      '<a href="../" class="az-gh__home" aria-label="หน้าแรก">' + ICON_HOME + '</a>' +
-      '<a href="../" class="az-gh__brand">Advisortool</a>' +
+      '<a href="../" class="az-gh__home" aria-label="หน้าแรก">A</a>' +
+      '<a href="../" class="az-gh__brand">Advisor<b>tool</b></a>' +
     '</div>' +
     '<div class="az-gh__right">' +
-      '<span class="az-gh__avatar" aria-label="โปรไฟล์">' + ICON_USER + '<span class="az-gh__check">' + ICON_CHECK + '</span></span>' +
+      '<span class="az-gh__badge" aria-label="เข้าสู่ระบบแล้ว">' + ICON_CHECK + '</span>' +
     '</div>';
 
   // Insert as the first element of <body> so it stays pinned at the top.
