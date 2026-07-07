@@ -1,12 +1,12 @@
-/* Advisortool — PIN gate configuration. แก้รหัสและตัวเลือกที่นี่ที่เดียว.
-   หมายเหตุ: นี่คือ soft gate (ฝั่งเบราว์เซอร์) — ซอร์สเปิดดูได้ PIN นี้อ่านได้
-   จากหน้าเว็บ ใช้กันคนทั่วไป ไม่ได้กันคนที่เปิดดูโค้ด. */
+/* Advisortool — PIN gate configuration. แก้ค่าที่นี่ที่เดียว.
+   หมายเหตุ: PIN ตรวจสอบฝั่งเซิร์ฟเวอร์ผ่าน Supabase (az_gate_verify RPC) แล้ว —
+   ไฟล์นี้ไม่มีรายการ PIN อีกต่อไป เพิ่ม/ปิดรหัสได้ที่ตาราง az_gate_pins ใน Supabase เท่านั้น. */
 window.PIN_GATE_CONFIG = {
-  // รหัส 6 หลักที่ใช้ได้ (คนละรหัสต่อคน) — เพิ่ม/ลบ/แก้ได้ในลิสต์นี้
-  pins: ['015495', '086678', '118880', '085271', '121095', '142406', '142124', '142394'],
+  supabaseUrl: 'https://yovibeztstpexajpuyyb.supabase.co',
+  supabaseAnonKey: 'sb_publishable_8LnqhRHZKBTI9qUueCahPA_lKEMNc0K',
   storageKey: 'az_gate',                // key ใน localStorage
   idleTimeoutMs: 12 * 60 * 60 * 1000,   // ไม่ใช้งานเกิน 12 ชม. → ล็อกใหม่ (sliding)
-  maxAttempts: 5,                       // ใส่ผิดกี่ครั้งถึงล็อกชั่วคราว
+  maxAttempts: 5,                       // ใส่ผิดกี่ครั้งถึงล็อกชั่วคราว (ฝั่ง UI; เซิร์ฟเวอร์ก็บังคับเองด้วย)
   lockoutSeconds: 30,                   // ล็อกนานเท่าไร (วินาที)
   title: 'กรุณาใส่รหัสผ่าน',
   subtitle: 'Advisortool'
