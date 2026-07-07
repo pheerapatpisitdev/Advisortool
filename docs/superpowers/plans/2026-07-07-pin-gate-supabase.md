@@ -221,7 +221,7 @@ from public.az_gate_access_log
 where tool = 'test-tool'
 order by created_at;
 ```
-Expected: 8 rows total (1 success, 1 fail, 5 more fails, then 1 more fail for the locked-out correct-PIN call — `success` is `false` for it too since `v_match` was never looked up).
+Expected: **6 rows total**, not 8 — the RPC's lockout branch returns before reaching the `insert` (by design, see Task 2), so once the 5-fail threshold is hit, neither the 5th batch call nor the final locked-out correct-PIN call gets logged. The 6 logged rows are: 1 success (Step 2), 1 fail (Step 3), then the first 4 of the 5 batch calls in Step 4 (the 4th fail brings the running total to 5 fails, so the 5th batch call already sees `v_recent_fails >= 5` and short-circuits unlogged). The final standalone locked-out call in Step 4 is also unlogged for the same reason.
 
 - [ ] **Step 6: Clean up the test PIN and test log rows**
 
