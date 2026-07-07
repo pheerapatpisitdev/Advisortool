@@ -1,23 +1,32 @@
-/* Advisortool — PIN gate (soft gate ฝั่งเบราว์เซอร์).
-   ต้องใส่ PIN 6 หลักก่อนหน้าจะแสดง. include ใน <head> ของทุกหน้า หลัง
-   pin-gate.config.js. รันแบบ synchronous เพื่อไม่ให้หน้าจริงแว้บก่อนฉากล็อก.
-   หมายเหตุ: soft gate เท่านั้น — PIN อ่านได้ในซอร์ส. */
+/* Advisortool — PIN gate. ตรวจ PIN ผ่าน Supabase RPC (az_gate_verify) ฝั่งเซิร์ฟเวอร์ —
+   ค่า PIN จริงไม่เคยถูกส่งมาที่เบราว์เซอร์เลย. include ใน <head> ของทุกหน้า หลัง
+   supabase.min.js + pin-gate.config.js. รันแบบ synchronous เพื่อไม่ให้หน้าจริงแว้บก่อนฉากล็อก
+   (การตรวจ PIN เองเป็น async แต่การซ่อน/แสดงหน้ายังคง synchronous เหมือนเดิม). */
 (function () {
   var CFG = window.PIN_GATE_CONFIG || {};
-  // รองรับหลายรหัส (pins: array) หรือรหัสเดียว (pin: string) — normalize เป็น array
-  var PINS = (Array.isArray(CFG.pins) ? CFG.pins : (CFG.pin != null ? [CFG.pin] : []))
-    .map(function (p) { return String(p); });
   var KEY = CFG.storageKey || 'az_gate';
   var IDLE = CFG.idleTimeoutMs || 12 * 60 * 60 * 1000;
   var MAX = CFG.maxAttempts || 5;
   var LOCKOUT = (CFG.lockoutSeconds || 30) * 1000;
   var TITLE = CFG.title || 'กรุณาใส่รหัสผ่าน';
   var SUBTITLE = CFG.subtitle || 'Advisortool';
-  var CONFIG_OK = PINS.length > 0 && PINS.every(function (p) { return /^\d{6}$/.test(p); });
+  var CONFIG_OK = !!(CFG.supabaseUrl && CFG.supabaseAnonKey);
 
   var LOCK_ICON = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
 
   var mem = null; // fallback ถ้า localStorage ใช้ไม่ได้ (โหมดส่วนตัว)
+  var sb = null;
+
+  function getSb() {
+    if (!sb && window.supabase && CFG.supabaseUrl && CFG.supabaseAnonKey) {
+      sb = window.supabase.createClient(CFG.supabaseUrl, CFG.supabaseAnonKey);
+    }
+    return sb;
+  }
+  function toolId() {
+    var seg = location.pathname.split('/').filter(Boolean)[0];
+    return seg || 'hub';
+  }
 
   function readState() {
     try { var raw = localStorage.getItem(KEY); return raw ? JSON.parse(raw) : null; }
@@ -86,8 +95,8 @@
   if (!CONFIG_OK) {
     overlay.innerHTML =
       '<div class="az-pin__card">' +
-        '<div class="az-pin__title">ตั้งค่า PIN ไม่ถูกต้อง</div>' +
-        '<div class="az-pin__msg az-pin__msg--show">กรุณาตั้ง pin เป็นตัวเลข 6 หลักใน assets/pin-gate.config.js</div>' +
+        '<div class="az-pin__title">ตั้งค่า Supabase ไม่ถูกต้อง</div>' +
+        '<div class="az-pin__msg az-pin__msg--show">กรุณาตั้ง supabaseUrl/supabaseAnonKey ใน assets/pin-gate.config.js</div>' +
       '</div>';
     root.appendChild(overlay);
     return;
@@ -120,6 +129,7 @@
   var entered = '';
   var attempts = 0;
   var lockedUntil = 0;
+  var checking = false;
 
   function renderDots() {
     for (var i = 0; i < dots.length; i++) dots[i].className = i < entered.length ? 'is-filled' : '';
@@ -134,36 +144,65 @@
     cardEl.classList.add('az-shake');
   }
   function press(d) {
-    if (Date.now() < lockedUntil || entered.length >= 6) return;
+    if (checking || Date.now() < lockedUntil || entered.length >= 6) return;
     entered += d;
     renderDots();
     if (entered.length === 6) submit();
   }
   function back() {
-    if (Date.now() < lockedUntil) return;
+    if (checking || Date.now() < lockedUntil) return;
     entered = entered.slice(0, -1);
     renderDots();
   }
   function submit() {
-    if (PINS.indexOf(entered) !== -1) {
-      unlock();
-      overlay.classList.add('az-pin--out');
-      setTimeout(function () {
-        root.classList.remove('az-locked');
-        if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
-        onReady(mountLockButton);
-        // เผื่อหน้าโหลดตอนล็อก (body ถูกซ่อน) แล้วมีกราฟ/เลย์เอาต์ที่วัดขนาดตอนโหลด
-        // ให้วัดใหม่หลังโชว์ (defense-in-depth สำหรับเครื่องมือที่ใช้ Chart.js ฯลฯ)
-        try { window.dispatchEvent(new Event('resize')); } catch (e) {}
-      }, 260);
+    var client = getSb();
+    if (!client) {
+      setMsg('โหลดระบบตรวจสอบไม่สำเร็จ กรุณารีเฟรชหน้า');
+      entered = '';
+      renderDots();
       return;
     }
-    attempts++;
-    entered = '';
-    renderDots();
-    shake();
-    if (attempts >= MAX) startLockout();
-    else setMsg('รหัสไม่ถูกต้อง ลองใหม่');
+    checking = true;
+    padEl.classList.add('is-disabled');
+    setMsg('กำลังตรวจสอบ...');
+    client.rpc('az_gate_verify', {
+      input_pin: entered,
+      input_tool: toolId(),
+      input_ua: navigator.userAgent
+    }).then(function (res) {
+      checking = false;
+      padEl.classList.remove('is-disabled');
+      if (res.error) {
+        setMsg('เชื่อมต่อไม่ได้ ลองใหม่อีกครั้ง');
+        entered = '';
+        renderDots();
+        return;
+      }
+      var data = res.data || {};
+      if (data.ok) {
+        unlock();
+        overlay.classList.add('az-pin--out');
+        setTimeout(function () {
+          root.classList.remove('az-locked');
+          if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+          onReady(mountLockButton);
+          // เผื่อหน้าโหลดตอนล็อก (body ถูกซ่อน) แล้วมีกราฟ/เลย์เอาต์ที่วัดขนาดตอนโหลด
+          // ให้วัดใหม่หลังโชว์ (defense-in-depth สำหรับเครื่องมือที่ใช้ Chart.js ฯลฯ)
+          try { window.dispatchEvent(new Event('resize')); } catch (e) {}
+        }, 260);
+        return;
+      }
+      entered = '';
+      renderDots();
+      shake();
+      if (data.locked) {
+        setMsg('ใส่ผิดหลายครั้ง กรุณารอสักครู่แล้วลองใหม่');
+        return;
+      }
+      attempts++;
+      if (attempts >= MAX) startLockout();
+      else setMsg('รหัสไม่ถูกต้อง ลองใหม่');
+    });
   }
   function startLockout() {
     lockedUntil = Date.now() + LOCKOUT;
