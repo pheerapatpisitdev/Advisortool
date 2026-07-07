@@ -202,6 +202,13 @@
       attempts++;
       if (attempts >= MAX) startLockout();
       else setMsg('รหัสไม่ถูกต้อง ลองใหม่');
+    }).catch(function () {
+      // เผื่อ RPC promise reject เอง (ไม่ใช่ res.error) — อย่าให้คีย์แพดค้าง
+      checking = false;
+      padEl.classList.remove('is-disabled');
+      entered = '';
+      renderDots();
+      setMsg('เชื่อมต่อไม่ได้ ลองใหม่อีกครั้ง');
     });
   }
   function startLockout() {
