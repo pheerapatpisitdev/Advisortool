@@ -132,6 +132,14 @@
     }
     .fhc-scope .line-btn:hover { background: #05A847; box-shadow: 0 4px 14px rgba(6,199,85,0.4); }
     .fhc-scope .line-btn:active { transform: scale(0.99); }
+    .fhc-scope .print-btn {
+      display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 20px;
+      border-radius: 12px; border: 1.5px solid #D97757; background: #FFF7F4; color: #C0663F;
+      font-size: 14.5px; font-weight: 700; cursor: pointer; font-family: 'Sarabun', sans-serif;
+      transition: background 0.2s, color 0.2s, box-shadow 0.2s; white-space: nowrap;
+    }
+    .fhc-scope .print-btn:hover { background: #D97757; color: #fff; box-shadow: 0 4px 14px rgba(217,119,87,0.35); }
+    .fhc-scope .print-btn:active { transform: scale(0.99); }
     .fhc-scope .ev-btn {
       padding: 5px 16px; border-radius: 20px; border: 1.5px solid #D97757; background: #FFF7F4; color: #C0663F;
       font-size: 12px; font-weight: 600; cursor: pointer; font-family: 'Sarabun', sans-serif; transition: background 0.15s, color 0.15s;
@@ -148,6 +156,81 @@
       .fhc-scope .sum-grid { grid-template-columns: 1fr 1fr; }
       .fhc-scope { padding: 1rem 0.75rem 2rem; }
     }
+
+    /* คำเฉลย 5 เหตุการณ์ — ซ่อนบนจอ (กดปุ่มเฉลยเอง) แต่พิมพ์ออกมาให้เห็นเสมอ */
+    .fhc-scope .ev-answer { display: none; font-size: 13px; color: #212121; }
+
+    /* ===== print: ทั้งฟอร์มจบใน A4 แนวนอน 1 แผ่น (กริด 3 คอลัมน์) =====
+       @page margin:0 กันเบราว์เซอร์พิมพ์ URL/วันที่/เลขหน้าลง PDF — ขอบกระดาษจำลองด้วย padding แทน */
+    @page { size: A4 landscape; margin: 0; }
+    @media print {
+      html, body { background: #fff; }
+      .az-gh { display: none !important; }
+      .fhc-scope { background: #fff; min-height: 0; padding: 7mm; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .fhc-scope .wrap {
+        max-width: none;
+        display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px;
+        align-items: start;
+      }
+      /* flatten the screen-only 2-column wrappers so every card sits on the grid
+         (but never the cards themselves — the bottom .row2's children ARE cards) */
+      .fhc-scope .wrap > .row2, .fhc-scope .wrap > .row2 > div:not(.card) { display: contents; }
+      .fhc-scope .page-title { grid-column: 1 / -1; margin-bottom: 2px; font-size: 15px; }
+      .fhc-scope .page-title span { padding-bottom: 2px; }
+      /* card placement: col1 อายุ · col2 รายได้/มูลค่างาน/ลงทุน · col3 เงินเก็บ-หนี้/ทรัพย์สิน */
+      #card-age      { grid-column: 1; grid-row: 2 / span 3; }
+      #card-expense  { grid-column: 2; grid-row: 2; }
+      #card-worth    { grid-column: 2; grid-row: 3; }
+      #card-invest   { grid-column: 2; grid-row: 4; }
+      #card-savdebt  { grid-column: 3; grid-row: 2 / span 2; }
+      #card-assets   { grid-column: 3; grid-row: 4; }
+      #card-persons  { grid-column: 1; grid-row: 5; }
+      #card-events   { grid-column: 2; grid-row: 5; }
+      #card-summary  { grid-column: 3; grid-row: 5; }
+
+      /* compact card chrome */
+      .fhc-scope .card { border-radius: 9px; padding: 7px 9px; margin-bottom: 0; box-shadow: 0 0 0 1px #E3DED6; break-inside: avoid; }
+      .fhc-scope .badge { font-size: 8.5px; padding: 2px 8px; margin-bottom: 5px; }
+      .fhc-scope .row2 { gap: 6px; }
+      /* compact fields */
+      .fhc-scope .fg { gap: 2px; margin-bottom: 4px; }
+      .fhc-scope .fg label { font-size: 8px; }
+      .fhc-scope .fg input, .fhc-scope .fg select { padding: 2.5px 7px; font-size: 9.5px; border-radius: 6px; border-width: 1px; }
+      .fhc-scope .calc { padding: 3px 8px; margin-top: 3px; border-radius: 6px; gap: 6px; }
+      .fhc-scope .calc-lbl { font-size: 8px; }
+      .fhc-scope .calc-val { font-size: 10px; }
+      .fhc-scope .calc-unit { font-size: 7.5px; }
+      /* age diagram compact */
+      .fhc-scope .circ.lg, .fhc-scope .circ.md { width: 34px; height: 34px; font-size: 10px; border-width: 1.5px; }
+      .fhc-scope .av-lbl { font-size: 7.5px; max-width: none; }
+      .fhc-scope .age-grid { padding: 3px 0 6px; }
+      .fhc-scope .hline { height: 1.5px; } .fhc-scope .vline { height: 10px; width: 1.5px; }
+      /* persons & events */
+      .fhc-scope .person-row { gap: 5px; margin-bottom: 4px; }
+      .fhc-scope .person-row input { padding: 2.5px 7px; font-size: 9.5px; border-radius: 6px; border-width: 1px; }
+      .fhc-scope .pnum { width: 16px; height: 16px; font-size: 8.5px; }
+      .fhc-scope .event-row { gap: 6px; margin-bottom: 4px; }
+      .fhc-scope .enum { width: 16px; height: 16px; font-size: 8.5px; }
+      .fhc-scope .ev-btn { display: none !important; }
+      .fhc-scope .ev-answer { display: inline; font-size: 9.5px; }
+      .fhc-scope .event-row [style*="flex"] > div { font-size: 9.5px !important; padding: 0 !important; }
+      /* assets: always show the answer body */
+      #asset-btn { display: none !important; }
+      #asset-body { display: block !important; }
+      #asset-body [style*="font-size:12px"] { font-size: 8.5px !important; margin-bottom: 2px !important; }
+      #asset-body [style*="font-size:13px"] { font-size: 9.5px !important; padding: 2px 0 !important; line-height: 1.5 !important; }
+      /* summary */
+      .fhc-scope .sum-grid { grid-template-columns: 1fr 1fr 1fr; gap: 4px; margin-bottom: 6px; }
+      .fhc-scope .sum-card { padding: 4px 4px; border-radius: 7px; }
+      .fhc-scope .sum-lbl { font-size: 7.5px; margin-bottom: 1px; }
+      .fhc-scope .sum-val { font-size: 9.5px; }
+      .fhc-scope .footer-row { gap: 6px; padding-top: 6px; margin-top: 2px; border-top-width: 1px; }
+      .fhc-scope .footer-field { gap: 2px; min-width: 0; }
+      .fhc-scope .footer-field label { font-size: 8px; }
+      .fhc-scope .footer-field input { padding: 2.5px 7px; font-size: 9.5px; border-radius: 6px; border-width: 1px; }
+      /* hide interactive-only bits */
+      .fhc-scope .btn-row, .fhc-scope .result-box { display: none !important; }
+    }
   </style>
 <link rel="stylesheet" href="../assets/global-header.css?v=4" />
 </head>
@@ -162,7 +245,7 @@
       <!-- LEFT -->
       <div>
         <!-- Age -->
-        <div class="card">
+        <div class="card" id="card-age">
           <span class="badge bg-yellow">ข้อมูลอายุ</span>
           <div class="age-grid">
             <div class="av-lbl" style="margin-bottom:6px">อายุปัจจุบัน</div><div></div>
@@ -211,7 +294,7 @@
         </div>
 
         <!-- Expenses & Income -->
-        <div class="card">
+        <div class="card" id="card-expense">
           <span class="badge bg-pink">ค่าใช้จ่าย &amp; รายได้</span>
           <div class="fg"><label for="exp">ค่าใช้จ่ายต่อเดือน (บาท)</label><input type="text" inputmode="numeric" id="exp" placeholder="20,000" /></div>
           <div class="fg"><label for="im">รายได้ต่อเดือน (บาท)</label><input type="text" inputmode="numeric" id="im" placeholder="50,000" /></div>
@@ -221,7 +304,7 @@
         </div>
 
         <!-- Work ability value -->
-        <div class="card">
+        <div class="card" id="card-worth">
           <span class="badge bg-teal">ค่าความสามารถในการทำงาน</span>
           <div class="calc"><span class="calc-lbl">= รายได้รวมตลอดชีวิตการทำงาน</span><span class="calc-val" id="v-ti2">—</span><span class="calc-unit">บาท</span></div>
         </div>
@@ -230,7 +313,7 @@
       <!-- RIGHT -->
       <div>
         <!-- Savings & Debt -->
-        <div class="card">
+        <div class="card" id="card-savdebt">
           <div class="row2">
             <div>
               <span class="badge bg-blue">เงินเก็บ</span>
@@ -250,7 +333,7 @@
         </div>
 
         <!-- Investment -->
-        <div class="card">
+        <div class="card" id="card-invest">
           <span class="badge bg-purple">กองทุน / การลงทุน</span>
           <div class="row2">
             <div class="fg"><label for="f1">กองทุน LTF/RMF (บาท)</label><input type="text" inputmode="numeric" id="f1" placeholder="0" /></div>
@@ -260,7 +343,7 @@
         </div>
 
         <!-- Assets -->
-        <div class="card">
+        <div class="card" id="card-assets">
           <span class="badge bg-green">ทรัพย์สินมี 2 ประเภท</span>
           <button class="ev-btn" id="asset-btn" style="display:block;margin-top:6px">เฉลย</button>
           <div id="asset-body" style="display:none">
@@ -282,18 +365,18 @@
 
     <!-- Dependents & Events -->
     <div class="row2">
-      <div class="card">
+      <div class="card" id="card-persons">
         <span class="badge bg-orange">บุคคลที่อยู่ภายใต้การดูแล</span>
         <div id="persons"></div>
       </div>
-      <div class="card">
+      <div class="card" id="card-events">
         <span class="badge bg-red">5 เหตุการณ์ควบคุมไม่ได้</span>
         <div id="events"></div>
       </div>
     </div>
 
     <!-- Summary -->
-    <div class="card">
+    <div class="card" id="card-summary">
       <span class="badge bg-teal">สรุปภาพรวม</span>
       <div class="sum-grid">
         <div class="sum-card"><div class="sum-lbl">ปีที่ทำงาน</div><div class="sum-val" id="s-wy">—</div></div>
@@ -309,6 +392,7 @@
       </div>
       <div class="btn-row">
         <button class="analyze-btn" id="analyze">สรุปข้อมูลทั้งหมด</button>
+        <button class="print-btn" id="print-btn">🖨️ พิมพ์ / บันทึก PDF</button>
         <button class="line-btn" id="share">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63h2.386c.349 0 .63.285.63.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.131.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63.349 0 .631.285.631.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.281.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314" /></svg>
           ส่งไป LINE
@@ -363,7 +447,7 @@ const setText = (id, v) => { const el = $(id); if (el) el.textContent = v; };
     const row = document.createElement("div");
     row.className = "event-row";
     row.style.alignItems = "center";
-    row.innerHTML = `<div class="enum">${i + 1}</div><div style="flex:1"><button class="ev-btn" data-event="${i}">เฉลย</button></div>`;
+    row.innerHTML = `<div class="enum">${i + 1}</div><div style="flex:1"><button class="ev-btn" data-event="${i}">เฉลย</button><span class="ev-answer">${e}</span></div>`;
     eventsEl.appendChild(row);
   });
 
@@ -468,6 +552,11 @@ $("analyze").addEventListener("click", () => {
 $("share").addEventListener("click", () => {
   const text = (lastSummary || buildSummary().text).trim();
   window.open("https://line.me/R/msg/text/?" + encodeURIComponent(text), "_blank");
+});
+
+$("print-btn").addEventListener("click", () => {
+  recalc(); // ให้ตัวเลขบนกระดาษตรงกับค่าที่กรอกล่าสุดเสมอ
+  if (window.azPrint) azPrint(); else window.print();
 });
 
 recalc();
