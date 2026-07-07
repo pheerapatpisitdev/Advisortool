@@ -104,4 +104,69 @@ table{width:100%;border-collapse:collapse;font-size:13.5px}
   .riders .rin,.riders select.rin{width:100%;min-width:0;font-size:15px;min-height:40px;padding:8px}
   .tabs button{min-height:40px}
 }
-@media print{header .az-hero__badge,.result-head,.tabs{display:none}.cv-wrap{max-height:none;overflow:visible}}
+/* ===== 2-part result layout (ส่วนที่ 1 สรุปความคุ้มครอง / 2 ตารางมูลค่ากรมธรรม์+กราฟ) ===== */
+.psec-head{display:flex;align-items:center;gap:10px;font-size:16px;font-weight:800;color:var(--navy);margin:26px 0 10px;padding-bottom:8px;border-bottom:2px solid var(--line)}
+.psec1 .psec-head{margin-top:4px}
+.psec-head .n{width:26px;height:26px;border-radius:50%;background:var(--navy);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:14px;flex:none}
+/* print-only twin of the cash-value table (rows split into side-by-side columns) */
+.print-only{display:none}
+
+/* ===== print: หน้า 1 สรุปความคุ้มครอง • หน้า 2 ตารางมูลค่ากรมธรรม์+กราฟ =====
+   @page margin:0 กันเบราว์เซอร์พิมพ์ URL/วันที่/เลขหน้าลง PDF — ขอบกระดาษจำลองด้วย padding แทน */
+@page{size:A4 portrait;margin:0}
+@media print{
+  body{background:#fff;font-size:10.5px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .az-hero{margin:8mm 8mm 0}
+  #page-result{margin-top:2mm;padding:0 8mm 4mm}
+  header .az-hero__badge,.result-head,.tabs,.cv-hint,.screen-only{display:none!important}
+  .print-only{display:block}
+  /* one section per page (padding-top = ขอบบนของหน้าใหม่ เมื่อ @page margin เป็น 0) */
+  .psec2{break-before:page;page-break-before:always;padding-top:9mm}
+  .psec{break-inside:auto}
+  .psec-head{margin:0 0 8px;padding-bottom:6px;font-size:15px}
+  .az-card{break-inside:auto;margin-bottom:8px}
+  .az-card__h{padding:7px 12px}
+  .az-card__h h2{font-size:12.5px}
+  .az-card__b{padding:8px 12px}
+
+  /* --- ส่วนที่ 1: สรุปความคุ้มครอง (compact) --- */
+  .cust-strip{padding:7px 12px;margin-bottom:8px;box-shadow:none;gap:5px 20px}
+  /* the ≤760px screen breakpoint also matches A4 print width — force 3 KPI boxes on one row */
+  .az-kpi{grid-template-columns:1.25fr 1fr 1fr;gap:8px;margin-bottom:10px!important}
+  .az-kpi .az-box{padding:8px 12px;border-radius:9px}
+  .az-kpi .az-box.az-hero-box{grid-column:auto}
+  .az-kpi .az-val{font-size:17px}
+  .az-kpi .az-box.az-hero-box .az-val{font-size:19px}
+  .az-grid2{grid-template-columns:1fr 1fr;gap:8px;align-items:start}
+  table{font-size:10px}
+  .breakdown th,.breakdown td{padding:3px 6px}
+  /* one line per rider on paper: drop the small description line (the benefit
+     table alongside already lists the same rider details) */
+  .breakdown .rd{display:none}
+  .breakdown .amt{white-space:nowrap}
+  .breakdown tfoot td:last-child{white-space:nowrap}
+  .breakdown tfoot .grand td{font-size:11px}
+  .breakdown tfoot .grand td:last-child{font-size:13px}
+  .benefit-tbl td{padding:3px 6px;font-size:10px}
+  .warn{padding:6px 9px;font-size:10.5px;margin-bottom:8px}
+
+  /* --- ส่วนที่ 2: ตารางมูลค่ากรมธรรม์ + กราฟ --- */
+  .cv-wrap{max-height:none;overflow:visible}
+  .cv-chart-wrap{break-inside:avoid;padding:6px 8px 4px;margin-bottom:8px}
+  .cv-chart{height:50mm;width:auto;max-width:100%;margin:0 auto}
+  .cv-legend .lg{font-size:10.5px}
+  .print-split{display:flex;gap:4mm;align-items:flex-start;margin-top:6px}
+  .print-split>div{flex:1;min-width:0;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+  .print-split .cv-table{font-size:8px;min-width:0}
+  .print-split .cv-table th,.print-split .cv-table td{padding:2px 4px;font-size:8px}
+  .print-split .be{font-size:7px;padding:1px 4px;margin-left:2px}
+  /* 3-column variant for very long tables (young issue ages) — the constant
+     ทุนประกัน column is dropped here (the SA already appears above the chart) */
+  .print-split.cols3{gap:3mm}
+  .print-split.cols3 .cv-table{font-size:7.5px}
+  .print-split.cols3 .cv-table th,.print-split.cols3 .cv-table td{padding:1.5px 3px;font-size:7.5px}
+  .print-split.cols3 .be{display:none}
+  .print-split.cols3 th:last-child,.print-split.cols3 td:last-child{display:none}
+
+  .az-disclaimer{font-size:9px;margin-top:8px;line-height:1.5}
+}

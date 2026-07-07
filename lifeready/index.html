@@ -15,7 +15,7 @@
 <meta http-equiv="Expires" content="0">
 <link rel="stylesheet" href="../assets/global-header.css?v=4" />
 <link rel="stylesheet" href="../assets/theme.css?v=1" />
-<link rel="stylesheet" href="css/styles.css?v=20">
+<link rel="stylesheet" href="css/styles.css?v=22">
 </head>
 <body class="az-theme">
 <script src="../assets/global-header.js?v=4"></script>
@@ -75,43 +75,50 @@
     <button class="az-btn az-btn-back" onclick="goInput()">←&nbsp; กลับไปแก้ไขข้อมูล</button>
     <button class="az-btn az-btn-ghost" onclick="printResult()">🖨️&nbsp; พิมพ์ / บันทึก PDF</button>
   </div>
-  <div class="cust-strip" id="custStrip"></div>
+  <section class="psec psec1">
+    <div class="psec-head"><span class="n">1</span>สรุปความคุ้มครอง</div>
+    <div class="cust-strip" id="custStrip"></div>
 
-  <div class="az-kpi" id="lrKpi" style="margin-bottom:18px">
-    <div class="az-box az-hero-box"><div class="az-lbl">เบี้ยประกันภัยรวม (งวดแรก)</div><div class="az-val" id="kTotal">—</div><div class="az-sub" id="kTotalSub"></div></div>
-    <div class="az-box"><div class="az-lbl">ทุนประกันสัญญาหลัก</div><div class="az-val" id="kMainSA">—</div></div>
-    <div class="az-box"><div class="az-lbl">เบี้ยสัญญาหลัก/งวด</div><div class="az-val" id="kMainPrem">—</div></div>
-  </div>
+    <div class="az-kpi" id="lrKpi" style="margin-bottom:18px">
+      <div class="az-box az-hero-box"><div class="az-lbl">เบี้ยประกันภัยรวม (งวดแรก)</div><div class="az-val" id="kTotal">—</div><div class="az-sub" id="kTotalSub"></div></div>
+      <div class="az-box"><div class="az-lbl">ทุนประกันสัญญาหลัก</div><div class="az-val" id="kMainSA">—</div></div>
+      <div class="az-box"><div class="az-lbl">เบี้ยสัญญาหลัก/งวด</div><div class="az-val" id="kMainPrem">—</div></div>
+    </div>
 
-  <div class="az-grid2">
+    <div class="az-grid2">
+      <div class="az-card">
+        <div class="az-card__h"><h2>สรุปเบี้ยประกันภัย</h2></div>
+        <div class="az-card__b">
+          <div id="warnBox"></div>
+          <table class="breakdown"><thead><tr><th>รายการ</th><th>ทุนประกัน / แผน</th><th>เบี้ย (งวด)</th></tr></thead>
+            <tbody id="bkBody"></tbody>
+            <tfoot id="bkFoot"></tfoot>
+          </table>
+        </div>
+      </div>
+      <div class="az-card">
+        <div class="az-card__h"><h2>ตารางผลประโยชน์ความคุ้มครอง</h2></div>
+        <div class="az-card__b">
+          <table class="benefit-tbl" id="benefitTbl"></table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="psec psec2">
+    <div class="psec-head"><span class="n">2</span>ตารางมูลค่ากรมธรรม์ และ กราฟ</div>
     <div class="az-card">
-      <div class="az-card__h"><h2>สรุปเบี้ยประกันภัย</h2></div>
       <div class="az-card__b">
-        <div id="warnBox"></div>
-        <table class="breakdown"><thead><tr><th>รายการ</th><th>ทุนประกัน / แผน</th><th>เบี้ย (งวด)</th></tr></thead>
-          <tbody id="bkBody"></tbody>
-          <tfoot id="bkFoot"></tfoot>
-        </table>
+        <div class="tabs">
+          <button class="on" data-tab="cv">ตารางมูลค่ากรมธรรม์</button>
+        </div>
+        <div class="muted" style="margin-bottom:10px">มูลค่ากรมธรรม์ต่อจำนวนเงินเอาประกันภัย <b id="cvSA">0</b> บาท (เฉพาะสัญญาหลัก ไลฟ์เรดดี้)</div>
+        <div id="cvChart" class="cv-chart-wrap"></div>
+        <div class="cv-wrap screen-only"><table class="cv-table" id="cvTbl"></table></div>
+        <div id="cvPrint" class="print-split print-only"></div>
       </div>
     </div>
-    <div class="az-card">
-      <div class="az-card__h"><h2>ตารางผลประโยชน์ความคุ้มครอง</h2></div>
-      <div class="az-card__b">
-        <table class="benefit-tbl" id="benefitTbl"></table>
-      </div>
-    </div>
-  </div>
-
-  <div class="az-card">
-    <div class="az-card__b">
-      <div class="tabs">
-        <button class="on" data-tab="cv">ตารางมูลค่ากรมธรรม์</button>
-      </div>
-      <div class="muted" style="margin-bottom:10px">มูลค่ากรมธรรม์ต่อจำนวนเงินเอาประกันภัย <b id="cvSA">0</b> บาท (เฉพาะสัญญาหลัก ไลฟ์เรดดี้)</div>
-      <div id="cvChart" class="cv-chart-wrap"></div>
-      <div class="cv-wrap"><table class="cv-table" id="cvTbl"></table></div>
-    </div>
-  </div>
+  </section>
 
   <div class="az-disclaimer">
     เอกสารนี้เป็นเพียงโปรแกรมช่วยคำนวณเบี้ยประกันภัยเบื้องต้น คำนวณตามอัตราเบี้ยในไฟล์ <b>ไลฟ์เรดดี้_A2026-1</b> ผลประโยชน์ ความคุ้มครอง และข้อยกเว้นเป็นไปตามที่กำหนดในกรมธรรม์
@@ -122,7 +129,7 @@
 <script src="js/data.js?v=15"></script>
 <script src="js/engine.js?v=15"></script>
 <script src="js/config.js?v=16"></script>
-<script src="js/app.js?v=20"></script>
+<script src="js/app.js?v=21"></script>
 
 </body>
 </html>

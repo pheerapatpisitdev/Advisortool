@@ -131,19 +131,29 @@ function renderCV(res,inp){
   $('cvSA').textContent=fmt0(inp.mainSA);
   var rows=res.main.ok?LR.cashValues(DATA,CV,inp,res.main):[];
   var payYear=res.main.ok?res.main.payYear:0;
-  var h='<thead><tr><th>อายุ</th><th>ปี</th><th>เบี้ยประกัน</th><th>เบี้ยประกันสะสม</th><th>มูลค่าเวนคืน</th><th>ส่วนต่าง<br><span class="th-sub">(เวนคืน − เบี้ยสะสม)</span></th><th>ทุนประกัน</th></tr></thead><tbody>';
-  if(!rows.length) h+='<tr><td colspan="7" style="text-align:center;padding:20px" class="muted">ไม่มีข้อมูลมูลค่ากรมธรรม์สำหรับแผนนี้</td></tr>';
-  var cum=0, breakeven=false, beAge=null, pts=[];
+  var thead='<thead><tr><th>อายุ</th><th>ปี</th><th>เบี้ยประกัน</th><th>เบี้ยประกันสะสม</th><th>มูลค่าเวนคืน</th><th>ส่วนต่าง<br><span class="th-sub">(เวนคืน − เบี้ยสะสม)</span></th><th>ทุนประกัน</th></tr></thead>';
+  var cum=0, breakeven=false, beAge=null, pts=[], rowsHtml=[];
   rows.forEach(function(r){
     var prem=r.year<=payYear?res.main.annual:0; cum+=prem;
     var diff=r.surrender-cum;
     var mark='', rowcls='';
     if(!breakeven && cum>0 && diff>=0){ breakeven=true; beAge=r.age; mark=' <span class="be">จุดคุ้มทุน</span>'; rowcls=' class="be-row"'; }
     var diffTxt='<span class="'+(diff>=0?'gain':'loss')+'">'+(diff>=0?'+':'−')+fmt0(Math.abs(Math.round(diff)))+'</span>';
-    h+='<tr'+rowcls+'><td>'+r.age+'</td><td>'+r.year+'</td><td>'+(prem>0?fmt0(Math.round(prem)):'')+mark+'</td><td>'+fmt0(Math.round(cum))+'</td><td>'+fmt0(Math.round(r.surrender))+'</td><td>'+diffTxt+'</td><td>'+fmt0(inp.mainSA)+'</td></tr>';
+    rowsHtml.push('<tr'+rowcls+'><td>'+r.age+'</td><td>'+r.year+'</td><td>'+(prem>0?fmt0(Math.round(prem)):'')+mark+'</td><td>'+fmt0(Math.round(cum))+'</td><td>'+fmt0(Math.round(r.surrender))+'</td><td>'+diffTxt+'</td><td>'+fmt0(inp.mainSA)+'</td></tr>');
     pts.push({year:r.year, age:r.age, cum:cum, surr:r.surrender, sa:inp.mainSA, diff:diff});
   });
-  h+='</tbody>'; $('cvTbl').innerHTML=h;
+  var body=rowsHtml.length?rowsHtml.join(''):'<tr><td colspan="7" style="text-align:center;padding:20px" class="muted">ไม่มีข้อมูลมูลค่ากรมธรรม์สำหรับแผนนี้</td></tr>';
+  $('cvTbl').innerHTML=thead+'<tbody>'+body+'</tbody>';
+  // print twin: split the rows into 2–3 side-by-side columns so the whole table fits one A4 page
+  if($('cvPrint')){
+    if(rowsHtml.length){
+      var theadP='<thead><tr><th>อายุ</th><th>ปี</th><th>เบี้ยประกัน</th><th>เบี้ยสะสม</th><th>เวนคืน</th><th>ส่วนต่าง</th><th>ทุนประกัน</th></tr></thead>';
+      var nCols=Math.max(2,Math.ceil(rowsHtml.length/33)), perCol=Math.ceil(rowsHtml.length/nCols), cols='';
+      for(var c=0;c<nCols;c++) cols+='<div><table class="cv-table">'+theadP+'<tbody>'+rowsHtml.slice(c*perCol,(c+1)*perCol).join('')+'</tbody></table></div>';
+      $('cvPrint').className='print-split print-only'+(nCols>2?' cols3':'');
+      $('cvPrint').innerHTML=cols;
+    } else { $('cvPrint').innerHTML=''; }
+  }
   if($('cvChart')){ $('cvChart').innerHTML = pts.length ? buildCVChart(pts, beAge) : ''; if(pts.length) attachCVChart(); }
 }
 
