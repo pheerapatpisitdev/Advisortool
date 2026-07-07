@@ -12,7 +12,7 @@
 <title>โปรแกรมคำนวณเบี้ยประกัน iShield</title>
 <link rel="stylesheet" href="../assets/global-header.css?v=4" />
 <link rel="stylesheet" href="../assets/theme.css?v=1" />
-<link rel="stylesheet" href="css/styles.css?v=3" />
+<link rel="stylesheet" href="css/styles.css?v=4" />
 </head>
 <body class="az-theme">
 <script src="../assets/global-header.js?v=4"></script>
@@ -235,7 +235,7 @@ function chartSVG(R){
   svg+=`<g id="curG" style="pointer-events:none"></g></svg>`;
   window._CHART={padL,plotW,top:padT,bot:padT+plotH,N,xs,ages,sers,defIdx};
   const legend=series.map((s,i)=>`<span style="display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--txt)"><span style="width:14px;height:3px;border-radius:2px;background:${s.color};display:inline-block"></span>${s.name} <b id="lgv${i}" style="color:${s.color};font-size:12.5px"></b></span>`).join('<span style="width:14px"></span>');
-  return `<div class="illus-wrap" style="overflow-x:auto;padding:12px 10px 6px"><div class="pillrow" style="gap:14px;justify-content:center;margin-bottom:6px">${legend}</div><div class="mini" style="text-align:center;margin-bottom:2px">👆 เลื่อนเมาส์/นิ้วบนกราฟเพื่อดูตัวเลขแต่ละปี</div>${svg}</div>`;
+  return `<div class="illus-wrap" style="overflow-x:auto;padding:12px 10px 6px"><div class="pillrow" style="gap:14px;justify-content:center;margin-bottom:6px">${legend}</div><div class="mini chart-hint" style="text-align:center;margin-bottom:2px">👆 เลื่อนเมาส์/นิ้วบนกราฟเพื่อดูตัวเลขแต่ละปี</div>${svg}</div>`;
 }
 
 // attach the draggable scrubber to the rendered chart
@@ -437,8 +437,11 @@ function _renderCore(){
     wb.innerHTML=`<div class="warn show">⚠️ ${R.warn.join('<br>⚠️ ')}</div>`;
   }
   const modeLab=R.mode;
-  // summary
   let h=`<div class="printhead-sub"></div>`;
+
+  // ===== ส่วนที่ 1: สรุปความคุ้มครอง =====
+  h+=`<section class="psec psec1">`;
+  h+=`<div class="psec-head"><span class="n">1</span>สรุปความคุ้มครอง</div>`;
   h+=`<div class="sumgrid">
     <div class="kpi"><div class="t">ทุนประกันภัย (สัญญาหลัก)</div><div class="v">${fmt(R.SA)}</div><div class="u">บาท</div></div>
     <div class="kpi"><div class="t">เบี้ยฯ รวม (${modeLab})</div><div class="v">${fmt(R.totMode,2)}</div><div class="u">บาท/งวด</div></div>
@@ -452,29 +455,8 @@ function _renderCore(){
   h+=`<tr class="total"><td>รวมทั้งหมด</td><td></td><td>${fmt(R.totAnn,2)}</td><td>${fmt(R.totMode,2)}</td></tr>`;
   h+=`</tbody></table>`;
   if(R.modeN>1)h+=`<div class="subtle">* ชำระ ${modeLab} ${R.modeN} งวด/ปี → เบี้ยสัญญาหลักรวมต่อปี ${fmt(R.annualizedBase,2)} บาท</div>`;
-
-  // illustration
-  h+=`<div class="sech"><span class="bar"></span>ตารางแสดงผลประโยชน์รายปี</div>`;
-  h+=`<div class="subtle">จำนวนเงินเอาประกันภัย ${fmt(R.SA)} บาท • เพศ${inp.sex} • อายุ ${inp.age} ปี • คุ้มครองถึงอายุ 85 ปี</div>`;
-  if(R.breakEvenYr){const be=R.rows.find(r=>r.yr===R.breakEvenYr);
-    h+=`<div class="cinote" style="border-left-color:#1b8a5a"><b>จุดคุ้มทุน: สิ้นปีที่ ${be.yr} (อายุ ${be.age} ปี)</b><br>ตั้งแต่ปีนี้เป็นต้นไป <b>มูลค่าเวนคืนเงินสด</b> จะมากกว่าหรือเท่ากับ <b>เบี้ยที่จ่ายสะสมทั้งหมด</b> — เงินที่จ่ายไปไม่ได้หายไปไหน แต่สะสมเป็นมูลค่าในกรมธรรม์ (ยังไม่รวมความคุ้มครองชีวิต ${fmt(R.SA)} บาท และโรคร้ายแรงตลอดสัญญา)</div>`;
-  }
-  h+=chartSVG(R);
-  h+=`<div class="illus-wrap"><table class="tb"><thead><tr>
-      <th>อายุ</th><th>ปี</th><th>เบี้ยประกัน</th><th>เบี้ยประกันสะสม</th><th>มูลค่าเวนคืน</th><th>ส่วนต่าง<br><span class="mini">(เวนคืน − เบี้ยสะสม)</span></th><th>ทุนประกัน</th></tr></thead><tbody>`;
-  let prevCum=0;
-  R.rows.forEach(r=>{
-    const dcol=r.diff>=0?'#0f8a4d':'#c0392b';
-    const dtxt=(r.diff>=0?'+':'')+fmt(r.diff,0);
-    const be=(r.yr===R.breakEvenYr);
-    const yearPrem=r.cumPrem-prevCum; prevCum=r.cumPrem;
-    const premCell=(yearPrem>0?fmt(yearPrem,0):'')+(be?' <span style="color:#0f8a4d;font-weight:800;font-size:10.5px">จุดคุ้มทุน</span>':'');
-    h+=`<tr${be?' style="background:#e7f6ee!important;font-weight:700"':''}><td style="text-align:center">${r.age}</td><td style="text-align:center">${r.yr}</td><td>${premCell}</td><td>${fmt(r.cumPrem,0)}</td><td>${fmt(r.cv)}</td><td style="color:${dcol};font-weight:700">${dtxt}</td><td>${fmt(R.SA)}</td></tr>`;
-  });
-  h+=`</tbody></table></div>`;
-
-  // CI (collapsible)
-  h+=`<details class="dz" open style="margin-top:18px"><summary>ผลประโยชน์ความคุ้มครองโรคร้ายแรง <span class="tag" style="background:#e6f6f0;color:#1b8a5a">70 โรค</span></summary><div class="dzgrp">`;
+  // coverage benefits (CI + death + maturity)
+  h+=`<div class="sech"><span class="bar"></span>ความคุ้มครองโรคร้ายแรง 70 โรค และผลประโยชน์</div>`;
   h+=`<div class="ci">
     <div class="cibox"><div class="h">โรคร้ายแรงระยะเริ่มต้น (Early Stage) • 20 โรค</div>
       <div class="amt">${fmt(R.ciEarly)} <span class="mini">บาท/โรค</span></div>
@@ -499,12 +481,48 @@ function _renderCore(){
       <li>ระยะเวลาที่ไม่คุ้มครอง (Waiting Period) 90 วัน นับจากวันเริ่มมีผลคุ้มครอง</li>
     </ul>
   </div>`;
-  // disease list (always shown)
-  h+=`<div class="dzgrp" style="padding-left:0;padding-right:0"><div class="dzh early">โรคร้ายแรงระยะเริ่มต้น — Early Stage (20 โรค) • ${fmt(R.ciEarly)} บาท/โรค</div>
-      <ol class="dzlist">${CIDISEASE.early.map(d=>`<li>${d}</li>`).join('')}</ol></div>
-    <div class="dzgrp" style="padding-left:0;padding-right:0"><div class="dzh major">โรคร้ายแรงระยะรุนแรง — Major Stage (50 โรค) • สูงสุด ${fmt(R.ciMajor)} บาท</div>
-      <ol class="dzlist">${CIDISEASE.major.map(d=>`<li>${d}</li>`).join('')}</ol></div>`;
-  h+=`</div></details>`; // close CI collapsible
+  h+=`</section>`;
+
+  // ===== ส่วนที่ 2: ตารางกรมธรรม์ และ กราฟ =====
+  h+=`<section class="psec psec2">`;
+  h+=`<div class="psec-head"><span class="n">2</span>ตารางผลประโยชน์กรมธรรม์ และ กราฟ</div>`;
+  h+=`<div class="subtle" style="margin-top:0">จำนวนเงินเอาประกันภัย ${fmt(R.SA)} บาท • เพศ${inp.sex} • อายุ ${inp.age} ปี • คุ้มครองถึงอายุ 85 ปี</div>`;
+  if(R.breakEvenYr){const be=R.rows.find(r=>r.yr===R.breakEvenYr);
+    h+=`<div class="cinote" style="border-left-color:#1b8a5a"><b>จุดคุ้มทุน: สิ้นปีที่ ${be.yr} (อายุ ${be.age} ปี)</b><br>ตั้งแต่ปีนี้เป็นต้นไป <b>มูลค่าเวนคืนเงินสด</b> จะมากกว่าหรือเท่ากับ <b>เบี้ยที่จ่ายสะสมทั้งหมด</b> — เงินที่จ่ายไปไม่ได้หายไปไหน แต่สะสมเป็นมูลค่าในกรมธรรม์ (ยังไม่รวมความคุ้มครองชีวิต ${fmt(R.SA)} บาท และโรคร้ายแรงตลอดสัญญา)</div>`;
+  }
+  h+=chartSVG(R);
+  // yearly rows built once — shown as one long table on screen, split into two
+  // side-by-side halves for print so the whole table fits a single A4 page
+  let prevCum=0;
+  const rowsHtml=R.rows.map(r=>{
+    const dcol=r.diff>=0?'#0f8a4d':'#c0392b';
+    const dtxt=(r.diff>=0?'+':'')+fmt(r.diff,0);
+    const be=(r.yr===R.breakEvenYr);
+    const yearPrem=r.cumPrem-prevCum; prevCum=r.cumPrem;
+    const premCell=(yearPrem>0?fmt(yearPrem,0):'')+(be?' <span class="be-tag" style="color:#0f8a4d;font-weight:800;font-size:10.5px">จุดคุ้มทุน</span>':'');
+    return `<tr${be?' style="background:#e7f6ee!important;font-weight:700"':''}><td style="text-align:center">${r.age}</td><td style="text-align:center">${r.yr}</td><td>${premCell}</td><td>${fmt(r.cumPrem,0)}</td><td>${fmt(r.cv)}</td><td style="color:${dcol};font-weight:700">${dtxt}</td><td>${fmt(R.SA)}</td></tr>`;
+  });
+  h+=`<div class="illus-wrap screen-only"><table class="tb"><thead><tr>
+      <th>อายุ</th><th>ปี</th><th>เบี้ยประกัน</th><th>เบี้ยประกันสะสม</th><th>มูลค่าเวนคืน</th><th>ส่วนต่าง<br><span class="mini">(เวนคืน − เบี้ยสะสม)</span></th><th>ทุนประกัน</th></tr></thead><tbody>${rowsHtml.join('')}</tbody></table></div>`;
+  const theadP=`<thead><tr><th>อายุ</th><th>ปี</th><th>เบี้ยประกัน</th><th>เบี้ยสะสม</th><th>เวนคืน</th><th>ส่วนต่าง</th><th>ทุนประกัน</th></tr></thead>`;
+  // ~33 rows fit one A4 column under the chart; use 3 columns for very long tables (young ages)
+  const nCols=Math.max(2,Math.ceil(rowsHtml.length/33));
+  const perCol=Math.ceil(rowsHtml.length/nCols);
+  let splitCols='';
+  for(let c=0;c<nCols;c++)splitCols+=`<div><table class="tb">${theadP}<tbody>${rowsHtml.slice(c*perCol,(c+1)*perCol).join('')}</tbody></table></div>`;
+  h+=`<div class="print-split print-only${nCols>2?' cols3':''}">${splitCols}</div>`;
+  h+=`</section>`;
+
+  // ===== ส่วนที่ 3: รายชื่อโรคร้ายแรง =====
+  h+=`<section class="psec psec3">`;
+  h+=`<div class="psec-head"><span class="n">3</span>รายชื่อโรคร้ายแรงที่คุ้มครอง (70 โรค)</div>`;
+  h+=`<details class="dz" open><summary>รายชื่อโรคร้ายแรงทั้งหมด <span class="tag" style="background:#e6f6f0;color:#1b8a5a">70 โรค</span></summary><div class="dzgrp">`;
+  h+=`<div class="dzh early">โรคร้ายแรงระยะเริ่มต้น — Early Stage (20 โรค) • ${fmt(R.ciEarly)} บาท/โรค</div>
+      <ol class="dzlist">${CIDISEASE.early.map(d=>`<li>${d}</li>`).join('')}</ol>
+      <div class="dzh major">โรคร้ายแรงระยะรุนแรง — Major Stage (50 โรค) • สูงสุด ${fmt(R.ciMajor)} บาท</div>
+      <ol class="dzlist">${CIDISEASE.major.map(d=>`<li>${d}</li>`).join('')}</ol>`;
+  h+=`</div></details>`;
+  h+=`</section>`;
 
   $('output').innerHTML=h;
   initChartInteract();
