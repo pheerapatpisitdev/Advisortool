@@ -163,21 +163,50 @@ table{width:100%;border-collapse:collapse;}
 .doc-actions{flex:0 0 auto;display:flex;gap:8px;}
 .doc-actions .btn{text-decoration:none;display:inline-flex;align-items:center;}
 
+/* 2-part result layout (ส่วนที่ 1 สรุปความคุ้มครอง / 2 ตารางรายปี) */
+.psec-head{display:flex;align-items:center;gap:10px;font-size:16px;font-weight:800;color:var(--navy);margin:22px 0 4px;padding-bottom:8px;border-bottom:2px solid var(--line);letter-spacing:-.01em;}
+.psec-head .n{width:26px;height:26px;border-radius:50%;background:var(--navy);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:14px;flex:none;}
+.psec1 .psec-head{margin-top:14px;}
+
 @media print{
- body{background:#fff;}.wrap{max-width:100%;padding:0;}.noprint,.az-gh{display:none!important;}.panel{box-shadow:none;}
+ html,body{background:#fff;}
+ /* @page margin:0 (ล่างสุดของบล็อกนี้) กัน URL/เลขหน้าจากเบราว์เซอร์ — จำลองขอบด้วย padding แทน */
+ .wrap{max-width:100%;padding:8mm 8mm 0;}.noprint,.az-gh{display:none!important;}.panel{box-shadow:none;}
+ /* one section per page: หน้า 1 สรุปความคุ้มครอง · หน้า 2 ตารางรายปี */
+ .psec2{break-before:page;page-break-before:always;padding-top:8mm;}
+ .psec{break-inside:auto;}
+ .psec-head{margin:0 0 6px;padding-bottom:5px;font-size:14px;}
+ .psec1 .psec-head{margin-top:6px;}
+ .psec-head .n{width:22px;height:22px;font-size:12px;}
  .tb td,.tb tr.rtot td{font-size:10px;}
  .tb th,.tb .ghg,.tb .ghn,.tb th.ghtax{font-size:9.5px;}
  .ta .gtag{font-size:8.5px;}.kpi .ks{font-size:9.5px;}.chlbl{font-size:10px;}
  .disc li{font-size:10.6px;}.foot{font-size:9px;}
  .scroll{background:none;}
- .pgbreak{break-before:page;page-break-before:always;}
  .cards,.tblwrap,.chartwrap,.disc,.kpi,.ta,.tb,table tr{break-inside:avoid;page-break-inside:avoid;}
  .sect{break-after:avoid;page-break-after:avoid;}
- .header{padding:12px 18px;}
- .cards{margin-top:10px;gap:8px;}
- .sect{margin:12px 0 7px;}
- .chartwrap{padding:10px 14px 4px;}
- @page{size:A4 landscape;margin:9mm;}
+ /* compact page 1 so KPI + ตารางที่ 1 + กราฟ fit one landscape page */
+ .header{padding:8px 16px;border-radius:10px;}
+ .header-logo{width:44px;height:44px;padding:4px;border-radius:9px;}
+ .h1{font-size:19px;}.hsub{font-size:10.5px;margin-top:2px;}.badge{margin-bottom:4px;padding:2px 10px;}
+ .cards{margin-top:8px;gap:8px;}
+ .kpi{padding:7px 11px;}.kpi .kv{font-size:17px;margin-top:2px;}
+ .sect{margin:9px 0 5px;}
+ .sect h2{font-size:13.5px;}
+ .ta th,.ta td{padding:4px 9px;font-size:11px;}
+ .ta th{font-size:10px;}
+ .ta tr.rowtot td{font-size:11.5px;}
+ .chartwrap{padding:8px 14px 2px;}
+ .chbar{height:118px;}
+ .chbar .seg{max-height:100%;}
+ .chtot{font-size:12.5px;margin-top:4px;}
+ .leg{padding:2px 0 8px;font-size:10px;}
+ /* page 2 */
+ .tb th,.tb td{padding:3.5px 10px;}
+ .disc{margin-top:10px;padding:9px 14px;}
+ .disc .dh{margin-bottom:4px;}
+ .foot{margin-top:8px;}
+ @page{size:A4 landscape;margin:0;}
 }
 @media(max-width:640px){
  .cards{grid-template-columns:repeat(2,1fr);}.h1{font-size:21px;}.amtbox input{font-size:20px;}
@@ -425,6 +454,9 @@ function recalc() {
 
   // ---- results ----
   var html = '';
+  // ===== ส่วนที่ 1: สรุปความคุ้มครอง (KPI + ตารางที่ 1 + กราฟเปรียบเทียบ) =====
+  html += '<section class="psec psec1">';
+  html += '<div class="psec-head"><span class="n">1</span>สรุปความคุ้มครอง</div>';
   // KPI
   html += '<div class="cards">'
     + '<div class="kpi"><div class="kl">ทุนประกัน</div><div class="kv">' + fmt(SA) + '</div><div class="ks">บาท</div></div>'
@@ -478,9 +510,13 @@ function recalc() {
     html += '</div><div class="chtot">' + fmt(x.total) + '</div><div class="chlbl">ดัชนี ' + labels[i] + '/ปี</div></div>';
   });
   html += '</div><div class="leg"><span><span class="sw" style="background:#0C1E30"></span>เงินการันตี (ฐานสีน้ำเงิน)</span><span>ส่วนบนของแต่ละแท่ง = โบนัสตามดัชนี (ไม่การันตี · สีตามสถานการณ์)</span></div></div>';
+  html += '</section>';
 
+  // ===== ส่วนที่ 2: ตารางผลประโยชน์รายปี + หมายเหตุ =====
+  html += '<section class="psec psec2">';
+  html += '<div class="psec-head"><span class="n">2</span>ตารางผลประโยชน์กรมธรรม์รายปี</div>';
   // TABLE B
-  html += '<div class="sect pgbreak"><span class="bar"></span><h2>ตารางที่ 2 · ผลประโยชน์รายปี (ปีที่ 1–' + T + ')</h2></div>';
+  html += '<div class="sect"><span class="bar"></span><h2>ตารางที่ 2 · ผลประโยชน์รายปี (ปีที่ 1–' + T + ')</h2></div>';
   html += '<div class="tblwrap"><div class="scroll"><table class="tb"><thead>';
   html += '<tr><th rowspan="2" style="vertical-align:middle">สิ้น<br />ปีที่</th>'
     + '<th rowspan="2" class="agehdr" style="vertical-align:middle">อายุ</th>'
@@ -514,6 +550,7 @@ function recalc() {
   prod.notes.forEach(function (n) { html += '<li>' + n + '</li>'; });
   html += '</ul></div>';
   html += '<div class="foot">“' + prod.name + ' (อินเด็กซ์ ลิงค์)” เป็นชื่อทางการตลาดของแบบ ' + prod.name + ' แบบมีผลตอบแทนตามดัชนีอ้างอิง · เครื่องคำนวณนี้จัดทำเพื่อประกอบการนำเสนอ</div>';
+  html += '</section>';
 
   document.getElementById('results').innerHTML = html;
 }
