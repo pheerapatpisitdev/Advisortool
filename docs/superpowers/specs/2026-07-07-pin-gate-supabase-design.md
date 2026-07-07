@@ -8,7 +8,7 @@ The current PIN gate (`assets/pin-gate.{config,js,css}`, shared by all 14 tool p
 
 1. Move PIN verification to the server (Supabase) so the real PIN values are never shipped to the browser.
 2. Record every unlock attempt (success and failure) with a human-readable label, timestamp, tool, device (user-agent), and IP.
-3. Provision one PIN per person, seeded from the existing 65-member roster in the **83G30M** Supabase project (`agents` table), not the original 8 anonymous PINs.
+3. Keep the same 8 people who already have PINs today — migrate their existing 8 codes into the new table (hashed), not pulled from the 83G30M `agents` roster.
 4. Add real server-side brute-force protection (client-side lockouts can be bypassed by anyone scripting requests directly).
 
 ## Non-goals
@@ -28,8 +28,7 @@ create extension if not exists pgcrypto;
 
 create table az_gate_pins (
   id uuid primary key default gen_random_uuid(),
-  label text not null,             -- person's name, seeded from agents.name
-  source_agent_id uuid,            -- informational only, not a live FK (decoupled from agents table)
+  label text not null,             -- placeholder "PIN 1".."PIN 8" for now; user renames via Table Editor later
   pin_hash text not null,          -- crypt(pin, gen_salt('bf'))
   active boolean not null default true,
   created_at timestamptz not null default now()
@@ -69,17 +68,16 @@ RLS enabled on both tables with **no policies granted to `anon` or `authenticate
 
 ## Migration (one-time, run via Supabase MCP, not committed to git)
 
-1. Pull `name` from `agents` in 83G30M (65 rows).
-2. Generate one unique random 6-digit PIN per agent (collisions re-rolled).
-3. Insert into `az_gate_pins` with `pin_hash = crypt(<generated pin>, gen_salt('bf'))`.
-4. The plaintext name→PIN mapping is handed to the user directly in the chat response (and/or a local, gitignored file) for manual distribution — it cannot be recovered later since only the hash is stored.
-5. The original 8 anonymous PINs are retired (not migrated forward) since this is a full upgrade to named, per-person credentials.
+1. Take the 8 existing PINs currently in `assets/pin-gate.config.js` (`015495, 086678, 118880, 085271, 121095, 142406, 142124, 142394`).
+2. Insert each into `az_gate_pins` with `pin_hash = crypt(<pin>, gen_salt('bf'))` and a placeholder `label` (`"PIN 1"`..`"PIN 8"`).
+3. User renames each `label` to the real person's name later via the Supabase Table Editor, at their own pace — no plaintext PIN needs to be re-distributed since the codes themselves don't change.
+4. Remove `pins: [...]` from `assets/pin-gate.config.js` once the migration is confirmed working.
 
 ## Trade-offs / limitations accepted
 
 - Unlocking now requires network connectivity (previously worked fully offline once the page loaded).
 - Slight latency on submit (one network round trip to Supabase).
-- `az_gate_pins.source_agent_id` is a point-in-time snapshot, not a live link — if someone leaves the 83G30M roster, their AdvisorTool PIN must be deactivated separately (`active = false`) in `az_gate_pins`; it does not happen automatically.
+- Adding a 9th person later means manually inserting a new row into `az_gate_pins` (hashed) — no automatic sync from any other roster/table.
 
 ## Separately flagged (not part of this work)
 
