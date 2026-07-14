@@ -21,14 +21,26 @@ copyFileSync(join(root, '../assets/global-header.css'), join(assets, 'global-hea
 copyFileSync(join(root, '../assets/global-header.js'), join(assets, 'global-header.js'));
 
 // rewrite index.html asset paths -> assets/
+// The source tags carry cache-busting queries (?v=N) bumped independently of this
+// script, so match the path and drop whatever query rides along.
+const ref = (attr, path) =>
+  new RegExp(`${attr}="${path.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&')}(\\?[^"]*)?"`);
 let html = readFileSync(join(root, 'index.html'), 'utf8')
-  .replace('href="src/styles.css?v=2"', 'href="assets/styles.css"')
-  .replace('href="../assets/theme.css?v=1"', 'href="assets/theme.css"')
-  .replace('href="../assets/global-header.css"', 'href="assets/global-header.css"')
-  .replace(/src="..\/assets\/global-header.js[^"]*"/, 'src="assets/global-header.js"')
-  .replace('src="data/db.js"', 'src="assets/db.js"')
-  .replace('src="src/engine.js"', 'src="assets/engine.js"')
-  .replace('src="src/app.js"', 'src="assets/app.js"');
+  .replace(ref('href', 'src/styles.css'), 'href="assets/styles.css"')
+  .replace(ref('href', '../assets/theme.css'), 'href="assets/theme.css"')
+  .replace(ref('href', '../assets/global-header.css'), 'href="assets/global-header.css"')
+  .replace(ref('src', '../assets/global-header.js'), 'src="assets/global-header.js"')
+  .replace(ref('src', 'data/db.js'), 'src="assets/db.js"')
+  .replace(ref('src', 'src/engine.js'), 'src="assets/engine.js"')
+  .replace(ref('src', 'src/app.js'), 'src="assets/app.js"');
+
+// fail loudly rather than shipping a dist/web that silently 404s its own assets
+const stale = html.match(/(href|src)="(\.\.\/assets\/|src\/|data\/)[^"]*"/g) || [];
+const unresolved = stale.filter(t => !/pin-gate|supabase|click-sound/.test(t));
+if (unresolved.length) {
+  console.error('✗ build:web failed: unresolved asset refs →', unresolved.join(', '));
+  process.exit(1);
+}
 writeFileSync(join(web, 'index.html'), html);
 
 console.log('✓ static site → dist/web/  (index.html + assets/)  — deploy this folder');

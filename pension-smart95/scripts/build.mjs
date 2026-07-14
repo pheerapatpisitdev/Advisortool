@@ -26,16 +26,19 @@ const ghJs  = read('../assets/global-header.js').replace(/^\/\*[\s\S]*?\*\/\s*/,
 // "does the final html still contain this bare ref" scan would always false-positive
 // once those files are spliced in. So for these three, assert the *source* tag was
 // actually present (and got replaced) up front, instead of re-scanning the final html.
+// The tags carry cache-busting queries (?v=N) that get bumped independently of this
+// script, so match on the href/src path and let any query ride along.
+const linkTag = href => new RegExp(`<link rel="stylesheet" href="${href.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&')}(\\?[^"]*)?"\\s*/?>`);
 function mustReplace(str, from, to, label) {
-  if (!str.includes(from)) { console.error('✗ build failed: unresolved ref', label); process.exit(1); }
-  return str.replace(from, to);
+  if (!from.test(str)) { console.error('✗ build failed: unresolved ref', label); process.exit(1); }
+  return str.replace(from, () => to);  // fn form: the inlined CSS must not be read as $-patterns
 }
 
-html = mustReplace(html, '<link rel="stylesheet" href="../assets/global-header.css" />', `<style>\n${ghCss}\n</style>`, '../assets/global-header.css');
-html = mustReplace(html, '<link rel="stylesheet" href="../assets/theme.css?v=1" />', `<style>\n${theme}\n</style>`, '../assets/theme.css');
+html = mustReplace(html, linkTag('../assets/global-header.css'), `<style>\n${ghCss}\n</style>`, '../assets/global-header.css');
+html = mustReplace(html, linkTag('../assets/theme.css'), `<style>\n${theme}\n</style>`, '../assets/theme.css');
 if (!/<script src="\.\.\/assets\/global-header.js[^"]*"><\/script>/.test(html)) { console.error('✗ build failed: unresolved ref', '../assets/global-header.js'); process.exit(1); }
 html = html.replace(/<script src="..\/assets\/global-header.js[^"]*"><\/script>/, `<script>${ghJs}</script>`);
-html = html.replace('<link rel="stylesheet" href="src/styles.css?v=2">', `<style>\n${css}\n</style>`);
+html = mustReplace(html, linkTag('src/styles.css'), `<style>\n${css}\n</style>`, 'src/styles.css');
 html = html.replace('<script src="data/db.js"></script>', `<script>${db}</script>`);
 html = html.replace('<script src="src/engine.js"></script>', `<script>${engine}</script>`);
 html = html.replace('<script src="src/app.js"></script>', `<script>${app}</script>`);
