@@ -121,12 +121,16 @@ table{width:100%;border-collapse:collapse;}
 .leg{display:flex;gap:16px;justify-content:center;padding:4px 0 12px;font-size:11px;font-weight:600;color:var(--muted);flex-wrap:wrap;}
 .leg span{display:inline-flex;align-items:center;gap:5px;}.sw{width:12px;height:12px;border-radius:3px;}
 
+.tb{width:100%;}
 .tb table{table-layout:auto;}
-.tb th{font-size:10.5px;font-weight:700;text-align:right;border-bottom:1px solid var(--line);line-height:1.15;padding:5px 12px;white-space:nowrap;color:var(--navy);}
+/* ตารางที่ 2: ล็อกความกว้างคอลัมน์ตาม colgroup ให้กลุ่มการันตี = กลุ่มโบนัส
+   min-width กันคอลัมน์แคบจนตัวเลขล้นบนจอเล็ก — จอแคบกว่านี้ให้เลื่อนใน .scroll แทน */
+.tb.tb-fixed{table-layout:fixed;min-width:980px;}
+.tb th{font-size:10.5px;font-weight:700;text-align:right;border-bottom:1px solid var(--line);line-height:1.15;padding:5px 8px;white-space:nowrap;color:var(--navy);}
 .tb .ghg{background:var(--navy);color:#fff;text-align:center;font-size:10.5px;padding:4px;}
 .tb .ghn{background:var(--golddk);color:#fff;text-align:center;font-size:10.5px;padding:4px;}
 .tb tr.subhead th{background:#FAFBFC;}
-.tb td{text-align:right;border-bottom:1px solid #EFF2F5;font-weight:600;font-size:11.5px;padding:4px 12px;white-space:nowrap;font-variant-numeric:tabular-nums;}
+.tb td{text-align:right;border-bottom:1px solid #EFF2F5;font-weight:600;font-size:11.5px;padding:4px 8px;white-space:nowrap;font-variant-numeric:tabular-nums;}
 .tb td.yr{text-align:center;font-weight:700;color:var(--navy);font-family:var(--num);}
 .tb td.prem{color:var(--muted);font-weight:500;}.tb td.pay{color:var(--navy);}.tb td.dth{color:var(--red);}
 .tb td.age{text-align:center;font-weight:600;color:#46566B;}
@@ -139,6 +143,11 @@ table{width:100%;border-collapse:collapse;}
 .tb th.ghtax{background:var(--greendk);color:#fff;text-align:center;font-size:10.5px;padding:4px;border-left:2px solid #BFE3D8;}
 .tb td.taxcol{color:var(--greendk);background:var(--softgreen);font-weight:700;border-left:2px solid #BFE3D8;}
 .tb tr.rtot td.taxcol{background:#CDEBE1;color:var(--greendk);border-top:2px solid var(--navy);}
+/* บรรทัดบรรทัดสุดท้าย: เงินรับรวมตลอดสัญญา แยกตามสถานการณ์ดัชนี */
+.tb tr.rgrand td{background:var(--navy);color:#fff;font-weight:700;font-size:12.5px;font-family:var(--num);font-variant-numeric:tabular-nums;border-top:2px solid var(--navy);}
+.tb tr.rgrand td.lbl{text-align:left;padding-left:10px;font-family:'IBM Plex Sans Thai','Sarabun',sans-serif;font-size:11.5px;}
+/* ข้อความบรรยายยาว — ต้องตัดบรรทัดได้ ไม่งั้นจะดันความกว้างทั้งตาราง */
+.tb tr.rgrand td.sub{text-align:left;font-weight:400;font-size:10.5px;color:#C9D4E2;font-family:'IBM Plex Sans Thai','Sarabun',sans-serif;white-space:normal;line-height:1.45;}
 
 .disc{background:var(--softgold);border:1px solid #EADFC2;border-radius:11px;padding:12px 16px;margin-top:16px;}
 .disc .dh{font-size:12.5px;font-weight:800;color:var(--golddk);margin-bottom:6px;}
@@ -344,7 +353,7 @@ table{width:100%;border-collapse:collapse;}
   <div id="view"></div>
 </div>
 
-<script src="data.js"></script>
+<script src="data.js?v=8"></script>
 <script>
 /* ============================================================
    Calculator (ported from Calculator.tsx)
@@ -518,11 +527,18 @@ function recalc() {
   html += '<div class="psec-head"><span class="n">2</span>ตารางผลประโยชน์กรมธรรม์รายปี</div>';
   // TABLE B
   html += '<div class="sect"><span class="bar"></span><h2>ตารางที่ 2 · ผลประโยชน์รายปี (ปีที่ 1–' + T + ')</h2></div>';
-  html += '<div class="tblwrap"><div class="scroll"><table class="tb"><thead>';
+  // colgroup: แบ่งพื้นที่ให้กลุ่ม "การันตี" (4 คอลัมน์) = กลุ่ม "โบนัสดัชนี" (N คอลัมน์) เท่ากันที่ฝั่งละ 41%
+  // ที่เหลือ: ปีที่ 4% + อายุ 5% + ลดหย่อนภาษี 9% (table-layout:fixed ทำให้ % บังคับได้จริง)
+  var GRP = 41;
+  var colg = '<colgroup><col style="width:4%"><col style="width:5%">';
+  for (var c = 0; c < 4; c++) colg += '<col style="width:' + (GRP / 4) + '%">';
+  for (var c2 = 0; c2 < N; c2++) colg += '<col style="width:' + (GRP / N) + '%">';
+  colg += '<col style="width:9%"></colgroup>';
+  html += '<div class="tblwrap"><div class="scroll"><table class="tb tb-fixed">' + colg + '<thead>';
   html += '<tr><th rowspan="2" style="vertical-align:middle">สิ้น<br />ปีที่</th>'
     + '<th rowspan="2" class="agehdr" style="vertical-align:middle">อายุ</th>'
     + '<th colspan="4" class="ghg">ส่วนการันตี · รับรองการจ่าย</th>'
-    + '<th colspan="' + N + '" class="ghn">มูลค่ารับหากเวนคืน/ครบสัญญา · รวมโบนัสดัชนี (ไม่การันตี)</th>'
+    + '<th colspan="' + N + '" class="ghn">โบนัสดัชนี (ไม่การันตี) · จ่ายสิ้นปี ' + prod.alive.map(function (m) { return m[0] === T ? 'ครบสัญญา' : m[0]; }).join(' และ ') + '</th>'
     + '<th rowspan="2" class="ghtax" style="vertical-align:middle">ลดหย่อน<br />ภาษี</th></tr>';
   html += '<tr class="subhead"><th>เบี้ย<br />ต่อปี</th><th>เบี้ย<br />สะสม</th><th>เงินจ่ายคืน<br />' + (+(prod.paybackPct * 100).toFixed(2)) + '%</th><th>คุ้มครอง<br />ชีวิต</th>';
   SCEN.forEach(function (s, i) { html += '<th class="' + (i === 0 ? 'dv' : '') + '" style="color:' + s.t + ';background:' + s.bg + '">ดัชนี<br />' + labels[i] + '/ปี</th>'; });
@@ -537,14 +553,30 @@ function recalc() {
       + '<td class="prem">' + fmt(a.cum) + '</td>'
       + '<td class="pay">' + fmt(a.pay) + '</td>'
       + '<td class="dth">' + fmt(a.death) + '</td>';
-    R.forEach(function (x, j) { html += '<td class="' + (j === 0 ? 'dv' : '') + '" style="color:' + SCEN[j].t + '">' + ev(x.rows[i].exit) + '</td>'; });
+    // โบนัสดัชนีที่ "จ่ายจริง" — มีเฉพาะปีที่อยู่ใน prod.alive (สิ้นปี 10 และครบสัญญา) ปีอื่นเว้นว่าง.
+    // (โบนัสบางส่วนที่ติดมากับมูลค่าเวนคืนของปีอื่น อยู่ในตัวแปร rows[i].bonus — ไม่แสดงในคอลัมน์นี้)
+    R.forEach(function (x, j) {
+      var paid = x.bonuses.filter(function (b) { return b.yr === y; })[0];
+      html += '<td class="' + (j === 0 ? 'dv' : '') + '" style="color:' + SCEN[j].t + '">' + (paid ? ev(paid.val) : '—') + '</td>';
+    });
     html += '<td class="taxcol">' + (a.prem ? fmt(Math.min(a.prem, 100000)) : '—') + '</td></tr>';
   });
   html += '<tr class="rtot"><td class="yr" colspan="2">รวมทั้งสิ้น</td>'
     + '<td>' + fmt(PY * P) + '</td><td>—</td><td class="pay">' + fmt(R[0].payTot + R[0].mat) + '</td><td>—</td>';
-  SCEN.forEach(function (_, j) { html += '<td class="' + (j === 0 ? 'dv' : '') + '">—</td>'; });
+  // ค่าโบนัสรายปีเป็นค่า ณ จุดเวลา (หากเวนคืนปีนั้น) บวกกันตรง ๆ ไม่ได้ —
+  // ผลรวมที่ถูกต้องคือโบนัสที่ "ได้รับจริง" หากถือจนครบสัญญา = โบนัสปี 10 + โบนัสครบสัญญา
+  R.forEach(function (x, j) {
+    var tot = x.bonuses.reduce(function (s, b) { return s + b.val; }, 0);
+    html += '<td class="' + (j === 0 ? 'dv' : '') + '" style="color:' + SCEN[j].t + '">' + ev(tot) + '</td>';
+  });
   html += '<td class="taxcol">' + fmt(PY * Math.min(P, 100000)) + '</td></tr>';
-  html += '</tbody></table></div></div>';
+  // บรรทัดสุดท้าย: เงินรับรวมตลอดสัญญา = เงินคืนรายปี + เงินครบสัญญา + โบนัสดัชนี (= x.total)
+  html += '<tr class="rgrand"><td class="lbl" colspan="2">เงินรับรวม<br />ทั้งสิ้น</td>'
+    + '<td class="sub" colspan="4">หากถือจนครบสัญญา · เงินคืนรายปี + เงินครบสัญญา + โบนัสดัชนี &nbsp;(เทียบกับเบี้ยที่ชำระรวม ' + fmt(PY * P) + ' บาท)</td>';
+  R.forEach(function (x, j) { html += '<td class="' + (j === 0 ? 'dv' : '') + '">' + fmt(x.total) + '</td>'; });
+  html += '<td class="taxcol">—</td></tr>';
+  html += '</tbody></table></div>'
+    + '<div class="hint" style="margin-top:6px"><b>โบนัสดัชนีจ่ายจริง 2 ครั้ง</b> — สิ้นปีที่ 10 และตอนครบสัญญา ปีอื่นจึงเว้นว่าง</div></div>';
 
   // disclaimer + foot
   html += '<div class="disc"><div class="dh">หมายเหตุสำคัญ</div><ul>';

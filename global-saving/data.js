@@ -102,7 +102,8 @@ function calc(prod, SA, P, r, age) {
       y: y, prem: y <= PY ? P : 0, cum: cum(y),
       pay: y < T ? prod.paybackPct * SA : prod.maturityPct * SA,
       death: Math.max(1.02 * cum(y), deathFactor(y, PY) * SA),
-      exit: base + bonus,
+      // base = ส่วนการันตี (เท่ากันทุกสถานการณ์) · bonus = ส่วนดัชนี (ไม่การันตี) · exit = ผลรวม
+      base: base, bonus: bonus, exit: base + bonus,
     });
   }
   var payTot = (T - 1) * prod.paybackPct * SA;
