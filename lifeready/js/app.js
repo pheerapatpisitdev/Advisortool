@@ -159,10 +159,11 @@ function renderCV(res,inp){
 
 // Interactive vanilla SVG line chart — 4 series over policy year/age, hover to read each year.
 var CVCHART=null;
+// series colours: distinct hues that stay legible on the light background
 var CV_SERIES=[
-  {key:'cum',  name:'เบี้ยสะสม',            color:'#c79a3a'},
-  {key:'surr', name:'มูลค่าเวนคืนเงินสด',   color:'#0a7d8c'},
-  {key:'sa',   name:'ความคุ้มครองเสียชีวิต', color:'#0d2c54'}
+  {key:'cum',  name:'เบี้ยสะสม',            color:'#f59e0b'},
+  {key:'surr', name:'มูลค่าเวนคืนเงินสด',   color:'#2563eb'},
+  {key:'sa',   name:'ความคุ้มครองเสียชีวิต', color:'#111827'}
 ];
 function buildCVChart(pts, beAge){
   var W=900,H=380, L=66,R=20,T=20,B=58;

@@ -1,12 +1,16 @@
-/* LifeReady calculator — styles */
+/* LifeReady calculator — styles.
+   Local var NAMES are legacy (--navy/--teal/--gold); the VALUES mirror the shared
+   Light Minimal palette in ../assets/theme.css. --navy stays a dark ink (safe as
+   text and as a dark surface); --teal/--gold both point at the single blue accent. */
 :root{
-  --navy:#0d2c54; --navy2:#143b6e; --teal:#0a7d8c; --teal-l:#e6f4f6;
-  --gold:#c79a3a; --bg:#f4f6f9; --card:#fff; --line:#e2e8f0; --txt:#1f2937;
-  --muted:#64748b; --green:#0f8a4d; --green-l:#e7f6ee; --red:#c0392b; --red-l:#fdecea;
-  --shadow:0 1px 3px rgba(16,42,76,.08),0 1px 2px rgba(16,42,76,.06);
+  --navy:#1f2937; --navy2:#374151; --teal:#2563eb; --teal-l:#eef4ff;
+  --gold:#2563eb; --bg:#f7f8fa; --card:#fff; --line:#e6e8ec; --txt:#1f2937;
+  --muted:#6b7280; --green:#0f8a4d; --green-l:#e9f7f0; --red:#c0392b; --red-l:#fdecea;
+  --head:#f1f3f6; --head-2:#e7eaef; --blue-d:#1d4ed8;
+  --shadow:0 1px 2px rgba(17,24,39,.04);
 }
 table{width:100%;border-collapse:collapse;font-size:13.5px}
-.riders th{background:var(--navy);color:#fff;padding:9px 8px;text-align:left;font-weight:600;font-size:12.5px}
+.riders th{background:var(--head);color:var(--muted);padding:9px 8px;text-align:left;font-weight:600;font-size:12.5px}
 .riders th:nth-child(3),.riders td:nth-child(3){text-align:left}
 .riders td{padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
 .riders tr.off td{color:#b9c2cd}
@@ -28,27 +32,27 @@ table{width:100%;border-collapse:collapse;font-size:13.5px}
 #planSeg button{flex:1 1 22%}
 .cust-strip{background:#fff;border:1px solid var(--line);border-radius:12px;padding:13px 18px;margin-bottom:18px;display:flex;flex-wrap:wrap;gap:8px 26px;box-shadow:var(--shadow)}
 .cust-strip .it{font-size:13px}.cust-strip .it b{color:var(--navy)}.cust-strip .it span{color:var(--muted)}
-.breakdown th{background:var(--navy);color:#fff;padding:10px 10px;text-align:left;font-size:12.5px;font-weight:600}
+.breakdown th{background:var(--head);color:var(--muted);padding:10px 10px;text-align:left;font-size:12.5px;font-weight:600}
 .breakdown th:last-child,.breakdown td:last-child{text-align:right}
 .breakdown td{padding:9px 10px;border-bottom:1px solid var(--line)}
 .breakdown tr.main td{background:var(--teal-l);font-weight:600}
 .breakdown .rn{font-weight:600}.breakdown .rd{font-size:11px;color:var(--muted)}
 .breakdown .amt{color:var(--muted);font-size:13px}
 .breakdown .pm{font-weight:700;color:var(--navy);white-space:nowrap}
-.breakdown tfoot td{padding:10px;border-top:2px solid var(--navy)}
+.breakdown tfoot td{padding:10px;border-top:2px solid var(--line)}
 .breakdown tfoot .sub td{border-top:1px solid var(--line);color:var(--muted)}
-.breakdown tfoot .grand td{background:var(--navy);color:#fff;font-size:16px;font-weight:700}
-.breakdown tfoot .grand td:last-child{font-size:20px;color:#fff}
+.breakdown tfoot .grand td{background:var(--teal-l);color:var(--blue-d);font-size:16px;font-weight:700}
+.breakdown tfoot .grand td:last-child{font-size:20px;color:var(--blue-d)}
 .breakdown tfoot .ann td{border-top:none;color:var(--muted);font-size:13px}
 .tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
 .tabs button{border:1px solid var(--line);background:#fff;padding:8px 15px;border-radius:9px;font-family:inherit;font-size:13.5px;cursor:pointer;color:var(--muted);font-weight:600}
-.tabs button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.tabs button.on{background:var(--teal);color:#fff;border-color:var(--teal)}
 /* show the full cash-value table (no inner scroll box); keep horizontal-only overflow
    as a safety so a narrow phone scrolls the wide table instead of breaking the page */
 .cv-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px}
 .cv-table{font-size:12.5px;min-width:560px}
-.cv-table th{background:var(--navy);color:#fff;padding:8px 6px;font-size:11.5px;text-align:center}
-.cv-table th.grp{background:var(--navy2)}
+.cv-table th{background:var(--head);color:var(--muted);padding:8px 6px;font-size:11.5px;text-align:center}
+.cv-table th.grp{background:var(--head-2);color:var(--txt)}
 .cv-table td{padding:5px 7px;text-align:right;border-bottom:1px solid #eef1f5}
 .cv-table td:first-child,.cv-table td:nth-child(2){text-align:center}
 .cv-table tr:nth-child(even) td{background:#f9fafb}
@@ -94,9 +98,9 @@ table{width:100%;border-collapse:collapse;font-size:13.5px}
 .breakdown th:last-child,.breakdown td:last-child,
 .cv-table th:last-child,.cv-table td:last-child,
 .benefit-tbl th:last-child,.benefit-tbl td:last-child{border-right:none}
-/* keep dark header dividers visible on navy backgrounds */
-.riders th,.breakdown th,.cv-table th{border-right-color:rgba(255,255,255,.18)}
-.cv-table th.grp{border-right-color:rgba(255,255,255,.18)}
+/* header dividers on the light header fill */
+.riders th,.breakdown th,.cv-table th{border-right-color:var(--line)}
+.cv-table th.grp{border-right-color:var(--line)}
 
 /* mobile: 44px min targets; riders controls fill their cell so the table never overflows */
 @media(max-width:640px){
@@ -107,7 +111,7 @@ table{width:100%;border-collapse:collapse;font-size:13.5px}
 /* ===== 2-part result layout (ส่วนที่ 1 สรุปความคุ้มครอง / 2 ตารางมูลค่ากรมธรรม์+กราฟ) ===== */
 .psec-head{display:flex;align-items:center;gap:10px;font-size:16px;font-weight:800;color:var(--navy);margin:26px 0 10px;padding-bottom:8px;border-bottom:2px solid var(--line)}
 .psec1 .psec-head{margin-top:4px}
-.psec-head .n{width:26px;height:26px;border-radius:50%;background:var(--navy);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:14px;flex:none}
+.psec-head .n{width:26px;height:26px;border-radius:50%;background:var(--teal);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:14px;flex:none}
 /* print-only twin of the cash-value table (rows split into side-by-side columns) */
 .print-only{display:none}
 

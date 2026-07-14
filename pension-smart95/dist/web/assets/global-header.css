@@ -1,23 +1,86 @@
-/* Advisortool — shared global header (injected by assets/global-header.js) */
+/* Advisortool — shared global header (injected by assets/global-header.js)
+   Light Minimal topbar: white bar, blue "A" mark, hairline bottom border.
+   Self-contained (opaque white) so it looks right on any page background. */
+@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@500;600;700&display=swap');
+
 :root { --az-header-h: 64px; }
-.az-gh { position: sticky; top: 0; z-index: 50; display:flex; align-items:center; justify-content:space-between; height: var(--az-header-h); padding:0 22px; background:#fff; border-bottom:1px solid #e9eaee; font-family:'IBM Plex Sans Thai','Sarabun',system-ui,sans-serif; box-sizing:border-box; }
-.az-gh *{ box-sizing:border-box; }
-.az-gh__left{ display:flex; align-items:center; gap:14px; }
-.az-gh__right{ display:flex; align-items:center; gap:12px; }
-.az-gh__home{ display:inline-flex; align-items:center; justify-content:center; width:44px; height:44px; border-radius:12px; color:#1f3aa0; border:1px solid #e5e7eb; background:#fff; text-decoration:none; transition:background .15s; }
-.az-gh__home:hover{ background:#f1f4fb; }
-.az-gh__home:focus-visible, .az-gh__btn:focus-visible, .az-gh__panel a:focus-visible{ outline:3px solid #2b6cc4; outline-offset:2px; }
-.az-gh__brand{ font-weight:800; font-size:18px; letter-spacing:-.3px; color:#14266b; text-decoration:none; }
-.az-gh__avatar{ position:relative; width:44px;height:44px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:#eef2fb;color:#1f3aa0; }
-.az-gh__check{ position:absolute; right:-2px; bottom:-2px; width:16px;height:16px;border-radius:50%;background:#16a34a;color:#fff;display:inline-flex;align-items:center;justify-content:center;border:2px solid #fff; }
-.az-gh__menu{ position:relative; }
-.az-gh__btn{ display:inline-flex; align-items:center; gap:7px; height:40px; padding:0 14px; border:1px solid #e5e7eb; background:#fff; border-radius:10px; color:#1f3aa0; font-family:inherit; font-size:14px; font-weight:600; cursor:pointer; transition:background .15s; }
-.az-gh__btn:hover{ background:#f1f4fb; }
-.az-gh__chev{ transition: transform .18s; }
-.az-gh__menu.open .az-gh__chev{ transform: rotate(180deg); }
-.az-gh__panel{ position:absolute; top:50px; right:0; min-width:264px; background:#fff; border:1px solid #e9eaee; border-radius:12px; box-shadow:0 14px 36px rgba(20,38,107,.18); padding:6px; display:none; z-index:300; }
-.az-gh__menu.open .az-gh__panel{ display:block; }
-.az-gh__panel a{ display:flex; align-items:center; gap:9px; padding:9px 12px; border-radius:8px; color:#33415c; text-decoration:none; font-size:14px; white-space:nowrap; font-family:inherit; }
-.az-gh__panel a:hover{ background:#f1f4fb; color:#1f3aa0; }
-.az-gh__dot{ width:7px;height:7px;border-radius:50%;background:#2b6cc4;flex-shrink:0; }
-@media (max-width:520px){ .az-gh__brand{display:none} .az-gh__btn span{display:none} .az-gh__btn{padding:0 11px} }
+
+.az-gh {
+  position: sticky; top: 0; z-index: 50;
+  display: flex; align-items: center; justify-content: space-between;
+  height: var(--az-header-h); padding: 0 clamp(16px, 4vw, 40px);
+  background: rgba(255,255,255,.86);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  border-bottom: 1px solid #e6e8ec;
+  font-family: 'IBM Plex Sans Thai', 'Sarabun', system-ui, sans-serif;
+  box-sizing: border-box;
+}
+.az-gh * { box-sizing: border-box; }
+
+.az-gh__left { display: flex; align-items: center; gap: 12px; }
+.az-gh__right { display: flex; align-items: center; gap: 12px; }
+
+/* blue "A" mark (home link) */
+.az-gh__home {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 38px; height: 38px; border-radius: 10px;
+  background: #2563eb; color: #fff; text-decoration: none;
+  font-family: 'Kanit', 'IBM Plex Sans Thai', sans-serif; font-weight: 700; font-size: 20px; line-height: 1;
+  transition: background .15s;
+}
+.az-gh__home:hover { background: #1d4ed8; }
+
+.az-gh__brand {
+  font-family: 'Kanit', 'IBM Plex Sans Thai', sans-serif; font-weight: 600;
+  font-size: 19px; letter-spacing: .1px; color: #111827; text-decoration: none;
+}
+.az-gh__brand b { color: #2563eb; font-weight: 600; }
+
+/* check badge (right) */
+.az-gh__badge {
+  width: 36px; height: 36px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: #ecfdf3; border: 1px solid #cdeeda; color: #0f8a4d;
+}
+/* legacy avatar (still styled in case a page ships its own markup) */
+.az-gh__avatar {
+  position: relative; width: 36px; height: 36px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: #f1f3f6; border: 1px solid #e6e8ec; color: #6b7280;
+}
+.az-gh__check {
+  position: absolute; right: -2px; bottom: -2px; width: 16px; height: 16px; border-radius: 50%;
+  background: #0f8a4d; color: #fff; display: inline-flex; align-items: center; justify-content: center;
+  border: 2px solid #fff;
+}
+
+.az-gh__home:focus-visible, .az-gh__brand:focus-visible, .az-gh__badge:focus-visible,
+.az-gh__btn:focus-visible, .az-gh__panel a:focus-visible { outline: 3px solid #2563eb; outline-offset: 2px; }
+
+/* dropdown "เครื่องมือ" menu (used by agency pages) */
+.az-gh__menu { position: relative; }
+.az-gh__btn {
+  display: inline-flex; align-items: center; gap: 7px; height: 38px; padding: 0 13px;
+  border: 1px solid #e6e8ec; background: #fff; border-radius: 9px;
+  color: #1f2937; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer;
+  transition: background .15s, border-color .15s;
+}
+.az-gh__btn:hover { background: #f1f3f6; border-color: #d6d9df; }
+.az-gh__chev { transition: transform .18s; }
+.az-gh__menu.open .az-gh__chev { transform: rotate(180deg); }
+.az-gh__panel {
+  position: absolute; top: 48px; right: 0; min-width: 264px;
+  background: #fff; border: 1px solid #e6e8ec; border-radius: 12px;
+  box-shadow: 0 12px 32px -12px rgba(17,24,39,.18); padding: 6px; display: none; z-index: 300;
+}
+.az-gh__menu.open .az-gh__panel { display: block; }
+.az-gh__panel a {
+  display: flex; align-items: center; gap: 9px; padding: 9px 12px; border-radius: 8px;
+  color: #374151; text-decoration: none; font-size: 14px; white-space: nowrap; font-family: inherit;
+}
+.az-gh__panel a:hover { background: #eef4ff; color: #1d4ed8; }
+.az-gh__dot { width: 7px; height: 7px; border-radius: 50%; background: #2563eb; flex-shrink: 0; }
+
+@media (max-width: 520px) { .az-gh__btn span { display: none; } .az-gh__btn { padding: 0 11px; } }
+@media (max-width: 460px) { .az-gh__brand { font-size: 17px; } }
+@media print { .az-gh { display: none !important; } }

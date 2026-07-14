@@ -10,13 +10,15 @@
    script-generated output. Everything theme.css already owns (reset, body,
    .wrap, header, generic inputs/select, .seg, .card, .row2, .btn) has been
    dropped here in favor of the shared .az-* classes.
-   The VALUES below mirror the shared Navy & Gold palette in ../assets/theme.css
+   The VALUES below mirror the shared Light Minimal palette in ../assets/theme.css
    (only the variable NAMES stay legacy so the kept rules keep resolving), so
-   iShield renders in the same unified palette as the other tools. */
+   iShield renders in the same unified palette as the other tools. --navy stays a
+   dark ink; --blue/--teal/--accent all point at the single blue accent. */
 :root{
-  --navy:#0d2c54; --blue:#143b6e; --teal:#0a7d8c; --accent:#c79a3a;
-  --bg:#f4f6f9; --card:#ffffff; --line:#e2e8f0; --txt:#1f2937; --muted:#64748b;
-  --good:#0f8a4d; --bad:#c0392b; --soft:#eef3f8;
+  --navy:#1f2937; --blue:#2563eb; --teal:#2563eb; --accent:#2563eb;
+  --bg:#f7f8fa; --card:#ffffff; --line:#e6e8ec; --txt:#1f2937; --muted:#6b7280;
+  --good:#0f8a4d; --bad:#c0392b; --soft:#f1f3f6;
+  --blue-l:#eef4ff; --blue-d:#1d4ed8; --head:#f1f3f6; --head-2:#e7eaef;
 }
 
 /* screen containers (two-screen input/result flow toggled via el.style.display in the script) */
@@ -58,18 +60,18 @@ label.fld .lab{font-size:13px;color:var(--muted);margin-bottom:5px;display:block
 
 /* KPI boxes: kept because the script builds this markup itself (class="kpi"/"kpi hi") —
    see note at top of file. Visually mirrors .az-box/.az-hero-box. */
-.kpi{background:linear-gradient(135deg,var(--soft),#fff);border:1px solid var(--line);border-radius:12px;padding:14px}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px}
 .kpi .t{font-size:12px;color:var(--muted);font-weight:600}
 .kpi .v{font-size:24px;font-weight:800;color:var(--navy);margin-top:3px}
 .kpi .u{font-size:12px;color:var(--muted)}
-.kpi.hi{background:linear-gradient(135deg,#0d2c54,#143b6e);border:none}
-.kpi.hi .t,.kpi.hi .u{color:#cfe0f0}.kpi.hi .v{color:#fff}
+.kpi.hi{background:var(--blue-l);border:1px solid #d6e2fb}
+.kpi.hi .t{color:var(--blue-d)}.kpi.hi .u{color:var(--muted)}.kpi.hi .v{color:var(--blue-d)}
 
 table.tb{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:6px}
 table.tb th,table.tb td{padding:8px 10px;text-align:right;border-bottom:1px solid var(--line);border-right:1px solid var(--line)}
 table.tb th:last-child,table.tb td:last-child{border-right:none}
-table.tb th{border-right-color:rgba(255,255,255,.18)}
-table.tb th{background:var(--navy);color:#fff;font-weight:600;font-size:12.5px;text-align:right}
+table.tb th{border-right-color:var(--line)}
+table.tb th{background:var(--head);color:var(--muted);font-weight:600;font-size:12.5px;text-align:right}
 .illus-wrap table.tb th{text-align:center}
 table.tb th:first-child,table.tb td:first-child{text-align:left}
 table.tb tr:nth-child(even) td{background:#f8fafc}
@@ -79,11 +81,11 @@ table.tb tfoot td,table.tb .total td{font-weight:800;background:var(--soft)!impo
 
 .illus-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;margin-top:8px}
 .vt-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;margin-top:8px}
-table.vt th{font-size:11.5px;line-height:1.2;text-align:center;border-left:1px solid rgba(255,255,255,.18)}
-table.vt th.grp{background:#143b6e;font-size:12.5px}
+table.vt th{font-size:11.5px;line-height:1.2;text-align:center;border-left:1px solid var(--line)}
+table.vt th.grp{background:var(--head-2);color:var(--txt);font-size:12.5px}
 table.vt td{font-size:12.5px}
-table.vt th.gp2,table.vt td:nth-child(5),table.vt td:nth-child(6),table.vt td:nth-child(7){background:rgba(10,125,140,.06)}
-table.vt thead tr:first-child th.gp2{background:#086876}
+table.vt th.gp2,table.vt td:nth-child(5),table.vt td:nth-child(6),table.vt td:nth-child(7){background:rgba(37,99,235,.05)}
+table.vt thead tr:first-child th.gp2{background:#dbe7fe;color:var(--blue-d)}
 .vtsection{margin-top:18px}
 
 .subtle{font-size:12px;color:var(--muted);margin-top:6px}

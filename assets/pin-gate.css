@@ -1,15 +1,15 @@
-/* Advisortool — PIN gate styles (ธีม Navy & Gold).
+/* Advisortool — PIN gate styles (ธีม Light Minimal).
    Self-contained: ใช้ตัวแปรจาก theme.css ถ้ามี ไม่มีก็ fallback เป็นค่าจริง. */
 
 /* ระหว่างล็อก: ซ่อนหน้าจริง + กัน scroll. overlay เป็น sibling ของ body จึงไม่โดนซ่อน. */
-html.az-locked { overflow: hidden; background: var(--az-navy, #0d2c54); }
+html.az-locked { overflow: hidden; background: var(--az-bg, #f7f8fa); }
 html.az-locked body { display: none !important; }
 
 .az-pin {
   position: fixed; inset: 0; z-index: 2147483000;
   display: flex; align-items: center; justify-content: center; padding: 20px;
   overflow: auto; /* กันคีย์แพดล้นจอบนหน้าจอเตี้ย (มือถือแนวนอน) ให้เลื่อนได้ */
-  background: linear-gradient(120deg, var(--az-navy, #0d2c54), var(--az-navy-2, #143b6e));
+  background: var(--az-bg, #f7f8fa);
   font-family: var(--az-font, 'IBM Plex Sans Thai', 'Sarabun', 'Segoe UI', Tahoma, sans-serif);
   -webkit-tap-highlight-color: transparent;
   animation: az-pin-in .2s ease;
@@ -20,24 +20,25 @@ html.az-locked body { display: none !important; }
 
 .az-pin__card {
   width: 100%; max-width: 340px; background: var(--az-card, #fff);
-  border-radius: 18px; box-shadow: 0 20px 60px rgba(0,0,0,.35);
+  border: 1px solid var(--az-line, #e6e8ec);
+  border-radius: 16px; box-shadow: 0 10px 34px -16px rgba(17,24,39,.20);
   padding: 28px 24px 24px; text-align: center;
 }
 .az-pin__brand {
   display: inline-block; font-size: 12px; font-weight: 700; letter-spacing: .5px;
-  text-transform: uppercase; color: var(--az-gold-d, #a97f28);
-  background: var(--az-gold-l, #f7efdd); padding: 4px 12px; border-radius: 20px;
+  text-transform: uppercase; color: var(--az-blue-d, #1d4ed8);
+  background: var(--az-blue-l, #eef4ff); padding: 4px 12px; border-radius: 20px;
 }
-.az-pin__title { margin-top: 14px; font-size: 18px; font-weight: 700; color: var(--az-navy, #0d2c54); }
+.az-pin__title { margin-top: 14px; font-size: 18px; font-weight: 700; color: var(--az-ink-strong, #111827); }
 
 .az-pin__dots { display: flex; justify-content: center; gap: 12px; margin: 20px 0 6px; }
 .az-pin__dots span {
   width: 13px; height: 13px; border-radius: 50%;
-  border: 2px solid var(--az-line, #e2e8f0); background: transparent;
+  border: 2px solid var(--az-line, #e6e8ec); background: transparent;
   transition: transform .1s, background .1s, border-color .1s;
 }
 .az-pin__dots span.is-filled {
-  background: var(--az-navy, #0d2c54); border-color: var(--az-navy, #0d2c54); transform: scale(1.05);
+  background: var(--az-blue, #2563eb); border-color: var(--az-blue, #2563eb); transform: scale(1.05);
 }
 
 .az-pin__msg {
@@ -49,13 +50,13 @@ html.az-locked body { display: none !important; }
 .az-pin__pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 14px; }
 .az-pin__pad.is-disabled { opacity: .45; pointer-events: none; }
 .az-pin__key {
-  height: 62px; border: 0; border-radius: 14px; cursor: pointer;
-  background: var(--az-soft, #eef3f8); color: var(--az-navy, #0d2c54);
+  height: 62px; border: 1px solid var(--az-line, #e6e8ec); border-radius: 12px; cursor: pointer;
+  background: #fff; color: var(--az-ink-strong, #111827);
   font-family: inherit; font-size: 24px; font-weight: 600;
   transition: transform .06s, background .12s; -webkit-user-select: none; user-select: none;
 }
-.az-pin__key:hover { background: var(--az-gold-l, #f7efdd); }
-.az-pin__key:active { transform: scale(.94); background: var(--az-gold-l, #f7efdd); }
+.az-pin__key:hover { background: var(--az-blue-l, #eef4ff); }
+.az-pin__key:active { transform: scale(.94); background: var(--az-blue-l, #eef4ff); }
 .az-pin__key--back { font-size: 20px; color: var(--az-muted, #64748b); }
 .az-pin__spacer { visibility: hidden; }
 
@@ -71,8 +72,8 @@ html.az-locked body { display: none !important; }
 .az-lock-btn {
   position: fixed; left: 14px; bottom: 14px; z-index: 2147482000;
   width: 40px; height: 40px; border-radius: 50%;
-  border: 1px solid var(--az-line, #e2e8f0);
-  background: rgba(255,255,255,.9); color: var(--az-navy, #0d2c54);
+  border: 1px solid var(--az-line, #e6e8ec);
+  background: rgba(255,255,255,.9); color: var(--az-muted, #6b7280);
   display: flex; align-items: center; justify-content: center; cursor: pointer;
   box-shadow: 0 2px 8px rgba(16,42,76,.18); opacity: .6;
   transition: opacity .15s, transform .1s;

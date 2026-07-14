@@ -116,6 +116,6 @@ forced recalc (`OOXMLRecalcMode=0`) per input case — see git history / ask if 
 
 ## Conventions
 
-- Thai-language UI. Brand: shared Navy & Gold theme in `../assets/theme.css` (navy `#0d2c54` + gold `#c79a3a`, teal `#0a7d8c` for actions). Font: IBM Plex Sans Thai. Prefer `.az-*` component classes; `src/styles.css` holds only tool-specific rules.
+- Thai-language UI. Brand: shared Light Minimal theme in `../assets/theme.css` — white/grey surfaces (bg `#f7f8fa`, card `#fff`, line `#e6e8ec`) with a single blue accent `#2563eb` for actions. The legacy var names `--az-navy` / `--az-gold` / `--az-teal` still exist (other tools consume them) but now resolve to dark ink and the blue accent — don't reintroduce navy/gold values. Font: IBM Plex Sans Thai. Prefer `.az-*` component classes; `src/styles.css` holds only tool-specific rules.
 - Vanilla JS, no framework, no runtime/build dependencies. Don't add a bundler or framework unless asked.
 - Round every number shown to the user via the engine's helpers / `toLocaleString`.
