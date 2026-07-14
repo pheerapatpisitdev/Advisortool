@@ -1,10 +1,10 @@
 /* Advisortool — UI click sounds (Web Audio, ไม่มีไฟล์เสียง, ออฟไลน์ได้).
-   เล่นเสียงคลิกสั้นๆ ตอนแตะปุ่ม/ลิงก์/การ์ด/คีย์แพดรหัสผ่าน ทั้งแอป.
+   เล่นเสียงคลิกสั้นๆ ตอนแตะปุ่ม/ลิงก์/การ์ด ทั้งแอป.
    include ใน <head> ของทุกหน้า หลัง pin-gate. ปุ่มเปิด/ปิดเสียงลอยมุมล่างซ้าย
    (เหนือปุ่มล็อก) ค่าจำใน localStorage['az_sound']. ใช้คลาส .az-lock-btn ร่วม
    (มาจาก pin-gate.css) เพื่อสไตล์/ซ่อนตอนพิมพ์เหมือนกัน. */
 (function () {
-  // เล่นเสียงเมื่อแตะ element ที่กดได้ (คีย์แพดเป็น <button> จึงเข้าเงื่อนไขด้วย)
+  // เล่นเสียงเมื่อแตะ element ที่กดได้
   var SEL = 'button, a[href], [role="button"], summary, input[type="button"], input[type="submit"]';
   var KEY = 'az_sound';
 
@@ -40,15 +40,14 @@
   }
   function play(freq) { if (on) blip(freq || 480); }
 
-  // ดักคลิกทั้งเอกสาร (capture) — ครอบคีย์แพดรหัสผ่านด้วย
+  // ดักคลิกทั้งเอกสาร (capture)
   document.addEventListener('click', function (e) {
     var t = e.target;
     if (!t || !t.closest) return;
     var el = t.closest(SEL);
     if (!el) return;
     if (el.id === 'az-sound-btn') return; // ปุ่ม mute เล่นเสียงยืนยันเอง กันซ้ำ
-    var isKey = el.classList && el.classList.contains('az-pin__key');
-    play(isKey ? 660 : 480);
+    play(480);
   }, true);
 
   var ICON_ON = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a9 9 0 0 1 0 14"/></svg>';

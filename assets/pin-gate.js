@@ -82,7 +82,7 @@
     return;
   }
 
-  // ยังไม่ปลด → ซ่อนหน้า + แสดง keypad
+  // ยังไม่ปลด → ซ่อนหน้า + แสดงฟอร์มกรอกรหัส
   var root = document.documentElement;
   root.classList.add('az-locked');
 
@@ -102,38 +102,29 @@
     return;
   }
 
-  function padBtn(d) { return '<button type="button" class="az-pin__key" data-d="' + d + '">' + d + '</button>'; }
-
   overlay.innerHTML =
     '<div class="az-pin__card">' +
       '<div class="az-pin__brand">' + esc(SUBTITLE) + '</div>' +
       '<div class="az-pin__title">' + esc(TITLE) + '</div>' +
-      '<div class="az-pin__dots" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></div>' +
-      '<div class="az-pin__msg" role="alert"></div>' +
-      '<div class="az-pin__pad">' +
-        padBtn('1') + padBtn('2') + padBtn('3') +
-        padBtn('4') + padBtn('5') + padBtn('6') +
-        padBtn('7') + padBtn('8') + padBtn('9') +
-        '<span class="az-pin__spacer"></span>' +
-        padBtn('0') +
-        '<button type="button" class="az-pin__key az-pin__key--back" data-back aria-label="ลบ">⌫</button>' +
-      '</div>' +
+      '<form class="az-pin__form" novalidate>' +
+        '<input class="az-pin__input" type="password" inputmode="numeric" autocomplete="one-time-code" ' +
+          'maxlength="6" placeholder="••••••" aria-label="' + esc(TITLE) + '">' +
+        '<div class="az-pin__msg" role="alert"></div>' +
+        '<button type="submit" class="az-pin__submit">ยืนยัน</button>' +
+      '</form>' +
     '</div>';
   root.appendChild(overlay);
 
-  var dots = overlay.querySelectorAll('.az-pin__dots span');
+  var formEl = overlay.querySelector('.az-pin__form');
+  var inputEl = overlay.querySelector('.az-pin__input');
+  var submitEl = overlay.querySelector('.az-pin__submit');
   var msgEl = overlay.querySelector('.az-pin__msg');
-  var padEl = overlay.querySelector('.az-pin__pad');
   var cardEl = overlay.querySelector('.az-pin__card');
 
-  var entered = '';
   var attempts = 0;
   var lockedUntil = 0;
   var checking = false;
 
-  function renderDots() {
-    for (var i = 0; i < dots.length; i++) dots[i].className = i < entered.length ? 'is-filled' : '';
-  }
   function setMsg(text) {
     msgEl.textContent = text || '';
     msgEl.className = 'az-pin__msg' + (text ? ' az-pin__msg--show' : '');
@@ -143,39 +134,42 @@
     void cardEl.offsetWidth; // บังคับ reflow เพื่อเริ่ม animation ใหม่
     cardEl.classList.add('az-shake');
   }
-  function press(d) {
-    if (checking || Date.now() < lockedUntil || entered.length >= 6) return;
-    entered += d;
-    renderDots();
-    if (entered.length === 6) submit();
+  function setDisabled(on) {
+    inputEl.disabled = on;
+    submitEl.disabled = on;
+    formEl.classList.toggle('is-disabled', on);
   }
-  function back() {
-    if (checking || Date.now() < lockedUntil) return;
-    entered = entered.slice(0, -1);
-    renderDots();
+  function reset() {
+    inputEl.value = '';
+    try { inputEl.focus(); } catch (e) {}
   }
   function submit() {
+    if (checking || Date.now() < lockedUntil) return;
+    var pin = inputEl.value.replace(/\D/g, '');
+    if (pin.length !== 6) {
+      setMsg('กรุณาใส่รหัส 6 หลัก');
+      shake();
+      return;
+    }
     var client = getSb();
     if (!client) {
       setMsg('โหลดระบบตรวจสอบไม่สำเร็จ กรุณารีเฟรชหน้า');
-      entered = '';
-      renderDots();
+      reset();
       return;
     }
     checking = true;
-    padEl.classList.add('is-disabled');
+    setDisabled(true);
     setMsg('กำลังตรวจสอบ...');
     client.rpc('az_gate_verify', {
-      input_pin: entered,
+      input_pin: pin,
       input_tool: toolId(),
       input_ua: navigator.userAgent
     }).then(function (res) {
       checking = false;
-      padEl.classList.remove('is-disabled');
+      setDisabled(false);
       if (res.error) {
         setMsg('เชื่อมต่อไม่ได้ ลองใหม่อีกครั้ง');
-        entered = '';
-        renderDots();
+        reset();
         return;
       }
       var data = res.data || {};
@@ -192,8 +186,7 @@
         }, 260);
         return;
       }
-      entered = '';
-      renderDots();
+      reset();
       shake();
       if (data.locked) {
         setMsg('ใส่ผิดหลายครั้ง กรุณารอสักครู่แล้วลองใหม่');
@@ -203,35 +196,33 @@
       if (attempts >= MAX) startLockout();
       else setMsg('รหัสไม่ถูกต้อง ลองใหม่');
     }).catch(function () {
-      // เผื่อ RPC promise reject เอง (ไม่ใช่ res.error) — อย่าให้คีย์แพดค้าง
+      // เผื่อ RPC promise reject เอง (ไม่ใช่ res.error) — อย่าให้ฟอร์มค้าง
       checking = false;
-      padEl.classList.remove('is-disabled');
-      entered = '';
-      renderDots();
+      setDisabled(false);
+      reset();
       setMsg('เชื่อมต่อไม่ได้ ลองใหม่อีกครั้ง');
     });
   }
   function startLockout() {
     lockedUntil = Date.now() + LOCKOUT;
-    padEl.classList.add('is-disabled');
+    setDisabled(true);
     (function tick() {
       var remain = Math.ceil((lockedUntil - Date.now()) / 1000);
       if (remain > 0) { setMsg('ใส่ผิดหลายครั้ง กรุณารอ ' + remain + ' วินาที'); setTimeout(tick, 500); }
-      else { attempts = 0; padEl.classList.remove('is-disabled'); setMsg(''); }
+      else { attempts = 0; setDisabled(false); setMsg(''); reset(); }
     })();
   }
 
-  overlay.addEventListener('click', function (e) {
-    var t = e.target;
-    if (!t || !t.getAttribute) return;
-    if (t.hasAttribute('data-d')) press(t.getAttribute('data-d'));
-    else if (t.hasAttribute('data-back')) back();
+  // รับเฉพาะตัวเลข ไม่เกิน 6 หลัก
+  inputEl.addEventListener('input', function () {
+    var v = inputEl.value.replace(/\D/g, '').slice(0, 6);
+    if (inputEl.value !== v) inputEl.value = v;
+    if (msgEl.textContent) setMsg('');
   });
-  document.addEventListener('keydown', function (e) {
-    if (!root.classList.contains('az-locked')) return;
-    if (e.key && e.key.length === 1 && e.key >= '0' && e.key <= '9') { press(e.key); e.preventDefault(); }
-    else if (e.key === 'Backspace') { back(); e.preventDefault(); }
+  formEl.addEventListener('submit', function (e) {
+    e.preventDefault();
+    submit();
   });
 
-  try { overlay.tabIndex = -1; overlay.focus(); } catch (e) {}
+  try { inputEl.focus(); } catch (e) {}
 })();
