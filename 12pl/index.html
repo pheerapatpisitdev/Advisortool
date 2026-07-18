@@ -138,13 +138,11 @@ input.locked:focus{outline:none}
 .totalbar .btn-ghost:hover{background:rgba(255,255,255,.24)}
 .totalbar .btn-print{background:#fff;color:var(--blue-deep)}
 
-/* tabs */
-.tabs{display:flex;gap:4px;border-bottom:2px solid var(--line);margin-bottom:14px;flex-wrap:wrap}
-.tabs button{font:inherit;font-weight:600;font-size:.92rem;background:none;border:0;
-  padding:9px 16px;cursor:pointer;color:var(--ink-3);border-bottom:3px solid transparent;margin-bottom:-2px}
-.tabs button.on{color:var(--blue-deep);border-bottom-color:var(--blue)}
-.tabpage{display:none}
-.tabpage.on{display:block}
+/* result sections */
+.tabpage{display:block}
+.tabpage::before{content:attr(data-title);display:block;margin-bottom:12px;
+  font-size:1.15rem;font-weight:700;color:var(--blue-deep)}
+.tabpage+.tabpage{margin-top:30px;padding-top:26px;border-top:2px solid var(--line)}
 
 /* tables */
 table{width:100%;border-collapse:collapse;font-size:.82rem}
@@ -153,6 +151,8 @@ th{background:var(--blue-bg);color:var(--blue-deep);font-weight:600;
   padding:7px 9px;border:1px solid var(--line);text-align:center;vertical-align:middle}
 td{padding:5px 9px;border:1px solid var(--line);text-align:right;white-space:nowrap}
 td.c{text-align:center}td.l{text-align:left;white-space:normal}
+td.payback-value{color:#15803d}
+td.net-positive{color:#15803d}
 tbody tr:nth-child(even){background:#f8fafc}
 tbody tr:hover{background:var(--blue-bg)}
 tr.hilite td{background:#fef3c7;font-weight:600}
@@ -174,13 +174,12 @@ tfoot td{background:var(--blue-bg);font-weight:700;color:var(--blue-deep)}
 @media print{
   @page{size:A4;margin:11mm 10mm}
   body{background:#fff;font-size:11.5px}
-  .masthead,.tabs,.no-print,.steps{display:none!important}
+  .masthead,.no-print,.steps{display:none!important}
   .page{display:none!important;padding:0}
   #pageResult{display:block!important}
   .panel{border:0;box-shadow:none}
   .panel-b{padding:0}
-  .tabpage{display:block!important;page-break-inside:avoid}
-  .tabpage+.tabpage{page-break-before:always}
+  .tabpage{display:block!important}
   .totalbar{background:none;color:var(--ink);box-shadow:none;border:2px solid var(--blue);padding:10px 16px}
   .totalbar .t-label{color:var(--ink-3)}
   .totalbar .t-big{color:var(--blue-deep);font-size:1.4rem}
@@ -369,17 +368,9 @@ tfoot td{background:var(--blue-bg);font-weight:700;color:var(--blue-deep)}
         <div class="ph-meta" id="phMeta"></div>
       </div>
 
-      <div class="tabs no-print">
-        <button data-tab="tabSummary" class="on">สรุปเบี้ย & ผลประโยชน์</button>
-        <button data-tab="tabBenefit">ตารางแสดงผลประโยชน์</button>
-        <button data-tab="tabValue">ตารางมูลค่ากรมธรรม์</button>
-        <button data-tab="tabTax">ลดหย่อนภาษี</button>
-      </div>
-
-      <div class="tabpage on" id="tabSummary"></div>
-      <div class="tabpage" id="tabBenefit"></div>
-      <div class="tabpage" id="tabValue"></div>
-      <div class="tabpage" id="tabTax"></div>
+      <div class="tabpage" id="tabSummary" data-title="สรุปเบี้ย & ผลประโยชน์"></div>
+      <div class="tabpage" id="tabBenefit" data-title="ตารางแสดงผลประโยชน์"></div>
+      <div class="tabpage" id="tabTax" data-title="ลดหย่อนภาษี"></div>
     </div>
   </section>
 </div>
@@ -759,6 +750,8 @@ function createEngine(DATA) {
     const { age, sex } = inp;
     const sa = inp.sa;
     const mode = MODES[inp.mode];
+    const ih = inp.ihealthy;
+    const ihClassMultiplier = (inp.occClass || 1) === 4 ? 1.5 : 1;
     const years = 85 - age;                    // policy years 1..years (last year age+y = 85)
     const annualPrem = calc.basicModal * mode.times;  // Excel: Cal!H13 * D4
     const rows = [];
@@ -783,19 +776,30 @@ function createEngine(DATA) {
       const cv = (cvRow[y - 1] || 0) * sa / 1000;
       const death = Math.max(cv, sa);
       const deathPlus = death + cumPayback;
-      rows.push({ y, age: age + y - 1, prem, cum, payback: F, accPayback: accG,
+      const policyAge = age + y - 1;
+      let ihAnnual = null;
+      if (ih && policyAge <= 80) {
+        const ihRate = (DATA.ihealthyRates[ihKey(policyAge, sex, ih.plan, ih.coverage, ih.territory)] || {})[String(policyAge)];
+        if (ihRate != null) ihAnnual = ihRate * ihClassMultiplier;
+      }
+      // Use only the annual 12PL payback to offset iHealthy Ultra premiums.
+      // The maturity benefit is excluded because iHealthy Ultra ends at age 80.
+      const netPaybackAfterIH = gRate * sa / 1000 - (ihAnnual || 0);
+      rows.push({ y, age: age + y - 1, prem, cum, payback: F, netPaybackAfterIH, accPayback: accG,
                   div2: d2, accDiv2: acc2, div3: d3, accDiv3: acc3,
                   total2: accG + acc2, total3: accG + acc3,
-                  cv, death, deathPlus });
+                  cv, death, deathPlus, ihAnnual });
       cumPayback += F;
     }
     const paybacks = rows.map(r => r.payback);
     const maxPay = Math.max(...paybacks);
     const summary = {
       totalPrem: rows.reduce((s, r) => s + r.prem, 0),
+      ihealthyAnnualTotal: rows.reduce((s, r) => s + (r.ihAnnual || 0), 0),
       paybackDuring: rows.reduce((s, r) => s + r.payback, 0) - maxPay,   // G101
       maturity: maxPay,                                                  // G102
       guaranteedTotal: rows.reduce((s, r) => s + r.payback, 0),          // G103
+      netPaybackAfterIHTotal: rows.reduce((s, r) => s + Math.min(0, r.netPaybackAfterIH), 0),
       div2Total: rows.reduce((s, r) => s + r.div2, 0),                   // K96/L104-ish
       div3Total: rows.reduce((s, r) => s + r.div3, 0),
       accGmax: Math.max(...rows.map(r => r.accPayback)),
@@ -803,7 +807,7 @@ function createEngine(DATA) {
     };
     summary.grand2 = summary.guaranteedTotal + summary.div2Total;
     summary.grand3 = summary.guaranteedTotal + summary.div3Total;
-    return { rows, summary, annualPrem };
+    return { rows, summary, annualPrem, hasIHealthy: Boolean(ih) };
   }
 
   // ============ policy value table (ตารางมูลค่า) ============
@@ -1010,7 +1014,6 @@ function doCalculate() {
   errBox.style.display = 'none';
 
   const bt = ENGINE.benefitTable(inp, calc);
-  const pv = ENGINE.policyValueTable(inp);
   const tax = ENGINE.taxDeduct(inp, calc);
   const modeTh = ENGINE.MODES[S.mode].th;
 
@@ -1023,7 +1026,6 @@ function doCalculate() {
 
   renderSummary(calc, bt, tax);
   renderBenefit(bt);
-  renderValue(pv);
   renderTax(calc, tax);
 
   $('phCustomer').innerHTML =
@@ -1071,59 +1073,55 @@ function renderSummary(calc, bt, tax) {
 }
 
 function renderBenefit(bt) {
+  const ihHeader = bt.hasIHealthy ? '<th rowspan="2">เบี้ย iHealthy Ultra<br>ต่อปี</th>' : '';
+  const ihCell = r => bt.hasIHealthy ? `<td class="num">${r.ihAnnual == null ? '-' : fmt0(r.ihAnnual)}</td>` : '';
+  const ihFooter = bt.hasIHealthy ? `<td class="num">${fmt0(bt.summary.ihealthyAnnualTotal)}</td>` : '';
+  const netPaybackHeader = bt.hasIHealthy ? '<th rowspan="2">กรณีรับเงินจ่ายคืน<br>หลังหักเบี้ย iHealthy Ultra</th>' : '';
+  const netPaybackCell = r => {
+    if (!bt.hasIHealthy) return '';
+    const amount = Math.abs(r.netPaybackAfterIH);
+    return `<td class="num${r.netPaybackAfterIH > 0 ? ' net-positive' : ''}">${amount === 0 ? '-' : fmt0(amount)}</td>`;
+  };
+  const netPaybackFooter = bt.hasIHealthy ? `<td class="num">${fmt0(Math.abs(bt.summary.netPaybackAfterIHTotal))}</td>` : '';
+  const trailingFooter = bt.hasIHealthy ? `${ihFooter}${netPaybackFooter}` : '';
   const rows = bt.rows.map((r, i) => `
     <tr${i === bt.rows.length - 1 ? ' class="hilite"' : ''}>
       <td class="c">${r.age}</td><td class="c">${r.y}</td>
       <td class="num">${fmtOr(r.prem, '-')}</td><td class="num">${fmt0(r.cum)}</td>
-      <td class="num">${fmtOr(r.payback, '-')}</td><td class="num">${fmtOr(r.accPayback, '-')}</td>
-      <td class="num">${fmtOr(r.div2, '-')}</td><td class="num">${fmtOr(r.accDiv2, '-')}</td>
-      <td class="num">${fmtOr(r.total2, '-')}</td>
-      <td class="num">${fmt0(r.death)}</td><td class="num">${fmt0(r.deathPlus)}</td>
       <td class="num">${fmtOr(r.cv, '-')}</td>
+      <td class="num">${fmt0(r.death)}</td>
+      <td class="num payback-value">${fmtOr(r.payback, '-')}</td>
+      ${ihCell(r)}
+      ${netPaybackCell(r)}
     </tr>`).join('');
   const s = bt.summary;
   $('tabBenefit').innerHTML = `
     <div class="tbl-wrap"><table>
       <thead>
         <tr>
-          <th rowspan="3">อายุ</th><th rowspan="3">สิ้นปีที่</th>
+          <th rowspan="2">อายุ</th><th rowspan="2">สิ้นปีที่</th>
           <th colspan="2">เบี้ยประกันภัยสัญญาหลัก</th>
-          <th colspan="2">เงินจ่ายคืนตามกรมธรรม์ และเงินครบกำหนดสัญญา</th>
-          <th colspan="3">เงินปันผล** (ตัวอย่างที่ 2)</th>
-          <th rowspan="3">ความคุ้มครอง<br>การเสียชีวิต</th>
-          <th rowspan="3">ผลประโยชน์กรณีเสียชีวิต<br>รวมเงินจ่ายคืนที่จ่ายแล้ว</th>
-          <th rowspan="3">มูลค่าเวนคืน<br>กรมธรรม์*</th>
+          <th rowspan="2">มูลค่าเวนคืน<br>กรมธรรม์*</th>
+          <th rowspan="2">ความคุ้มครอง<br>การเสียชีวิต</th>
+          <th rowspan="2">เงินจ่ายคืนตามกรมธรรม์<br>และเงินครบกำหนดสัญญา</th>
+          ${ihHeader}
+          ${netPaybackHeader}
         </tr>
         <tr>
-          <th rowspan="2">ต่อปี</th><th rowspan="2">สะสม</th>
-          <th rowspan="2">กรณีรับเงินจ่ายคืน</th><th rowspan="2">กรณีสะสมกับบริษัทฯ<br>ดอกเบี้ย 0.5% ต่อปี***</th>
-          <th rowspan="2">รับเงินปันผล</th><th rowspan="2">กรณีสะสมกับบริษัทฯ<br>ดอกเบี้ย 0.5% ต่อปี***</th>
-          <th rowspan="2">รวมเงินจ่ายคืน+<br>เงินปันผลสะสม</th>
+          <th>ต่อปี</th><th>สะสม</th>
         </tr>
-        <tr></tr>
       </thead>
       <tbody>${rows}</tbody>
       <tfoot><tr>
         <td class="l" colspan="2">รวมทั้งสิ้น</td>
         <td class="num">${fmt0(s.totalPrem)}</td><td></td>
-        <td class="num">${fmt0(s.guaranteedTotal)}</td><td class="num">${fmt0(s.accGmax)}</td>
-        <td class="num">${fmt0(s.div2Total)}</td><td class="num">${fmt0(s.accDiv2max)}</td>
-        <td class="num">${fmt0(s.accGmax + s.accDiv2max)}</td><td colspan="3"></td>
+        <td colspan="2"></td><td class="num payback-value">${fmt0(s.guaranteedTotal)}</td>${trailingFooter}
       </tr></tfoot>
     </table></div>
 
-    <div class="sum-cards">
-      <div class="sum-card g"><div class="sc-label">1) เงินจ่ายคืนระหว่างสัญญา (การันตี)</div><div class="sc-val num">${fmt0(s.paybackDuring)} ฿</div></div>
-      <div class="sum-card g"><div class="sc-label">2) เงินครบกำหนดสัญญา (รวมเงินคืนปีสุดท้าย)</div><div class="sc-val num">${fmt0(s.maturity)} ฿</div></div>
-      <div class="sum-card"><div class="sc-label">3) เงินปันผล** รวมตลอดสัญญา — ตัวอย่างที่ 2</div><div class="sc-val num">${fmt0(s.div2Total)} ฿</div>
-        <div class="sc-sub">ตัวอย่างที่ 1: 0 ฿ · ตัวอย่างที่ 3: ${fmt0(s.div3Total)} ฿</div></div>
-      <div class="sum-card"><div class="sc-label">รวมผลประโยชน์ทั้งสิ้นตลอดสัญญา (รวมเงินปันผล** ตย.2)</div><div class="sc-val num">${fmt0(s.grand2)} ฿</div>
-        <div class="sc-sub">การันตี: ${fmt0(s.guaranteedTotal)} ฿ · ตย.3: ${fmt0(s.grand3)} ฿</div></div>
-    </div>
     <div class="footnote-list">
       * มูลค่าเวนคืนกรมธรรม์เป็นมูลค่าที่มิได้รวมเงินจ่ายคืนตามกรมธรรม์ประกันภัย ยกเว้นปีที่ครบกำหนดสัญญา กรณีกู้เงินตามกรมธรรม์ มูลค่าจะลดลงตามจำนวนเงินกู้และดอกเบี้ย<br>
-      ** การแสดงเงินปันผลไม่รับรองการจ่าย เป็นการประมาณการโดยใช้สมมติฐานอัตราผลตอบแทนการลงทุนที่แตกต่างกัน (ตัวอย่างที่ 1 = 0%, ตัวอย่างที่ 2 = 75%, ตัวอย่างที่ 3 = 90% ของส่วนต่างประมาณการ) มิได้หมายถึงอัตราขั้นต่ำหรือขั้นสูงที่จะได้รับ<br>
-      *** อัตราดอกเบี้ยกรณีสะสมเงินจ่ายคืนรายงวดขั้นต่ำ ณ ปัจจุบัน
+      ${bt.hasIHealthy ? '† เบี้ย iHealthy Ultra เป็นเบี้ยต่อปีของสัญญาเพิ่มเติมแบบต่ออายุได้ และอาจเปลี่ยนแปลงตามอายุและเงื่อนไขการรับประกันภัย<br>' : ''}
     </div>`;
 }
 
@@ -1220,13 +1218,6 @@ function init() {
 
   $('btnCalc').addEventListener('click', doCalculate);
   $('btnBack').addEventListener('click', () => showPage('input'));
-
-  document.querySelectorAll('.tabs button').forEach(b =>
-    b.addEventListener('click', () => {
-      document.querySelectorAll('.tabs button').forEach(x => x.classList.remove('on'));
-      document.querySelectorAll('.tabpage').forEach(x => x.classList.remove('on'));
-      b.classList.add('on'); $(b.dataset.tab).classList.add('on');
-    }));
 
   refreshIhPlans();
   updateLive();
