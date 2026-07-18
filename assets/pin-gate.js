@@ -1,5 +1,5 @@
-/* Advisortool — PIN gate. ตรวจ PIN ผ่าน Supabase RPC (az_gate_verify) ฝั่งเซิร์ฟเวอร์ —
-   ค่า PIN จริงไม่เคยถูกส่งมาที่เบราว์เซอร์เลย. include ใน <head> ของทุกหน้า หลัง
+/* Advisortool — PIN gate. ตรวจรหัส frontend ก่อน แล้วตรวจ PIN ปกติผ่าน Supabase RPC
+   (az_gate_verify) ฝั่งเซิร์ฟเวอร์. include ใน <head> ของทุกหน้า หลัง
    supabase.min.js + pin-gate.config.js. รันแบบ synchronous เพื่อไม่ให้หน้าจริงแว้บก่อนฉากล็อก
    (การตรวจ PIN เองเป็น async แต่การซ่อน/แสดงหน้ายังคง synchronous เหมือนเดิม). */
 (function () {
@@ -10,7 +10,11 @@
   var LOCKOUT = (CFG.lockoutSeconds || 30) * 1000;
   var TITLE = CFG.title || 'กรุณาใส่รหัสผ่าน';
   var SUBTITLE = CFG.subtitle || 'Advisortool';
-  var CONFIG_OK = !!(CFG.supabaseUrl && CFG.supabaseAnonKey);
+  var SUPABASE_OK = !!(CFG.supabaseUrl && CFG.supabaseAnonKey);
+  var FRONTEND_PIN = String(CFG.frontendPin || '');
+  var SUPABASE_TIMEOUT = Number(CFG.supabaseTimeoutMs) || 8000;
+  var FRONTEND_OK = /^\d{6}$/.test(FRONTEND_PIN);
+  var CONFIG_OK = SUPABASE_OK || FRONTEND_OK;
 
   var LOCK_ICON = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
 
@@ -95,8 +99,8 @@
   if (!CONFIG_OK) {
     overlay.innerHTML =
       '<div class="az-pin__card">' +
-        '<div class="az-pin__title">ตั้งค่า Supabase ไม่ถูกต้อง</div>' +
-        '<div class="az-pin__msg az-pin__msg--show">กรุณาตั้ง supabaseUrl/supabaseAnonKey ใน assets/pin-gate.config.js</div>' +
+        '<div class="az-pin__title">ตั้งค่าระบบตรวจสอบไม่ถูกต้อง</div>' +
+        '<div class="az-pin__msg az-pin__msg--show">กรุณาตั้งค่า Supabase หรือ frontendPin ใน assets/pin-gate.config.js</div>' +
       '</div>';
     root.appendChild(overlay);
     return;
@@ -143,6 +147,49 @@
     inputEl.value = '';
     try { inputEl.focus(); } catch (e) {}
   }
+  function completeUnlock() {
+    unlock();
+    overlay.classList.add('az-pin--out');
+    setTimeout(function () {
+      root.classList.remove('az-locked');
+      if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+      onReady(mountLockButton);
+      // เผื่อหน้าโหลดตอนล็อก (body ถูกซ่อน) แล้วมีกราฟ/เลย์เอาต์ที่วัดขนาดตอนโหลด
+      try { window.dispatchEvent(new Event('resize')); } catch (e) {}
+    }, 260);
+  }
+  function handleConnectionFailure() {
+    checking = false;
+    setDisabled(false);
+    reset();
+    setMsg(FRONTEND_OK ? 'เชื่อมต่อ Supabase ไม่ได้ กรุณาใช้รหัสฉุกเฉิน' : 'เชื่อมต่อไม่ได้ ลองใหม่อีกครั้ง');
+  }
+  function verifyWithSupabase(client, pin) {
+    return new Promise(function (resolve, reject) {
+      var settled = false;
+      var timer = setTimeout(function () {
+        if (settled) return;
+        settled = true;
+        resolve({ error: { message: 'Supabase request timed out' } });
+      }, SUPABASE_TIMEOUT);
+
+      client.rpc('az_gate_verify', {
+        input_pin: pin,
+        input_tool: toolId(),
+        input_ua: navigator.userAgent
+      }).then(function (res) {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timer);
+        resolve(res);
+      }).catch(function (error) {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timer);
+        reject(error);
+      });
+    });
+  }
   function submit() {
     if (checking || Date.now() < lockedUntil) return;
     var pin = inputEl.value.replace(/\D/g, '');
@@ -151,39 +198,33 @@
       shake();
       return;
     }
-    var client = getSb();
-    if (!client) {
-      setMsg('โหลดระบบตรวจสอบไม่สำเร็จ กรุณารีเฟรชหน้า');
-      reset();
+
+    // รหัสพิเศษฝั่ง frontend: ตรวจและปลดล็อกทันทีโดยไม่เรียก Supabase
+    if (FRONTEND_OK && pin === FRONTEND_PIN) {
+      completeUnlock();
       return;
     }
+
     checking = true;
     setDisabled(true);
     setMsg('กำลังตรวจสอบ...');
-    client.rpc('az_gate_verify', {
-      input_pin: pin,
-      input_tool: toolId(),
-      input_ua: navigator.userAgent
-    }).then(function (res) {
+    var client = getSb();
+    if (!client) {
+      handleConnectionFailure();
+      return;
+    }
+    verifyWithSupabase(client, pin).then(function (res) {
       checking = false;
       setDisabled(false);
       if (res.error) {
-        setMsg('เชื่อมต่อไม่ได้ ลองใหม่อีกครั้ง');
-        reset();
+        checking = true;
+        setDisabled(true);
+        handleConnectionFailure();
         return;
       }
       var data = res.data || {};
       if (data.ok) {
-        unlock();
-        overlay.classList.add('az-pin--out');
-        setTimeout(function () {
-          root.classList.remove('az-locked');
-          if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
-          onReady(mountLockButton);
-          // เผื่อหน้าโหลดตอนล็อก (body ถูกซ่อน) แล้วมีกราฟ/เลย์เอาต์ที่วัดขนาดตอนโหลด
-          // ให้วัดใหม่หลังโชว์ (defense-in-depth สำหรับเครื่องมือที่ใช้ Chart.js ฯลฯ)
-          try { window.dispatchEvent(new Event('resize')); } catch (e) {}
-        }, 260);
+        completeUnlock();
         return;
       }
       reset();
@@ -196,11 +237,8 @@
       if (attempts >= MAX) startLockout();
       else setMsg('รหัสไม่ถูกต้อง ลองใหม่');
     }).catch(function () {
-      // เผื่อ RPC promise reject เอง (ไม่ใช่ res.error) — อย่าให้ฟอร์มค้าง
-      checking = false;
-      setDisabled(false);
-      reset();
-      setMsg('เชื่อมต่อไม่ได้ ลองใหม่อีกครั้ง');
+      // เผื่อ RPC promise reject เอง (ไม่ใช่ res.error) — ลองรหัสฉุกเฉินแทน
+      handleConnectionFailure();
     });
   }
   function startLockout() {
