@@ -4,12 +4,12 @@
   <link rel="stylesheet" href="../assets/pin-gate.css" />
   <script src="../assets/pin-gate.config.js"></script>
   <script src="../assets/supabase.min.js"></script>
-  <script src="../assets/pin-gate.js"></script>
+  <script src="../assets/pin-gate.js?v=20260719-2"></script>
   <script src="../assets/click-sound.js"></script>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="แบบสอบถามความถนัดในอาชีพตัวแทนประกัน ประเมินให้คะแนนและจัดระดับผลอัตโนมัติ" />
-  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg" />
+  <link rel="icon" type="image/png" href="../assets/favicon.png?v=20260719" />
   <title>แบบสอบถามความถนัดในอาชีพ (CAQ)</title>
 
   <!-- Tailwind (prebuilt, ไม่ต้อง compile runtime) -->
@@ -32,10 +32,10 @@
     .animate-scaleUp { animation: caq-scaleUp 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
     body { font-family: "Google Sans", system-ui, -apple-system, "Segoe UI", sans-serif; }
   </style>
-<link rel="stylesheet" href="../assets/global-header.css?v=4" />
+<link rel="stylesheet" href="../assets/global-header.css?v=5" />
 </head>
 <body>
-<script src="../assets/global-header.js?v=4"></script>
+<script src="../assets/global-header.js?v=6"></script>
 
   <div id="root"></div>
 
@@ -44,7 +44,7 @@
    * CONFIG
    * ========================================================================= */
   const CONFIG = {
-    LOGO_URL: "logo.png",        // คัดลอก public/career-agent/logo.png มาวางข้างไฟล์นี้
+    LOGO_URL: "../assets/advisortool-logo.png?v=20260719-2",
   };
 
   /* ===================== ข้อมูลแบบสอบถาม (เหมือนต้นฉบับเป๊ะ) ===================== */
@@ -227,7 +227,7 @@
     return `
     <div class="text-center space-y-4 sm:space-y-6 py-4 sm:py-10 animate-fadeIn">
       <div class="flex justify-center">
-        <img src="${esc(CONFIG.LOGO_URL)}" alt="Career Agent Question (CAQ)" class="w-24 h-24 sm:w-32 sm:h-32 object-contain" onerror="this.style.display='none'" />
+        <img src="${esc(CONFIG.LOGO_URL)}" alt="Advisortool" class="w-24 h-24 sm:w-32 sm:h-32 object-contain" onerror="this.style.display='none'" />
       </div>
       <h1 class="text-xl sm:text-2xl md:text-3xl font-bold text-text-primary-light tracking-tight px-1">แบบสอบถามความถนัดในอาชีพ</h1>
       <p class="text-text-secondary max-w-lg mx-auto italic leading-relaxed text-sm sm:text-base px-1">
@@ -403,7 +403,7 @@
       <div class="text-center py-4 sm:py-6">
         <div class="flex justify-center mb-4 sm:mb-6">
           <div class="flex justify-center">
-            <img src="${esc(CONFIG.LOGO_URL)}" alt="Career Agent Question (CAQ)" class="w-20 h-20 sm:w-24 sm:h-24 object-contain" onerror="this.style.display='none'" />
+            <img src="${esc(CONFIG.LOGO_URL)}" alt="Advisortool" class="w-20 h-20 sm:w-24 sm:h-24 object-contain" onerror="this.style.display='none'" />
           </div>
         </div>
         <h1 class="text-2xl sm:text-3xl md:text-4xl font-black text-text-primary-light tracking-tight px-1">ส่งแบบสอบถามเรียบร้อย</h1>

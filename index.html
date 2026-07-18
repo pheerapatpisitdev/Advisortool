@@ -4,12 +4,13 @@
   <link rel="stylesheet" href="assets/pin-gate.css" />
   <script src="assets/pin-gate.config.js"></script>
   <script src="assets/supabase.min.js"></script>
-  <script src="assets/pin-gate.js"></script>
+  <script src="assets/pin-gate.js?v=20260719-2"></script>
   <script src="assets/click-sound.js"></script>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="ศูนย์รวมเครื่องมือที่ปรึกษาประกันและการเงิน — คำนวณเบี้ย ผลประโยชน์ และแบบประเมิน ครบในที่เดียว" />
-  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="icon" type="image/png" href="assets/favicon.png?v=20260719" />
+  <link rel="apple-touch-icon" href="assets/app-icon-192.png" />
   <title>Advisortool — Hub</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -58,18 +59,20 @@
     }
     .hd__brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--ink); }
     .hd__mark {
-      width: 38px; height: 38px; border-radius: 10px; display: grid; place-items: center;
-      background: var(--accent); color: #fff; font-family: var(--font-num);
-      font-weight: 700; font-size: 20px;
+      width: 44px; height: 44px; border-radius: 10px; display: grid; place-items: center;
+      background: #fff; overflow: hidden;
     }
-    .hd__name { font-family: var(--font-display); font-weight: 600; font-size: 19px; letter-spacing: .1px; }
-    .hd__name b { color: var(--accent); font-weight: 600; }
+    .hd__mark img { display: block; width: 44px; height: 44px; object-fit: contain; }
+    .hd__wordmark { display: block; width: auto; height: 30px; object-fit: contain; }
     .hd__right { display: flex; align-items: center; gap: 10px; }
     .hd__badge {
       display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%;
       background: #ecfdf3; border: 1px solid #cdeeda; color: var(--good);
     }
-    @media (max-width: 460px) { .hd__name { font-size: 17px; } }
+    @media (max-width: 460px) {
+      .hd__brand { gap: 9px; }
+      .hd__wordmark { height: 26px; }
+    }
 
     /* ============ HERO ============ */
     .hero { padding: clamp(40px, 7vw, 76px) clamp(18px, 4vw, 54px) clamp(24px, 3vw, 36px); max-width: 1320px; margin: 0 auto; }
@@ -142,14 +145,17 @@
     /* soft scrim at the top only — keeps the number/tag legible over any artwork */
     .card__media::after {
       content: ""; position: absolute; inset: 0;
-      background: linear-gradient(180deg, rgba(17,24,39,.30) 0%, rgba(17,24,39,0) 42%);
+      background: linear-gradient(180deg, rgba(255,255,255,.54) 0%, rgba(255,255,255,0) 40%);
+      pointer-events: none;
     }
-    .card__ic { position: absolute; inset: 0; display: grid; place-items: center; color: rgba(255,255,255,.7); }
+    .card__ic { position: absolute; inset: 0; display: grid; place-items: center; color: rgba(37,99,235,.62); transition: opacity .2s ease; }
+    .card__media.has-image .card__ic { opacity: 0; }
 
     .card__no {
       position: absolute; top: 11px; left: 13px; z-index: 2;
       font-family: var(--font-num); font-weight: 600; font-size: 14px;
-      color: rgba(255,255,255,.95); letter-spacing: .5px;
+      color: var(--accent-d); letter-spacing: .5px;
+      text-shadow: 0 1px 10px rgba(255,255,255,.92);
     }
     .tag {
       position: absolute; top: 10px; right: 11px; z-index: 2;
@@ -191,8 +197,8 @@
 <div class="wrap">
   <header class="hd">
     <a href="./" class="hd__brand" aria-label="หน้าแรก Advisortool">
-      <span class="hd__mark">A</span>
-      <span class="hd__name">Advisor<b>tool</b></span>
+      <span class="hd__mark"><img src="assets/advisortool-mark.png?v=20260719-2" alt="" width="44" height="44"></span>
+      <img class="hd__wordmark" src="assets/advisortool-wordmark.png?v=20260719-2" alt="Advisortool" width="188" height="36">
     </a>
     <div class="hd__right">
       <span class="hd__badge" aria-label="เข้าสู่ระบบแล้ว">
@@ -236,42 +242,45 @@
 
   // ready: true → ลิงก์ไปหน้าวานิลลา | false → เร็วๆ นี้
   const products = [
-    { ready:true, href:"life-treasure/", kicker:"มรดกตลอดชีพ", band:"ไลฟ์เทรเชอร์ LifeTreasure", tagline:"ประกันชีวิตตลอดชีพถึงอายุ 99 ปี ส่งต่อความมั่งคั่งสู่คนที่รัก",
+    { ready:true, href:"life-treasure/?v=6", kicker:"มรดกตลอดชีพ", band:"ไลฟ์เทรเชอร์ LifeTreasure", tagline:"ประกันชีวิตตลอดชีพถึงอายุ 99 ปี ส่งต่อความมั่งคั่งสู่คนที่รัก",
       bullets:["ชำระเบี้ย 12 หรือ 18 ปี คุ้มครองถึงอายุ 99 ปี","แนบสัญญาเพิ่มเติมได้ (CI 123 / PB)","คำนวณเบี้ยและผลประโยชน์ · พิมพ์ PDF · A2026-1"],
-      isNew:true, gradient:"linear-gradient(135deg,#1a1204,#8a6d2f 55%,#d0aa5a)", image:"hub/lifetreasure.png", icon:ICONS.shield },
+      isNew:true, gradient:"linear-gradient(135deg,#f8fafc,#eef4ff)", image:"hub/covers-minimal-v1/lifetreasure.jpg", icon:ICONS.shield },
     { ready:true, href:"12pl/", kicker:"ออมทรัพย์คุ้มครองชีวิต", band:"12PL ชำระสั้น 12 ปี", tagline:"ชำระเบี้ยสั้น 12 ปี คุ้มครองยาวถึงอายุ 85 ปี พร้อมเงินครบกำหนด",
       bullets:["ชำระเบี้ย 12 ปี คุ้มครองถึงอายุ 85 ปี","คำนวณเบี้ยสองทาง: ทุนประกัน ↔ เบี้ย","ลดหย่อนภาษีได้ · พิมพ์ PDF · A2026-1"],
-      isNew:true, gradient:"linear-gradient(135deg,#1d4ed8,#2563eb 55%,#60a5fa)", image:"hub/12pl.png", icon:ICONS.piggy },
+      isNew:true, gradient:"linear-gradient(135deg,#f8fafc,#eef4ff)", image:"hub/covers-minimal-v1/12pl.jpg", icon:ICONS.piggy },
+    { ready:true, href:"easy-protect6/", kicker:"ชำระเบี้ยสั้น 6 ปี", band:"Easy Protect 6", tagline:"คำนวณเบี้ยและตารางผลประโยชน์ครบทุกปี พร้อมสัญญาเพิ่มเติม",
+      bullets:["ชำระเบี้ย 6 ปี คุ้มครองถึงอายุ 99 ปี","คำนวณสองทาง: ทุนประกัน ↔ เบี้ย","สัญญาเพิ่มเติม · ตารางผลประโยชน์ · PDF · A2026-1"],
+      isNew:true, gradient:"linear-gradient(135deg,#f8fafc,#eef4ff)", image:"hub/covers-minimal-v1/easy-protect6.jpg", icon:ICONS.shield },
     { ready:true, href:"lifeready/", kicker:"ประกันชีวิตตลอดชีพ", band:"ไลฟ์เรดดี้ Life Ready", tagline:"คำนวณเบี้ยและผลประโยชน์ครบในเครื่องเดียว ไม่มีเงินปันผล",
       bullets:["คำนวณเบี้ยสองทาง: ทุนประกัน ↔ เบี้ย","ตารางผลประโยชน์ + มูลค่ากรมธรรม์รายปี","พิมพ์ PDF · อัตราเบี้ย A2026-1"],
-      isNew:true, gradient:"linear-gradient(135deg,#047857,#10b981 55%,#6ee7b7)", image:"hub/lifeready.png", icon:ICONS.heart },
+      isNew:true, gradient:"linear-gradient(135deg,#f8fafc,#eef4ff)", image:"hub/covers-minimal-v1/lifeready.jpg", icon:ICONS.heart },
     { ready:true, href:"global-saving/", kicker:"ออมทรัพย์ระดับโลก", band:"Global Saving Plus 15/8", tagline:"ยกระดับแผนการเงินสู่โอกาสรับผลตอบแทนระดับโลก",
       bullets:["ชำระเบี้ย 8 ปี คุ้มครอง 15 ปี","รับเงินคืนทุกปี + ผลตอบแทนจากดัชนี Citi","การันตีเงินคืนรวมสูงสุด 815%"],
-      isNew:true, gradient:"linear-gradient(135deg,#1f3aa0,#2b6cc4 55%,#4f9be0)", image:"hub/global-saving.png", icon:ICONS.piggy },
+      isNew:true, gradient:"linear-gradient(135deg,#f8fafc,#eef4ff)", image:"hub/covers-minimal-v1/global-saving.jpg", icon:ICONS.piggy },
     { ready:true, href:"pension-smart95/", kicker:"บำนาญลดหย่อนภาษี", band:"บำนาญ สมาร์ท 95", tagline:"คำนวณเบี้ยและผลประโยชน์บำนาญครบในเครื่องเดียว",
       bullets:["คำนวณสองทาง: ทุนประกัน ↔ บำนาญ/เดือน","ผลประโยชน์รายปี + บำนาญถึงอายุ 95","อัตราเบี้ย A2026-1"],
-      isNew:true, gradient:"linear-gradient(135deg,#0f4c5c,#0f766e 55%,#e09f3e)", image:"hub/pension-smart95.png", icon:ICONS.piggy },
+      isNew:true, gradient:"linear-gradient(135deg,#f8fafc,#eef4ff)", image:"hub/covers-minimal-v1/pension-smart95.jpg", icon:ICONS.piggy },
     { ready:true, href:"ihealthy/", kicker:"สุขภาพเหมาจ่าย", band:"iHealthy Ultra", tagline:"ประกันสุขภาพเหมาจ่าย ดูแลครบ จบทุกความกังวล",
       bullets:["เปรียบเทียบแผน + คำนวณเบี้ยรายบุคคล","ค่ารักษาพยาบาลแบบเหมาจ่าย","ลดหย่อนภาษีได้"],
-      gradient:"linear-gradient(135deg,#0f766e,#14a89a 55%,#5fd3c4)", image:"hub/ihealthy.png", icon:ICONS.heart },
+      gradient:"linear-gradient(135deg,#f8fafc,#eef4ff)", image:"hub/covers-minimal-v1/ihealthy.jpg", icon:ICONS.heart },
     { ready:true, href:"ci123/", kicker:"โรคร้ายแรง", band:"CI 123 ประกันโรคร้ายแรง", tagline:"เจอ จ่าย ครบ — ดูแลค่าใช้จ่ายเมื่อตรวจพบโรคร้าย",
       bullets:["คุ้มครองโรคร้ายหลายระยะ","เครื่องคำนวณเบี้ยในตัว","ลดหย่อนภาษีได้"],
-      gradient:"linear-gradient(135deg,#b91c1c,#e2231a 55%,#f97316)", image:"hub/ci123.png", icon:ICONS.activity },
+      gradient:"linear-gradient(135deg,#f8fafc,#eef4ff)", image:"hub/covers-minimal-v1/ci123.jpg", icon:ICONS.activity },
     { ready:true, href:"ishield/", kicker:"ชีวิตควบโรคร้าย", band:"iShield", tagline:"ประกันชีวิตควบคุ้มครองโรคร้ายแรงตลอดชีพ ถึงอายุ 85 ปี",
       bullets:["คำนวณสองทาง: ทุนประกัน ↔ เบี้ย","iShield 5/10/15/20 + สัญญาเพิ่มเติม","คุ้มครองโรคร้าย 70 โรค · พิมพ์ PDF"],
-      isNew:true, gradient:"linear-gradient(135deg,#0b2942,#1c5d99 55%,#0e9aa7)", image:"hub/ishield.png", icon:ICONS.shield },
+      isNew:true, gradient:"linear-gradient(135deg,#f8fafc,#eef4ff)", image:"hub/covers-minimal-v1/ishield.jpg", icon:ICONS.shield },
     { ready:true, href:"group-insurance/", kicker:"ประกันองค์กร", band:"ประกันกลุ่ม Group Insurance", tagline:"แผนความคุ้มครองสำหรับองค์กร พร้อมใบเสนอราคา",
       bullets:["สุขภาพกลุ่ม / อุบัติเหตุกลุ่ม","สร้างใบเสนอราคา PDF ทันที","เลือกแผนตามประเภทธุรกิจ"],
-      gradient:"linear-gradient(135deg,#3b3fb6,#6d5ae0 55%,#9a7af0)", image:"hub/group-insurance.png", icon:ICONS.users },
+      gradient:"linear-gradient(135deg,#f8fafc,#eef4ff)", image:"hub/covers-minimal-v1/group-insurance.jpg", icon:ICONS.users },
     { ready:true, href:"fhc/", kicker:"สุขภาพการเงิน", band:"FHC", tagline:"แบบสอบถามคุณภาพชีวิต — ประเมินสุขภาพการเงินรอบด้าน",
       bullets:["กรอกรายได้ เงินเก็บ หนี้สิน คำนวณสด","สรุปสินทรัพย์สุทธิและค่าความสามารถ","ส่งสรุปไป LINE ได้ทันที"],
-      gradient:"linear-gradient(135deg,#b45309,#d97757 55%,#fbbf24)", image:"hub/fhc.png", icon:ICONS.clipboard },
+      gradient:"linear-gradient(135deg,#f8fafc,#eef4ff)", image:"hub/covers-minimal-v1/fhc.jpg", icon:ICONS.clipboard },
     { ready:true, href:"career-agent/", kicker:"ประเมินอาชีพตัวแทน", band:"Career-Agent-Question", tagline:"แบบสอบถามความถนัดในอาชีพตัวแทน — ประเมินและส่งผลอัตโนมัติ",
       bullets:["หลายส่วน + คำถามปลายเปิด","ให้คะแนน จัดระดับ เขียว/ส้ม/แดง","ส่งผลอีเมล/LINE + บันทึกคำตอบ"],
-      gradient:"linear-gradient(135deg,#1C1B1A,#4a4641 55%,#d97757)", image:"hub/career-agent.png", icon:ICONS.briefcase },
+      gradient:"linear-gradient(135deg,#f8fafc,#eef4ff)", image:"hub/covers-minimal-v1/career-agent.jpg", icon:ICONS.briefcase },
     { ready:true, href:"agency/", kicker:"ชุดเครื่องมือตัวแทน", band:"Agency Blueprint", tagline:"คำนวณค่าบริหาร/รายได้ + แบบทดสอบผู้จัดการ",
       bullets:["เครื่องคำนวณค่าบริหาร (commission)","คำนวณรายได้ตัวแทน + โบนัส","แบบทดสอบความพร้อมผู้จัดการ"],
-      gradient:"linear-gradient(135deg,#314059,#5A8282 55%,#B48749)", image:"hub/agency.png", icon:ICONS.network },
+      gradient:"linear-gradient(135deg,#f8fafc,#eef4ff)", image:"hub/covers-minimal-v1/agency.jpg", icon:ICONS.network },
   ];
 
   const esc = (s) => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
@@ -283,7 +292,7 @@
     const inner = `
       <div class="card__media">
         <div class="g" style="background:${p.gradient}"></div>
-        <img src="${esc(p.image)}" alt="" loading="lazy" decoding="async" onerror="this.style.display='none'" />
+        <img src="${esc(p.image)}" alt="" loading="lazy" decoding="async" onload="this.parentElement.classList.add('has-image')" onerror="this.style.display='none'" />
         <span class="card__ic">${p.icon}</span>
         <span class="card__no">${pad(i+1)}</span>
         ${tag}

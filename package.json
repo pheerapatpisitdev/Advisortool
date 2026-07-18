@@ -2,7 +2,7 @@
   "name": "advisortool",
   "version": "1.0.0",
   "private": true,
-  "description": "Advisortool — static vanilla HTML/CSS/JS site (no build step)",
+  "description": "Advisortool — static HTML/CSS/JS site with prebuilt calculator bundles",
   "scripts": {
     "dev": "python3 -m http.server 8080",
     "start": "python3 -m http.server 8080"

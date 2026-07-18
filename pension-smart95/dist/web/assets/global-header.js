@@ -5,6 +5,33 @@
      <script src="../assets/global-header.js"></script>
 */
 (function () {
+  var headerScript = document.currentScript;
+  var BRAND_ASSET_VERSION = '20260719-2';
+
+  function brandAssetUrl(fileName) {
+    if (fileName === 'advisortool-mark.png' && window.AZ_BRAND_MARK_URL) {
+      return window.AZ_BRAND_MARK_URL;
+    }
+    if (fileName === 'advisortool-wordmark.png' && window.AZ_BRAND_WORDMARK_URL) {
+      return window.AZ_BRAND_WORDMARK_URL;
+    }
+    if (headerScript && headerScript.src) {
+      var assetUrl = new URL(fileName, headerScript.src);
+      assetUrl.searchParams.set('v', BRAND_ASSET_VERSION);
+      return assetUrl.href;
+    }
+    var fallbackUrl = new URL('../assets/' + fileName, window.location.href);
+    fallbackUrl.searchParams.set('v', BRAND_ASSET_VERSION);
+    return fallbackUrl.href;
+  }
+
+  function homeUrl() {
+    if (headerScript && headerScript.src) {
+      return new URL('../', headerScript.src).href;
+    }
+    return '../';
+  }
+
   // Shared print helper for every tool. iOS/iPadOS cannot print from a page launched
   // via "Add to Home Screen" (standalone web-app mode) — window.print() is a silent
   // no-op there. Detect it and guide the user to open in Safari; otherwise defer the
@@ -29,8 +56,12 @@
   header.setAttribute('data-az-global-header', '');
   header.innerHTML =
     '<div class="az-gh__left">' +
-      '<a href="../" class="az-gh__home" aria-label="หน้าแรก">A</a>' +
-      '<a href="../" class="az-gh__brand">Advisor<b>tool</b></a>' +
+      '<a href="' + homeUrl() + '" class="az-gh__home" aria-label="หน้าแรก Advisortool">' +
+        '<img src="' + brandAssetUrl('advisortool-mark.png') + '" alt="" width="44" height="44">' +
+      '</a>' +
+      '<a href="' + homeUrl() + '" class="az-gh__brand" aria-label="Advisortool">' +
+        '<img src="' + brandAssetUrl('advisortool-wordmark.png') + '" alt="Advisortool" width="188" height="36">' +
+      '</a>' +
     '</div>' +
     '<div class="az-gh__right">' +
       '<span class="az-gh__badge" aria-label="เข้าสู่ระบบแล้ว">' + ICON_CHECK + '</span>' +

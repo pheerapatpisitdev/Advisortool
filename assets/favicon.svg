@@ -1,4 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="14" fill="#be185d"/>
-  <path d="M32 14 18 46h7l2.4-6h9.2l2.4 6h7L32 14zm-2.2 20L32 27l2.2 7h-4.4z" fill="#fff"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Advisortool">
+  <rect width="64" height="64" rx="14" fill="#fff"/>
+  <path d="M9 36a23 23 0 0 1 45-7" fill="none" stroke="#071f38" stroke-width="5" stroke-linecap="round"/>
+  <path d="M15 30l-4-1m10-10-3-3m14-3v-4m12 9 3-4" fill="none" stroke="#071f38" stroke-width="3" stroke-linecap="round"/>
+  <path d="M33 31l13-12-9 16z" fill="#1769e8"/>
+  <circle cx="33" cy="31" r="5" fill="#1769e8"/>
+  <circle cx="33" cy="31" r="2" fill="#fff"/>
+  <path d="M8 45c10-8 25-6 38-11l12-5-5 12-2-4C39 46 28 47 17 55H8c5-5 10-8 17-11-7 1-12 4-17 7z" fill="#071f38"/>
 </svg>

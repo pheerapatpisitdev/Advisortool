@@ -4,16 +4,20 @@
   <link rel="stylesheet" href="../assets/pin-gate.css" />
   <script src="../assets/pin-gate.config.js"></script>
   <script src="../assets/supabase.min.js"></script>
-  <script src="../assets/pin-gate.js"></script>
+  <script src="../assets/pin-gate.js?v=20260719-2"></script>
   <script src="../assets/click-sound.js"></script>
-  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg" />
+  <link rel="icon" type="image/png" href="../assets/favicon.png?v=20260719" />
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>ไลฟ์เทรเชอร์ — โปรแกรมคำนวณเบี้ยประกัน A2026-1</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Thai:wght@400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600;700&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/global-header.css?v=5" />
 <style>
 :root{
   --ink:#ece3cf;            /* ตัวอักษรครีม */
@@ -236,22 +240,179 @@ table.ill tr:hover td{background:rgba(201,162,75,.09)}
 .chart-holder .ctip .tr .v{font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
 @media(max-width:640px){.chart-legend{gap:.4rem 1rem}.chart-legend .lg{font-size:.8rem}}
 
+/* ================= Easy Protect 6 theme ================= */
+:root{
+  --ink:#232323;--paper:#f4f4f4;--card:#fff;--panel:#fff;
+  --green:#171aa8;--green-2:#10137d;--gold:#171aa8;--gold-soft:#171aa8;
+  --line:#c8c8c8;--err:#a51e2b;--ok:#08783f;--muted:#666;
+  --serif:'Kanit','IBM Plex Sans Thai',sans-serif;
+  --sans:'IBM Plex Sans Thai',Tahoma,sans-serif;
+}
+html{scroll-behavior:smooth}
+body{color:var(--ink);background:var(--paper);background-image:none}
+button,input,select{font-family:var(--sans)}
+::selection{background:#dfe0ff;color:#10137d}
+
+header.app{
+  min-height:108px;padding:24px clamp(24px,4vw,64px);background:#fff;color:var(--ink);
+  border-bottom:1px solid #d5d5d5;display:flex;align-items:center;overflow:visible;
+}
+header.app::after{display:none}
+.brandline{width:100%;max-width:1390px;margin:0 auto;display:grid;grid-template-columns:1fr auto;align-items:center;gap:5px 28px}
+.brandline>div:first-child{min-width:0}
+.product-kicker{display:block;margin-bottom:2px;color:var(--green);font-family:var(--serif);font-size:11px;font-weight:600;letter-spacing:.09em;text-transform:uppercase}
+h1{margin:0;color:var(--green);font-family:var(--serif);font-size:25px;font-weight:600;line-height:1.25}
+h1 .thin{color:#303030;font-weight:500}
+.brandline p{margin:3px 0 0;color:var(--muted);font-size:13px}
+.vbadge{grid-column:2;grid-row:1;align-self:center;min-width:188px;padding:8px 14px;border:1px solid #bfc0e4;border-radius:0;color:var(--green);font-family:var(--serif);font-size:12px;font-weight:600;letter-spacing:.04em;text-align:center}
+.effnote{grid-column:1/-1;width:100%;color:#777;font-size:11px}
+
+.lt-steps{height:66px;padding:0 clamp(24px,4vw,64px);background:#fff;border-bottom:1px solid #d9d9d9;display:flex;align-items:center;justify-content:center;gap:14px}
+.lt-steps span{display:inline-flex;align-items:center;gap:8px;color:#777;font-family:var(--serif);font-size:13px;font-weight:500}
+.lt-steps span b{width:26px;height:26px;border:1px solid #aaa;border-radius:50%;display:grid;place-items:center;font-size:12px}
+.lt-steps span.active{color:var(--green)}
+.lt-steps span.active b{border-color:var(--green);background:var(--green);color:#fff}
+.lt-steps i{width:58px;height:1px;background:#cfcfcf}
+
+.wrap-calc{width:min(1390px,calc(100% - 48px));max-width:none;margin:0 auto 60px;padding:0}
+.case-line{margin:0;padding:28px 0 20px;border-bottom:1px solid #c9c9c9;color:#555;font-family:var(--serif);font-size:clamp(15px,1.3vw,19px);font-weight:500}
+#form{width:min(984px,100%);margin:0 auto;background:transparent;border:0;border-radius:0;box-shadow:none}
+.sec{padding:0;margin:54px 0 0;border:0}
+.sec:last-child{border:0}
+.sec>h2{margin:0 0 16px;color:var(--green);font-family:var(--serif);font-size:clamp(23px,2vw,31px);font-weight:500;line-height:1.3}
+.sec>h2::before{display:none}
+.secnum{width:30px;height:30px;border-radius:50%;background:var(--green);color:#fff;font-family:var(--serif);font-size:15px}
+.subhead{margin:24px 0 12px;padding:0 0 9px;border-bottom:1px solid #c8c8c8;color:var(--green);font-family:var(--serif);font-size:18px;font-weight:500}
+.field{margin-bottom:20px}
+.field>.f,label.f{margin-bottom:7px;color:#2f2f2f;font-size:15px;font-weight:500;letter-spacing:0}
+input[type=text],input[type=number],select{height:52px;padding:0 14px;border:1px solid #777;border-radius:0;background:#fff;color:#292929;font-size:16px}
+select{color-scheme:light}
+input:focus,select:focus{outline:2px solid #dfe0ff;outline-offset:0;border-color:var(--green)}
+input:disabled,select:disabled{background:#eee;color:#777}
+input::placeholder{color:#999}
+.hint{margin-top:5px;color:#777;font-size:11px}
+.errmsg{color:var(--err);font-size:12px}
+
+.segmented{min-height:52px;padding:0;gap:0;border:1px solid var(--green);border-radius:0;background:#fff}
+.segmented button{min-height:50px;padding:9px 12px;border:0;border-right:1px solid var(--green);border-radius:0;background:#fff;color:var(--green-2);font-family:var(--serif);font-size:16px;font-weight:600;box-shadow:none}
+.segmented button:last-child{border-right:0}
+.segmented button:hover:not(.on):not(:disabled){background:#f6f6ff;color:var(--green)}
+.segmented button.on{background:var(--green);color:#fff;box-shadow:none}
+.segmented button.on small,.segmented button small{color:inherit}
+.segs{gap:0;border:1px solid var(--green);background:#fff}
+.seg{min-height:68px;padding:10px 8px;border:0;border-right:1px solid var(--green);border-radius:0;background:#fff;color:var(--green-2)}
+.seg:last-child{border-right:0}
+.seg:hover{background:#f6f6ff;border-color:var(--green)}
+.seg.on{border-color:var(--green);background:var(--green);color:#fff;box-shadow:none}
+.seg.on small{color:#fff}
+.chips{gap:0;border:1px solid var(--green);background:#fff}
+.chip{flex:1;min-height:46px;padding:8px 12px;border:0;border-right:1px solid var(--green);border-radius:0;background:#fff;color:var(--green);font-family:var(--serif);font-size:14px}
+.chip:last-child{border-right:0}
+.chip:hover{background:#f6f6ff}
+.chip.on{background:var(--green);border-color:var(--green);color:#fff}
+.plancap{margin-top:10px;color:#666;font-size:12px}
+.plancap b{color:var(--green)}
+.readout{border:1px solid #777;border-radius:0;background:#fff;color:#232323}
+
+.secToggle{border:1px solid var(--green);border-radius:0;background:#fff;color:var(--green);font-size:12px}
+.secToggle:hover{border-color:var(--green);background:#f0f1ff}
+.rider{grid-template-columns:210px 1fr;gap:0;padding:0;border:1px solid #888;border-bottom:0;background:#fff;align-items:stretch}
+.rider:last-child{border-bottom:1px solid #888}
+.rider:first-of-type{border-top:1px solid #888}
+.rider .rname{padding:15px 16px;border-right:1px solid #888;color:var(--green);font-family:var(--serif);font-size:16px;display:flex;flex-direction:column;justify-content:center}
+.rider .rname small{color:#666;font-family:var(--sans);font-size:11px}
+.rider .rctl{padding:12px 14px;gap:8px;background:#fff}
+.ravail{color:#777}
+
+.calcbar{position:static;width:min(984px,100%);min-height:92px;margin:40px auto 0;padding:14px 0 14px 20px;border-top:2px solid var(--green);border-bottom:2px solid var(--green);background:#fff;box-shadow:none;display:flex;gap:14px}
+button.primary,button.ghost,button.back{min-height:48px;border-radius:0;font-family:var(--serif);font-weight:600;box-shadow:none}
+button.primary{border:1px solid var(--green);background:var(--green);color:#fff}
+button.primary:hover{background:#10137d;box-shadow:none}
+button.ghost,button.back{border:1px solid var(--green);background:#fff;color:var(--green)}
+button.ghost:hover,button.back:hover{background:#f0f1ff}
+button.big{font-family:var(--serif);font-size:18px}
+
+#page-result{padding-bottom:70px}
+.wrap{width:min(984px,calc(100% - 48px));max-width:none;margin:0 auto;padding:30px 0 0;display:grid;grid-template-columns:1fr;gap:24px}
+.resulthead{grid-column:1;display:grid;grid-template-columns:auto 1fr;align-items:center;gap:10px 18px;padding:13px 0 18px;border-top:3px solid var(--green);border-bottom:1px solid #bbb}
+.resulthead h2{margin:0;color:var(--green);font-family:var(--serif);font-size:clamp(22px,2.3vw,34px);font-weight:600;text-align:right}
+.resulthead #rescap{grid-column:1/-1;text-align:right}
+.resulthead button.back{padding:0 16px}
+.wrap>.card{grid-row:3;border:1px solid #333;border-radius:0;box-shadow:none}
+.side{grid-row:2;position:static;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:stretch}
+.total-card{padding:20px 24px;border:1px solid var(--green);border-radius:0;background:var(--green);color:#fff;box-shadow:none}
+.total-card::before,.total-card::after{display:none}
+.total-card .tl{color:#fff;letter-spacing:0}
+.total-card .amt{margin:2px 0;color:#fff;font-family:var(--serif);font-size:clamp(27px,3vw,40px)}
+.total-card .amt small,.total-card .sub,.total-card .sub b{color:#fff}
+.total-card .sub{border-top:1px solid rgba(255,255,255,.35)}
+.total-card .warn{color:#fff1a6}
+.btnrow{min-width:210px;display:flex;flex-direction:column;gap:8px}
+.sumhead{padding:15px 18px;border-bottom:2px solid #222;background:#eee;color:var(--green);font-family:var(--serif);font-size:18px}
+.sumlist{padding:0}
+.sumlist .row{min-height:54px;padding:11px 18px;border-bottom:1px solid #888;background:#fff;font-size:14px}
+.sumlist .row:last-child{border-bottom:0}
+.sumlist .row:nth-child(even){background:#fafafa}
+.sumlist .row .nm{color:#232323}
+.sumlist .row .vv{color:var(--green)}
+
+.wrap-full{width:min(984px,calc(100% - 48px));max-width:none;margin:48px auto 0;padding:0}
+.chartcard,.illwrap{border:1px solid #333;border-radius:0;background:#fff;box-shadow:none}
+.chartcard{padding:18px 18px 12px}
+.chart-title{margin:0 0 12px;color:var(--green);font-family:var(--serif);font-size:clamp(22px,2vw,30px);font-weight:500}
+.chart-title b{color:var(--green)}
+.chart-legend .lg{color:#3a3a3a;font-size:13px}
+.chart-legend .lg .nm{color:#555}
+.chart-hint{color:#8a8a8a;font-size:11px}
+.chart-holder .ctip{min-width:240px;padding:12px 14px;border:1px solid #dfe4eb;border-radius:0;background:rgba(255,255,255,.97);-webkit-backdrop-filter:none;backdrop-filter:none;box-shadow:0 8px 18px rgba(27,41,62,.14)}
+.chart-holder .ctip .th{padding-bottom:7px;border-bottom:1px solid #d7dce2;color:#232323;font-family:var(--serif);font-size:14px}
+.chart-holder .ctip .tr .l{color:#555}
+.chart-holder .ctip .tr .v{color:#232323}
+.illhead{padding:20px 18px 12px;display:block;text-align:center}
+.illhead h2{margin:0;color:#111;font-family:var(--serif);font-size:clamp(18px,1.8vw,24px);font-weight:600}
+.illhead .cap{margin-top:8px;color:#555;font-size:12px}
+.tscroll{padding:0 18px 18px}
+table.ill{min-width:840px;font-size:13px}
+table.ill th{padding:13px 8px;border:1px solid #111;background:#fff;color:#111;font-family:var(--serif);font-size:14px;font-weight:600;line-height:1.35;text-align:center;white-space:normal;vertical-align:middle}
+table.ill td{height:32px;padding:5px 8px;border:1px solid #111;background:#fff;color:#232323}
+table.ill td:first-child,table.ill td:nth-child(2){color:#232323}
+table.ill tr:nth-child(even) td{background:#fafafa}
+table.ill tr:hover td{background:#f0f1ff}
+table.ill tr.payend td{border-bottom:2px solid var(--green);background:#f0f1ff;color:#10137d;font-weight:700}
+table.ill tr.becross td{border-top:1px solid #159454;border-bottom:1px solid #159454;background:#e7f6ef!important;font-weight:700}
+.illkey .ln.gold{border-color:var(--green)}
+.illkey .ln.be{border-color:#159454}
+.break-even-badge{display:inline-flex;align-items:center;justify-content:center;min-height:26px;margin-left:6px;padding:3px 10px;border-radius:999px;background:#10934f;color:#fff;font-family:var(--serif);font-size:11px;font-weight:600;line-height:1;white-space:nowrap}
+
+@media(max-width:680px){
+  header.app{min-height:auto;padding:18px 16px}.brandline{grid-template-columns:1fr auto;gap:5px 10px}h1{font-size:21px}.brandline p{font-size:11px}.effnote{display:none}.vbadge{min-width:0;padding:6px 8px;font-size:10px}
+  .lt-steps{height:58px;padding:0 15px}.lt-steps i{width:22px}.lt-steps span{font-size:11px}
+  .wrap-calc{width:calc(100% - 24px)}.case-line{padding:20px 0 15px;font-size:13px}.sec{margin-top:36px}.sec>h2{font-size:22px}
+  .g2,.g3{grid-template-columns:1fr}.segs{grid-template-columns:1fr}.seg{border-right:0;border-bottom:1px solid var(--green)}.seg:last-child{border-bottom:0}
+  .chips{flex-direction:column}.chip{border-right:0;border-bottom:1px solid var(--green)}.chip:last-child{border-bottom:0}
+  .rider{grid-template-columns:1fr}.rider .rname{border-right:0;border-bottom:1px solid #888}.rider .rctl{padding:12px}
+  .calcbar{min-height:auto;padding:14px;flex-direction:column}.calcbar button{width:100%;min-height:52px!important;padding:0 12px!important}
+  .wrap,.wrap-full{width:calc(100% - 20px)}.resulthead{grid-template-columns:1fr}.resulthead h2,.resulthead #rescap{text-align:left}.resulthead button.back{grid-row:3}
+  .side{grid-template-columns:1fr}.btnrow{min-width:0;flex-direction:row}.total-card{padding:16px}.wrap-full{margin-top:34px}.chartcard{padding:12px 8px 8px}.chart-legend{justify-content:flex-start}.chart-holder .ctip{left:50%!important;width:min(230px,calc(100% - 16px));transform:translateX(-50%)!important}
+  .illhead{padding:16px 10px 10px}.tscroll{padding:0 8px 10px}
+}
+
 /* ================= print quote ================= */
 #quote{display:none}
 
 @media print{
-  @page{size:A4;margin:12mm 11mm}
-  body{background:#fff}
-  header.app,.wrap{display:none!important}
+  @page{size:A4 portrait;margin:10mm}
+  body{background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  header.app,.lt-steps,.wrap-calc,.wrap,.wrap-full{display:none!important}
   #quote{display:block;font-size:10.3pt;color:#111}
   #quote .qpage{page-break-after:always}
   #quote .qpage:last-child{page-break-after:auto}
-  #quote h2{font-family:var(--serif);font-size:13pt;text-align:center;color:#1b1710;margin-bottom:2mm}
-  #quote h3{font-family:var(--serif);font-size:11pt;color:#1b1710;margin:4mm 0 1.6mm;border-bottom:1.2pt solid #b3903f;padding-bottom:.8mm}
+  #quote h2{font-family:var(--serif);font-size:13pt;text-align:center;color:#171aa8;margin-bottom:2mm}
+  #quote h3{font-family:var(--serif);font-size:11pt;color:#171aa8;margin:4mm 0 1.6mm;border-bottom:1.2pt solid #171aa8;padding-bottom:.8mm}
   #quote .qmeta{display:grid;grid-template-columns:1fr 1fr;gap:.8mm 6mm;font-size:9.5pt;margin:2mm 0}
   #quote .qmeta div b{font-weight:700}
   table.qt{border-collapse:collapse;width:100%;font-size:9pt;font-variant-numeric:tabular-nums}
-  table.qt th{background:#e9e2cf;border:.5pt solid #999;padding:1.2mm 1.6mm;font-weight:700}
+  table.qt th{background:#f0f1ff;border:.5pt solid #777;padding:1.2mm 1.6mm;font-weight:700;color:#10137d}
   table.qt td{border:.5pt solid #999;padding:1mm 1.6mm;text-align:right}
   table.qt td.l{text-align:left}
   table.qt td.c{text-align:center}
@@ -267,17 +428,23 @@ table.ill tr:hover td{background:rgba(201,162,75,.09)}
 </style>
 </head>
 <body>
+<script src="../assets/global-header.js?v=6"></script>
 
 <header class="app">
   <div class="brandline">
-    <h1>ไลฟ์เทรเชอร์ <span class="thin">| โปรแกรมคำนวณเบี้ยประกันและทุนประกัน</span></h1>
+    <div><span class="product-kicker">Life Insurance Proposal Program</span><h1>LifeTreasure <span class="thin">ไลฟ์เทรเชอร์</span></h1><p>เครื่องมือคำนวณเบี้ยประกันและตารางผลประโยชน์</p></div>
     <span class="vbadge">เวอร์ชั่น A2026-1</span>
     <div class="effnote">ใช้สำหรับการเสนอขายตั้งแต่ 1 มกราคม 2569 ถึง 31 มีนาคม 2570 · ชื่อแบบประกันในกรมธรรม์: ไลฟ์เรดดี้ (ไม่มีเงินปันผล) · ระยะเวลาคุ้มครองครบอายุ 99 ปี</div>
   </div>
 </header>
 
+<div class="lt-steps" id="ltSteps" aria-label="ขั้นตอนการใช้งาน">
+  <span class="active" id="ltStep1"><b>1</b> คำนวณเบี้ย</span><i></i><span id="ltStep2"><b>2</b> ตารางผลลัพธ์</span>
+</div>
+
 <!-- ============ หน้า 1: กรอกข้อมูล ============ -->
 <div class="wrap-calc" id="page-calc">
+  <p class="case-line" id="ltCaseLine">LifeTreasure / ชาย / 35 ปี / ชำระเบี้ย 18 ปี</p>
   <div class="card" id="form">
     <div class="sec">
       <h2 class="numbered"><span class="secnum">1</span>ข้อมูลผู้เอาประกันภัย</h2>
@@ -367,7 +534,7 @@ table.ill tr:hover td{background:rgba(201,162,75,.09)}
   <div class="wrap">
     <div class="resulthead">
       <button class="back" onclick="goBack()">◂ กลับไปแก้ไขข้อมูล</button>
-      <h2>ผลการคำนวณเบี้ยประกัน</h2>
+      <h2>สรุปผลการคำนวณแบบประกัน ไลฟ์เทรเชอร์</h2>
       <span style="font-size:.82rem;color:var(--muted)" id="rescap"></span>
     </div>
 
@@ -398,7 +565,7 @@ table.ill tr:hover td{background:rgba(201,162,75,.09)}
     <div class="card chartcard">
       <div class="chart-title" id="chartTitle"></div>
       <div class="chart-legend" id="chartLegend"></div>
-      <div class="chart-hint">👆 เลื่อนเมาส์ / แตะบนกราฟเพื่อดูตัวเลขแต่ละปี</div>
+      <div class="chart-hint">เลื่อนเมาส์หรือนิ้วบนกราฟเพื่อดูตัวเลขแต่ละปี</div>
       <div class="chart-holder" id="chartHolder"></div>
     </div>
   </div>
@@ -407,7 +574,7 @@ table.ill tr:hover td{background:rgba(201,162,75,.09)}
   <div class="wrap-full">
     <div class="card illwrap">
       <div class="illhead">
-        <h2>ตารางแสดงผลประโยชน์ (สัญญาหลัก)</h2>
+        <h2>ตัวอย่าง ตารางแสดงผลประโยชน์ที่ได้รับจากแบบประกัน ไลฟ์เทรเชอร์</h2>
         <div class="cap" id="illcap"></div>
       </div>
       <div class="tscroll">
@@ -1157,6 +1324,8 @@ function render(){
   $('terr').textContent = totErr;
   $('modehint').textContent = state.mode==='รายเดือน'?'เบี้ยรายเดือนรวมขั้นต่ำ 1,000 บาท และงวดแรกชำระ 2 งวด':'';
   // illustration
+  const caseText = `LifeTreasure / ${state.gender} / ${state.age} ปี / ${state.plan} / งวด${state.mode}`;
+  $('ltCaseLine').textContent = caseText;
   $('rescap').textContent = `${state.name||''} · ${state.gender} อายุ ${state.age} ปี · ${state.plan} · งวด${state.mode}`;
   // หาแถวจุดคุ้มทุน (มูลค่าเวนคืน >= เบี้ยสะสม ครั้งแรก)
   let beRow=-1;
@@ -1169,15 +1338,16 @@ function render(){
   let ib='';
   out.illustration.forEach((r,i)=>{
     const cls=[]; if(r.year===termYr) cls.push('payend'); if(i===beRow) cls.push('becross');
-    ib+=`<tr${cls.length?` class="${cls.join(' ')}"`:''}><td>${r.age}</td><td>${r.year}</td><td>${fmt0(r.premium)}</td><td>${fmt0(r.cumPremium)}</td><td>${fmt0(r.cv)}</td><td>${fmt0(r.death)}</td></tr>`;
+    const beBadge=i===beRow?'<span class="break-even-badge">จุดคุ้มทุน</span>':'';
+    ib+=`<tr${cls.length?` class="${cls.join(' ')}"`:''}><td>${r.age}</td><td>${r.year}</td><td>${fmt0(r.premium)}</td><td>${fmt0(r.cumPremium)}</td><td>${fmt0(r.cv)} ${beBadge}</td><td>${fmt0(r.death)}</td></tr>`;
   });
   $('illbody').innerHTML=ib;
   buildChart(out);
 }
 
 /* ---------- กราฟมูลค่ากรมธรรม์ ---------- */
-const CHART_COL={cum:'#d8ac52',cv:'#6f9bff',death:'#ece3cf'};
-const CHART_BE='#66c99a';
+const CHART_COL={cum:'#f59e0b',cv:'#2563eb',death:'#111827'};
+const CHART_BE='#159454';
 function fmtK(v){
   if(v===0) return '0';
   return (v/1000).toLocaleString('th-TH',{maximumFractionDigits:1})+'k';
@@ -1185,7 +1355,7 @@ function fmtK(v){
 function buildChart(out){
   const holder=$('chartHolder'), rows=out.illustration;
   $('chartTitle').innerHTML = out.main.status ? '' :
-    `มูลค่ากรมธรรม์ต่อจำนวนเงินเอาประกันภัย <b>${fmt0(out.displaySa)}</b> บาท (เฉพาะสัญญาหลัก ไลฟ์เรดดี้)`;
+    `กราฟเปรียบเทียบเบี้ยสะสม มูลค่าเวนคืน และความคุ้มครอง <b>· ทุน ${fmt0(out.displaySa)} บาท</b>`;
   if(!rows.length || out.main.status){ holder.innerHTML=''; $('chartLegend').innerHTML=''; return; }
   const cum=rows.map(r=>r.cumPremium), cv=rows.map(r=>r.cv), death=rows.map(r=>r.death);
   const n=rows.length;
@@ -1204,17 +1374,17 @@ function buildChart(out){
   let svg=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" role="img">`;
   // gridlines + y labels
   yt.forEach(v=>{ const y=yAt(v);
-    svg+=`<line x1="${mL}" y1="${y.toFixed(1)}" x2="${W-mR}" y2="${y.toFixed(1)}" stroke="#2a2419" stroke-width="1"/>`;
-    svg+=`<text x="${mL-10}" y="${(y+4).toFixed(1)}" text-anchor="end" font-size="15" fill="#8f8672">${fmtK(v)}</text>`;
+    svg+=`<line x1="${mL}" y1="${y.toFixed(1)}" x2="${W-mR}" y2="${y.toFixed(1)}" stroke="#edf0f4" stroke-width="1"/>`;
+    svg+=`<text x="${mL-10}" y="${(y+4).toFixed(1)}" text-anchor="end" font-size="15" fill="#7d8794">${fmtK(v)}</text>`;
   });
   // x labels (ปีกรมธรรม์ + อายุ)
   xt.forEach(i=>{ const x=xAt(i);
-    svg+=`<text x="${x.toFixed(1)}" y="${H-mB+24}" text-anchor="middle" font-size="15" fill="#b6ac95">${rows[i].year}</text>`;
-    svg+=`<text x="${x.toFixed(1)}" y="${H-mB+42}" text-anchor="middle" font-size="13" fill="#847c69">${rows[i].age}ปี</text>`;
+    svg+=`<text x="${x.toFixed(1)}" y="${H-mB+24}" text-anchor="middle" font-size="15" fill="#7d8794">${rows[i].year}</text>`;
+    svg+=`<text x="${x.toFixed(1)}" y="${H-mB+42}" text-anchor="middle" font-size="13" fill="#a1a9b4">${rows[i].age}ปี</text>`;
   });
   // แกน
-  svg+=`<line x1="${mL}" y1="${mT}" x2="${mL}" y2="${H-mB}" stroke="#3a3226" stroke-width="1"/>`;
-  svg+=`<line x1="${mL}" y1="${H-mB}" x2="${W-mR}" y2="${H-mB}" stroke="#3a3226" stroke-width="1"/>`;
+  svg+=`<line x1="${mL}" y1="${mT}" x2="${mL}" y2="${H-mB}" stroke="#aeb7c2" stroke-width="1"/>`;
+  svg+=`<line x1="${mL}" y1="${H-mB}" x2="${W-mR}" y2="${H-mB}" stroke="#aeb7c2" stroke-width="1"/>`;
   // เส้นจุดคุ้มทุน
   if(be>=0){ const x=xAt(be);
     svg+=`<line x1="${x.toFixed(1)}" y1="${mT}" x2="${x.toFixed(1)}" y2="${H-mB}" stroke="${CHART_BE}" stroke-width="1.5" stroke-dasharray="6 5"/>`;
@@ -1304,11 +1474,15 @@ function goCalc(){
   render();
   $('page-calc').style.display='none';
   $('page-result').style.display='';
+  $('ltStep1').classList.remove('active');
+  $('ltStep2').classList.add('active');
   window.scrollTo(0,0);
 }
 function goBack(){
   $('page-result').style.display='none';
   $('page-calc').style.display='';
+  $('ltStep2').classList.remove('active');
+  $('ltStep1').classList.add('active');
   window.scrollTo(0,0);
 }
 
@@ -1386,7 +1560,7 @@ function printQuote(){
     </div>
     <div class="qfoot"><span>ไลฟ์เทรเชอร์ เวอร์ชั่น A2026-1</span><span>หน้า 2</span></div>
   </div>`;
-  window.print();
+  window.azPrint ? window.azPrint() : window.print();
 }
 
 /* ---------- init ---------- */

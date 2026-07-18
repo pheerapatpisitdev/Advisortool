@@ -4,28 +4,27 @@
   <link rel="stylesheet" href="../assets/pin-gate.css" />
   <script src="../assets/pin-gate.config.js"></script>
   <script src="../assets/supabase.min.js"></script>
-  <script src="../assets/pin-gate.js"></script>
+  <script src="../assets/pin-gate.js?v=20260719-2"></script>
   <script src="../assets/click-sound.js"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="ไลฟ์เรดดี้ Life Ready ประกันชีวิตตลอดชีพ — คำนวณเบี้ยและผลประโยชน์ครบในเครื่องเดียว" />
-  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg" />
+  <link rel="icon" type="image/png" href="../assets/favicon.png?v=20260719" />
 <title>โปรแกรมคำนวณเบี้ยประกัน ไลฟ์เรดดี้ (A2026-1)</title>
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<link rel="stylesheet" href="../assets/global-header.css?v=4" />
+<link rel="stylesheet" href="../assets/global-header.css?v=5" />
 <link rel="stylesheet" href="../assets/theme.css?v=1" />
-<link rel="stylesheet" href="css/styles.css?v=22">
+<link rel="stylesheet" href="css/styles.css?v=24">
 </head>
 <body class="az-theme">
-<script src="../assets/global-header.js?v=4"></script>
+<script src="../assets/global-header.js?v=6"></script>
 
 <header class="az-hero">
   <div class="az-hero__in">
     <div class="az-hero__brand">
-      <span class="az-hero__logo">LR</span>
-      <span><span class="az-hero__ttl">โปรแกรมคำนวณเบี้ยประกันภัย</span><span class="az-hero__sub">ไลฟ์เรดดี้ (ไม่มีเงินปันผล) &middot; LifeReady (Non-Participating)</span></span>
+      <span><span class="az-hero__ttl">โปรแกรมคำนวณเบี้ยประกันภัย ไลฟ์เรดดี้</span><span class="az-hero__sub">ไลฟ์เรดดี้ (ไม่มีเงินปันผล) &middot; LifeReady (Non-Participating)</span></span>
     </div>
     <div class="az-hero__badge"><b>เวอร์ชัน A2026-1</b>ใช้ได้ถึง 31 มี.ค. 2570</div>
   </div>
@@ -39,15 +38,32 @@
 
 <!-- ============ PAGE 1 : INPUT ============ -->
 <div class="az-wrap az-narrow" id="page-input">
+  <div class="lr-case-summary" id="lrCaseSummary">LifeReady / หญิง / 35 ปี / ชำระเบี้ย 18 ปี</div>
+
   <div class="az-card">
-    <div class="az-card__h"><span class="az-card__n">1</span><h2>ข้อมูลผู้เอาประกันภัย</h2></div>
+    <div class="az-card__h"><span class="az-card__n">1</span><h2>งวดการชำระเบี้ยประกันภัย</h2></div>
     <div class="az-card__b">
-      <div class="az-field"><label for="age">อายุ (ปี)</label><select id="age"></select></div>
-      <div class="az-field"><label id="sexSegLbl">เพศ</label><div class="az-seg" id="sexSeg" role="radiogroup" aria-labelledby="sexSegLbl"><button type="button" role="radio" aria-checked="true" data-v="หญิง" class="on">หญิง</button><button type="button" role="radio" aria-checked="false" data-v="ชาย">ชาย</button></div></div>
-      <div class="az-field"><label id="modeSegLbl">งวดการชำระเบี้ย</label><div class="az-seg" id="modeSeg" role="radiogroup" aria-labelledby="modeSegLbl"></div></div>
-      <div class="az-field"><label id="planSegLbl">แผนการชำระเบี้ย</label><div class="az-seg" id="planSeg" role="radiogroup" aria-labelledby="planSegLbl"></div></div>
+      <div class="az-field lr-mode-field"><label id="modeSegLbl">เลือกความถี่การชำระ</label><div class="az-seg" id="modeSeg" role="radiogroup" aria-labelledby="modeSegLbl"></div></div>
+    </div>
+  </div>
+
+  <div class="az-card">
+    <div class="az-card__h"><span class="az-card__n">2</span><h2>ข้อมูลผู้เอาประกันภัย</h2></div>
+    <div class="az-card__b">
       <div class="az-grid2">
+        <div class="az-field"><label for="age">อายุ (ปี)</label><select id="age"></select></div>
+        <div class="az-field"><label id="sexSegLbl">เพศ</label><div class="az-seg" id="sexSeg" role="radiogroup" aria-labelledby="sexSegLbl"><button type="button" role="radio" aria-checked="true" data-v="หญิง" class="on">หญิง</button><button type="button" role="radio" aria-checked="false" data-v="ชาย">ชาย</button></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="az-card">
+    <div class="az-card__h"><span class="az-card__n">3</span><h2>สัญญาหลัก</h2></div>
+    <div class="az-card__b">
+      <div class="az-field"><label id="planSegLbl">แผนการชำระเบี้ย</label><div class="az-seg" id="planSeg" role="radiogroup" aria-labelledby="planSegLbl"></div></div>
+      <div class="lr-calc-pair">
         <div class="az-field"><label for="mainSA">จำนวนเงินเอาประกันภัย (บาท)</label><input id="mainSA" type="text" inputmode="numeric" value="1,000,000"></div>
+        <div class="lr-calc-bridge">คำนวณ<br>อัตโนมัติ</div>
         <div class="az-field"><label for="mainPrem">เบี้ยสัญญาหลัก/งวด (บาท)</label><input id="mainPrem" type="text" inputmode="decimal" placeholder="กรอกเพื่อคำนวณทุนย้อนกลับ"></div>
       </div>
       <div id="mainNote" class="az-hint"></div>
@@ -55,7 +71,7 @@
   </div>
 
   <div class="az-card">
-    <div class="az-card__h"><span class="az-card__n">2</span><h2>สัญญาเพิ่มเติม</h2></div>
+    <div class="az-card__h"><span class="az-card__n">4</span><h2>สัญญาเพิ่มเติม</h2></div>
     <div class="az-card__b">
       <div id="pbExtra" class="az-grid2" style="display:none;background:#f6f8fb;padding:10px;border-radius:9px">
         <div class="az-field"><label for="payerAge">อายุผู้ชำระเบี้ย (PB)</label><input id="payerAge" type="number" value="35" min="20" max="70"></div>
@@ -67,14 +83,18 @@
     </div>
   </div>
 
-  <div class="calc-bar"><button class="az-btn-calc" onclick="goResult()">คำนวณเบี้ยประกัน &nbsp;→</button></div>
+  <div class="calc-bar"><div class="lr-live-total"><span>เบี้ยรวมต่องวด</span><b id="lrLiveTotal">—</b></div><button class="az-btn-calc" onclick="goResult()">คำนวณเบี้ยประกัน</button></div>
 </div>
 
 <!-- ============ PAGE 2 : RESULT ============ -->
 <div class="az-wrap" id="page-result" style="display:none">
   <div class="result-head">
-    <button class="az-btn az-btn-back" onclick="goInput()">←&nbsp; กลับไปแก้ไขข้อมูล</button>
-    <button class="az-btn az-btn-ghost" onclick="printResult()">🖨️&nbsp; พิมพ์ / บันทึก PDF</button>
+    <button class="az-btn az-btn-back" onclick="goInput()">กลับไปแก้ไขข้อมูล</button>
+    <button class="az-btn az-btn-ghost" onclick="printResult()">พิมพ์ / บันทึก PDF</button>
+  </div>
+  <div class="lr-document-title">
+    <h1>ตารางแสดงผลประโยชน์ที่ได้รับจากแบบประกัน ไลฟ์เรดดี้</h1>
+    <p id="lrResultSubtitle">ไลฟ์เรดดี้ (ไม่มีเงินปันผล) · LifeReady</p>
   </div>
   <section class="psec psec1">
     <div class="psec-head"><span class="n">1</span>สรุปความคุ้มครอง</div>
@@ -86,7 +106,7 @@
       <div class="az-box"><div class="az-lbl">เบี้ยสัญญาหลัก/งวด</div><div class="az-val" id="kMainPrem">—</div></div>
     </div>
 
-    <div class="az-grid2">
+    <div class="az-grid2 lr-result-stack">
       <div class="az-card">
         <div class="az-card__h"><h2>สรุปเบี้ยประกันภัย</h2></div>
         <div class="az-card__b">
@@ -107,15 +127,13 @@
   </section>
 
   <section class="psec psec2">
-    <div class="psec-head"><span class="n">2</span>ตารางมูลค่ากรมธรรม์ และ กราฟ</div>
+    <div class="psec-head"><span class="n">2</span>ตารางมูลค่ากรมธรรม์</div>
     <div class="az-card">
       <div class="az-card__b">
-        <div class="tabs">
-          <button class="on" data-tab="cv">ตารางมูลค่ากรมธรรม์</button>
-        </div>
         <div class="muted" style="margin-bottom:10px">มูลค่ากรมธรรม์ต่อจำนวนเงินเอาประกันภัย <b id="cvSA">0</b> บาท (เฉพาะสัญญาหลัก ไลฟ์เรดดี้)</div>
-        <div id="cvChart" class="cv-chart-wrap"></div>
         <div class="cv-wrap screen-only"><table class="cv-table" id="cvTbl"></table></div>
+        <h3 class="lr-chart-heading">กราฟเปรียบเทียบเบี้ยสะสม มูลค่าเวนคืน และความคุ้มครอง</h3>
+        <div id="cvChart" class="cv-chart-wrap"></div>
         <div id="cvPrint" class="print-split print-only"></div>
       </div>
     </div>
@@ -130,7 +148,7 @@
 <script src="js/data.js?v=15"></script>
 <script src="js/engine.js?v=15"></script>
 <script src="js/config.js?v=16"></script>
-<script src="js/app.js?v=21"></script>
+<script src="js/app.js?v=23"></script>
 
 </body>
 </html>

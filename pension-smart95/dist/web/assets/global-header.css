@@ -1,5 +1,5 @@
 /* Advisortool — shared global header (injected by assets/global-header.js)
-   Light Minimal topbar: white bar, blue "A" mark, hairline bottom border.
+   Light Minimal topbar: white bar, official logo, hairline bottom border.
    Self-contained (opaque white) so it looks right on any page background. */
 @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@500;600;700&display=swap');
 
@@ -20,21 +20,20 @@
 .az-gh__left { display: flex; align-items: center; gap: 12px; }
 .az-gh__right { display: flex; align-items: center; gap: 12px; }
 
-/* blue "A" mark (home link) */
+/* official brand mark (home link) */
 .az-gh__home {
   display: inline-flex; align-items: center; justify-content: center;
-  width: 38px; height: 38px; border-radius: 10px;
-  background: #2563eb; color: #fff; text-decoration: none;
-  font-family: 'Kanit', 'IBM Plex Sans Thai', sans-serif; font-weight: 700; font-size: 20px; line-height: 1;
-  transition: background .15s;
+  width: 44px; height: 44px; border-radius: 10px;
+  background: #fff; color: #fff; text-decoration: none; overflow: hidden;
+  transition: opacity .15s;
 }
-.az-gh__home:hover { background: #1d4ed8; }
+.az-gh__home:hover { opacity: .82; }
+.az-gh__home img { display: block; width: 44px; height: 44px; object-fit: contain; }
 
 .az-gh__brand {
-  font-family: 'Kanit', 'IBM Plex Sans Thai', sans-serif; font-weight: 600;
-  font-size: 19px; letter-spacing: .1px; color: #111827; text-decoration: none;
+  display: inline-flex; align-items: center; color: #111827; text-decoration: none;
 }
-.az-gh__brand b { color: #2563eb; font-weight: 600; }
+.az-gh__brand img { display: block; width: auto; height: 30px; object-fit: contain; }
 
 /* check badge (right) */
 .az-gh__badge {
@@ -82,5 +81,8 @@
 .az-gh__dot { width: 7px; height: 7px; border-radius: 50%; background: #2563eb; flex-shrink: 0; }
 
 @media (max-width: 520px) { .az-gh__btn span { display: none; } .az-gh__btn { padding: 0 11px; } }
-@media (max-width: 460px) { .az-gh__brand { font-size: 17px; } }
+@media (max-width: 460px) {
+  .az-gh__left { gap: 9px; }
+  .az-gh__brand img { height: 26px; }
+}
 @media print { .az-gh { display: none !important; } }

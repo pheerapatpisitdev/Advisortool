@@ -3,6 +3,8 @@
    supabase.min.js + pin-gate.config.js. รันแบบ synchronous เพื่อไม่ให้หน้าจริงแว้บก่อนฉากล็อก
    (การตรวจ PIN เองเป็น async แต่การซ่อน/แสดงหน้ายังคง synchronous เหมือนเดิม). */
 (function () {
+  var pinGateScript = document.currentScript;
+  var BRAND_ASSET_VERSION = '20260719-2';
   var CFG = window.PIN_GATE_CONFIG || {};
   var KEY = CFG.storageKey || 'az_gate';
   var IDLE = CFG.idleTimeoutMs || 12 * 60 * 60 * 1000;
@@ -15,6 +17,20 @@
   var SUPABASE_TIMEOUT = Number(CFG.supabaseTimeoutMs) || 8000;
   var FRONTEND_OK = /^\d{6}$/.test(FRONTEND_PIN);
   var CONFIG_OK = SUPABASE_OK || FRONTEND_OK;
+
+  function brandAssetUrl(fileName) {
+    if (fileName === 'advisortool-logo.png' && window.AZ_BRAND_LOGO_URL) {
+      return window.AZ_BRAND_LOGO_URL;
+    }
+    if (pinGateScript && pinGateScript.src) {
+      var assetUrl = new URL(fileName, pinGateScript.src);
+      assetUrl.searchParams.set('v', BRAND_ASSET_VERSION);
+      return assetUrl.href;
+    }
+    var fallbackUrl = new URL('../assets/' + fileName, window.location.href);
+    fallbackUrl.searchParams.set('v', BRAND_ASSET_VERSION);
+    return fallbackUrl.href;
+  }
 
   var LOCK_ICON = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
 
@@ -108,7 +124,7 @@
 
   overlay.innerHTML =
     '<div class="az-pin__card">' +
-      '<div class="az-pin__brand">' + esc(SUBTITLE) + '</div>' +
+      '<img class="az-pin__logo" src="' + esc(brandAssetUrl('advisortool-logo.png')) + '" alt="' + esc(SUBTITLE) + '" width="190" height="164">' +
       '<div class="az-pin__title">' + esc(TITLE) + '</div>' +
       '<form class="az-pin__form" novalidate>' +
         '<input class="az-pin__input" type="password" inputmode="numeric" autocomplete="one-time-code" ' +

@@ -3,7 +3,8 @@ function segBtn(v,label,on){ return '<button type="button" role="radio" data-v="
 function planShort(th){ return th.replace(/^ชำระเบี้ย\s*/,'').replace(/\s*Package$/,''); }
 function buildSelects(){
   var ag=$('age'); if(ag){ var ao=''; for(var a=0;a<=80;a++){ ao+='<option value="'+a+'"'+(a===35?' selected':'')+'>'+a+'</option>'; } ag.innerHTML=ao; }
-  $('modeSeg').innerHTML = DATA.modes.filter(function(m){ return m.th!=='ราย 3 เดือน'; }).map(function(m){ return segBtn(m.th, m.th, m.th===STATE.mode); }).join('');
+  var modeOrder=['รายเดือน','ราย 6 เดือน','รายปี'];
+  $('modeSeg').innerHTML = modeOrder.map(function(name){ return DATA.modes.find(function(m){ return m.th===name; }); }).filter(Boolean).map(function(m){ return segBtn(m.th, m.th, m.th===STATE.mode); }).join('');
   $('planSeg').innerHTML = DATA.pptPlans.filter(function(p){ return p.seq<=4; }).map(function(p){ return segBtn(p.seq, planShort(p.th), String(p.seq)===String(STATE.seq)); }).join('');
 }
 function buildRiders(){
@@ -19,7 +20,7 @@ function buildRiders(){
 }
 function ctlHTML(r,i){
   var v=STATE.riders[r.key]||{};
-  if(r.ctl==='buy') return '<span class="muted" style="font-size:12px">เลือก ✓ เพื่อซื้อ</span>';
+  if(r.ctl==='buy') return '<span class="muted" style="font-size:12px">เลือกช่องด้านซ้ายเพื่อซื้อ</span>';
   if(r.ctl==='pb') return '<select class="rin" id="in_pb_type"><option>PB Beyond</option><option>PB Fit</option></select>';
   if(r.ctl==='sa'||r.ctl==='saUnit') return '<input class="rin" type="number" id="in_'+r.key+'" value="'+(v.sa||r.smin||'')+'" step="10000"><div class="az-hint" id="hint_'+r.key+'"></div>';
   if(r.ctl==='planMEB'){ var o=MEB_PLANS(i.age).map(function(p){return '<option value="'+p+'">'+fmt0(p)+' บาท/วัน</option>'}).join(''); return '<select class="rin" id="in_'+r.key+'">'+o+'</select>'; }
@@ -88,7 +89,9 @@ function recalc(){
   var res=LR.calc(DATA,CV,inp); LAST={res:res,inp:inp};
   // live feedback on input page
   var rateTxt=res.main.ok?(+res.main.rate.toFixed(4)):0;
-  $('mainNote').textContent=res.main.ok?('รหัสแผน '+res.main.plancode+' · ชำระเบี้ย '+res.main.payYear+' ปี · อัตรา '+rateTxt+' /พันบาท'+(res.main.disc?(' · ส่วนลดทุนสูง '+res.main.disc):'')):('⚠ อายุ '+inp.age+' ปี ไม่อยู่ในเกณฑ์รับประกันของแผนนี้');
+  $('mainNote').textContent=res.main.ok?('รหัสแผน '+res.main.plancode+' · ชำระเบี้ย '+res.main.payYear+' ปี · อัตรา '+rateTxt+' /พันบาท'+(res.main.disc?(' · ส่วนลดทุนสูง '+res.main.disc):'')):('อายุ '+inp.age+' ปี ไม่อยู่ในเกณฑ์รับประกันของแผนนี้');
+  if($('lrCaseSummary')) $('lrCaseSummary').innerHTML='<strong>LifeReady</strong> / '+inp.sex+' / '+inp.age+' ปี / '+planName(inp.seq);
+  if($('lrLiveTotal')) $('lrLiveTotal').textContent=res.main.ok?(fmt(res.modeTotal)+' บาท'):'—';
   // keep the main-premium field in sync (unless the user is typing in it)
   if($('mainPrem') && document.activeElement!==$('mainPrem')) $('mainPrem').value = res.main.ok ? fmt(res.main.mode) : '';
   if($('page-result').style.display!=='none') render(res,inp);
@@ -116,16 +119,18 @@ function render(res,inp){
     $('kMainSA').textContent=fmt0(inp.mainSA)+' บาท';
     $('kMainPrem').textContent=res.main.ok?(fmt(res.main.mode)+' บาท'):'ไม่คุ้มครอง';
   }
+  if($('lrResultSubtitle')) $('lrResultSubtitle').textContent=inp.sex+' อายุ '+inp.age+' ปี · ทุนประกัน '+fmt0(inp.mainSA)+' บาท · '+planName(inp.seq)+' · '+inp.mode;
   renderBenefit(res,inp); renderCV(res,inp);
 }
 function renderBenefit(res,inp){
   var rows=[['<td class="cat" colspan="2">ความคุ้มครองสัญญาหลัก</td>'],
+    ['<td>แบบประกันและระยะเวลาชำระเบี้ย</td><td>'+planName(inp.seq)+'</td>'],
     ['<td>กรณีเสียชีวิต (จำนวนเงินเอาประกันภัย)</td><td>'+fmt0(inp.mainSA)+' บาท</td>'],
     ['<td>ครบกำหนดสัญญา (อายุครบ 99 ปี)</td><td>'+fmt0(inp.mainSA)+' บาท</td>']];
   var rd=[];
   RIDERS.forEach(function(r){ if(!inp[r.key]) return; rd.push('<td>'+r.name+' — '+r.desc+'</td><td>'+amountLabel(r,inp[r.key])+'</td>'); });
   if(rd.length){ rows.push(['<td class="cat" colspan="2">ความคุ้มครองสัญญาเพิ่มเติม</td>']); rd.forEach(function(x){rows.push([x])}); }
-  $('benefitTbl').innerHTML=rows.map(function(r){return '<tr>'+r[0]+'</tr>'}).join('');
+  $('benefitTbl').innerHTML='<thead><tr><th>ความคุ้มครองและผลประโยชน์</th><th>จำนวนเงิน / รายละเอียด</th></tr></thead><tbody>'+rows.map(function(r){return '<tr>'+r[0]+'</tr>'}).join('')+'</tbody>';
 }
 function renderCV(res,inp){
   $('cvSA').textContent=fmt0(inp.mainSA);
@@ -221,7 +226,7 @@ function buildCVChart(pts, beAge){
   var lg='<div class="cv-legend">'+CV_SERIES.map(function(s){
     return '<span class="lg"><i style="background:'+s.color+'"></i>'+s.name+' <b class="cv-lval" data-k="'+s.key+'">'+fmt0(Math.round(last.v[s.key]))+'</b></span>';
   }).join('')+'</div>';
-  var hint='<div class="cv-hint">👆 เลื่อนเมาส์/นิ้วบนกราฟเพื่อดูตัวเลขแต่ละปี</div>';
+  var hint='<div class="cv-hint">เลื่อนเมาส์หรือนิ้วบนกราฟเพื่อดูตัวเลขแต่ละปี</div>';
   var tip='<div class="cv-tip" style="display:none"></div>';
 
   CVCHART={ P:P, geom:{W:W,H:H,L:L,R:R,T:T,ih:ih,iw:iw}, issueAge:issueAge };

@@ -24,12 +24,11 @@ html.az-locked body { display: none !important; }
   border-radius: 16px; box-shadow: 0 10px 34px -16px rgba(17,24,39,.20);
   padding: 28px 24px 24px; text-align: center;
 }
-.az-pin__brand {
-  display: inline-block; font-size: 12px; font-weight: 700; letter-spacing: .5px;
-  text-transform: uppercase; color: var(--az-blue-d, #1d4ed8);
-  background: var(--az-blue-l, #eef4ff); padding: 4px 12px; border-radius: 20px;
+.az-pin__logo {
+  display: block; width: min(190px, 72%); height: auto; margin: 0 auto;
+  object-fit: contain;
 }
-.az-pin__title { margin-top: 14px; font-size: 18px; font-weight: 700; color: var(--az-ink-strong, #111827); }
+.az-pin__title { margin-top: 12px; font-size: 18px; font-weight: 700; color: var(--az-ink-strong, #111827); }
 
 .az-pin__form { margin-top: 20px; }
 .az-pin__form.is-disabled { opacity: .55; }

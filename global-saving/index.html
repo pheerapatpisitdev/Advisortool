@@ -4,12 +4,12 @@
   <link rel="stylesheet" href="../assets/pin-gate.css" />
   <script src="../assets/pin-gate.config.js"></script>
   <script src="../assets/supabase.min.js"></script>
-  <script src="../assets/pin-gate.js"></script>
+  <script src="../assets/pin-gate.js?v=20260719-2"></script>
   <script src="../assets/click-sound.js"></script>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="Global Saving Plus 15/8 — เครื่องคำนวณผลประโยชน์และ factsheet พร้อมกราฟแสดงผล" />
-  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg" />
+  <link rel="icon" type="image/png" href="../assets/favicon.png?v=20260719" />
 <title>Global Savings Plus 15/8 · เครื่องคำนวณ</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -337,15 +337,15 @@ table{width:100%;border-collapse:collapse;}
 #chartjs-tooltip .pos{color:#7FD8BC} #chartjs-tooltip .neg{color:#F0A99B}
 @media(prefers-reduced-motion:reduce){.factsheet *{transition:none!important;animation:none!important}}
 </style>
-<link rel="stylesheet" href="../assets/global-header.css?v=4" />
+<link rel="stylesheet" href="../assets/global-header.css?v=5" />
 </head>
 <body>
-<script src="../assets/global-header.js?v=4"></script>
+<script src="../assets/global-header.js?v=6"></script>
 
 <div id="root">
   <nav class="tabbar noprint">
     <div class="tabbar-inner">
-      <img class="brand-logo" src="logo.png" alt="Global Savings Plus 15/8" width="36" height="36" />
+      <img class="brand-logo" src="../assets/advisortool-mark.png?v=20260719-2" alt="Advisortool" width="36" height="36" />
       <button class="tab on" id="tab-calc">เครื่องคำนวณ</button>
       <button class="tab" id="tab-docs">เอกสารการลงทุน</button>
     </div>
@@ -396,7 +396,7 @@ function renderCalculatorShell() {
     + '<span class="badge">เครื่องคำนวณผลประโยชน์</span>'
     + '<h1 class="h1">Global Savings Plus 15/8 <span class="lk">(Index Linked)</span></h1>'
     + '<div class="hsub">คุ้มครอง ' + prod.term + ' ปี · จ่ายเบี้ย ' + prod.premYears + ' ปี · รหัส ' + prod.code + ' · กรุงไทย-แอกซา</div>'
-    + '</div><img class="header-logo" src="logo.png" alt="Global Savings Plus 15/8" width="78" height="78" /></div>'
+    + '</div><img class="header-logo" src="../assets/advisortool-mark.png?v=20260719-2" alt="Advisortool" width="78" height="78" /></div>'
 
     + '<div class="panel noprint"><div class="prow">'
     + '<div class="field"><label class="flabel" for="f-sa">จำนวนเงินเอาประกันภัย / ทุนประกัน (บาท)<span class="autotag" id="tag-sa">คำนวณให้</span></label>'
@@ -628,7 +628,7 @@ function mountDocuments() {
   view.innerHTML = ''
     + '<div class="factsheet"><div class="sheet">'
     + '<header class="head"><div class="head-brand">'
-    + '<img class="head-logo" src="logo.png" alt="Global Savings Plus 15/8" width="58" height="58" />'
+    + '<img class="head-logo" src="../assets/advisortool-mark.png?v=20260719-2" alt="Advisortool" width="58" height="58" />'
     + '<div><p class="h-eyebrow">ดัชนีอ้างอิงหลายสินทรัพย์ · ควบคุมความผันผวน</p><h1 class="h-title">Citi Grandmaster RC&nbsp;5 Index</h1></div></div>'
     + '<div class="h-metrics">'
     + '<div class="hm"><div class="v">4.15<span class="u">%</span></div><div class="l">ผลตอบแทนเฉลี่ยต่อปี</div></div>'

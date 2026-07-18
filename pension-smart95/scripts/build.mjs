@@ -6,6 +6,8 @@ import { fileURLToPath } from 'node:url';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const read = p => readFileSync(join(root, p), 'utf8');
+const dataUrl = (p, mime = 'image/png') =>
+  `data:${mime};base64,${readFileSync(join(root, p)).toString('base64')}`;
 const OUT_NAME = 'โปรแกรมคำนวณเบี้ย-บำนาญสมาร์ท95.html';
 
 let html = read('index.html');
@@ -19,6 +21,11 @@ const ghCss = read('../assets/global-header.css');
 // pages should include this file (`<link ... href="../assets/...">`), so left in place
 // it would leave stray "../assets/" text sitting inertly inside the single-file build.
 const ghJs  = read('../assets/global-header.js').replace(/^\/\*[\s\S]*?\*\/\s*/, '');
+const brandMarkUrl = dataUrl('../assets/advisortool-mark.png');
+const brandPrelude =
+  `window.AZ_BRAND_MARK_URL=${JSON.stringify(brandMarkUrl)};` +
+  `window.AZ_BRAND_WORDMARK_URL=${JSON.stringify(dataUrl('../assets/advisortool-wordmark.png'))};`;
+const faviconUrl = dataUrl('../assets/favicon.png');
 
 // The inlined global-header.js/theme.css/global-header.css bodies legitimately contain
 // text like `<link ... href="../assets/global-header.css" />` in their own doc comments
@@ -37,7 +44,9 @@ function mustReplace(str, from, to, label) {
 html = mustReplace(html, linkTag('../assets/global-header.css'), `<style>\n${ghCss}\n</style>`, '../assets/global-header.css');
 html = mustReplace(html, linkTag('../assets/theme.css'), `<style>\n${theme}\n</style>`, '../assets/theme.css');
 if (!/<script src="\.\.\/assets\/global-header.js[^"]*"><\/script>/.test(html)) { console.error('✗ build failed: unresolved ref', '../assets/global-header.js'); process.exit(1); }
-html = html.replace(/<script src="..\/assets\/global-header.js[^"]*"><\/script>/, `<script>${ghJs}</script>`);
+html = html.replace(/<script src="..\/assets\/global-header.js[^"]*"><\/script>/, `<script>${brandPrelude}\n${ghJs}</script>`);
+html = html.replace(/<link rel="icon"[^>]*href="..\/assets\/favicon\.png(?:\?[^\"]*)?"\s*\/>/, `<link rel="icon" type="image/png" href="${faviconUrl}" />`);
+html = html.replace(/src="..\/assets\/advisortool-mark\.png(?:\?[^\"]*)?"/g, `src="${brandMarkUrl}"`);
 html = mustReplace(html, linkTag('src/styles.css'), `<style>\n${css}\n</style>`, 'src/styles.css');
 html = html.replace('<script src="data/db.js"></script>', `<script>${db}</script>`);
 html = html.replace('<script src="src/engine.js"></script>', `<script>${engine}</script>`);

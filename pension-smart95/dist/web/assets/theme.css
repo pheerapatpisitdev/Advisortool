@@ -38,6 +38,8 @@
 .az-hero__in{ max-width:1180px; margin:0 auto; padding:20px 16px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
 .az-hero__brand{ display:flex; align-items:center; gap:13px; }
 .az-hero__logo{ width:44px; height:44px; border-radius:10px; background:var(--az-blue); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:19px; letter-spacing:-.5px; flex:none; }
+.az-hero__logo--brand{ background:#fff; overflow:hidden; }
+.az-hero__logo--brand img{ display:block; width:100%; height:100%; object-fit:cover; }
 /* block, not inline: some pages mark these up as <span>s inside one wrapper */
 .az-hero__ttl{ display:block; font-size:21px; font-weight:700; line-height:1.15; color:var(--az-ink-strong); letter-spacing:-.2px; }
 .az-hero__sub{ display:block; font-size:13px; color:var(--az-muted); margin-top:2px; }
