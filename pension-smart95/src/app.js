@@ -21,25 +21,17 @@
         { k: 'sa', t: 'num', label: 'จำนวนเงินเอาประกันภัย (บาท)', val: 1000000, step: 100000 } ] },
     { code: 'ecare', name: 'E-CARE — อุบัติเหตุ (เพิ่ม)', sub: 'อุบัติเหตุส่วนเพิ่ม', tag: '16–60 ปี', fields: [
         { k: 'sa', t: 'num', label: 'จำนวนเงินเอาประกันภัย (บาท)', val: 1000000, step: 100000 } ] },
-    { code: 'mex', name: 'MEX — ค่ารักษา (เหมาจ่าย)', sub: 'ค่ารักษาผู้ป่วยใน', tag: '1ด.–70 ปี', fields: [
-        { k: 'plan', t: 'selectDyn', label: 'แผน (ค่าห้อง/วัน)', dyn: 'mex' } ] },
     { code: 'meb', name: 'MEB — ชดเชยรายวัน', sub: 'ชดเชยรายวันเมื่อนอน รพ.', tag: '6–65 ปี', fields: [
         { k: 'plan', t: 'selectDyn', label: 'แผน (ชดเชย/วัน)', dyn: 'meb' } ] },
-    { code: 'dci', name: 'DCI — โรคร้ายแรง', sub: 'เจอ-จ่าย โรคร้ายแรง', tag: '20–65 · ไม่คู่ CPR', fields: [
+    { code: 'dci', name: 'DCI — โรคร้ายแรง', sub: 'เจอ-จ่าย โรคร้ายแรง', tag: '20–65 ปี', fields: [
         { k: 'sa', t: 'num', label: 'จำนวนเงินเอาประกันภัย (บาท)', val: 1000000, step: 100000 } ] },
     { code: 'pls', name: 'PLS — คุ้มครองชีวิต (เพิ่ม)', sub: 'คุ้มครองชีวิตชั่วระยะเวลา', tag: '20–59 ปี', fields: [
         { k: 'code', t: 'select', label: 'แผน', opts: [['PLS05', 'PLS 5 ปี'], ['PLS10', 'PLS 10 ปี'], ['PLS12', 'PLS 12 ปี'], ['PLS15', 'PLS 15 ปี']] },
         { k: 'sa', t: 'num', label: 'จำนวนเงินเอาประกันภัย (บาท)', val: 1000000, step: 100000 } ] },
-    { code: 'cpr', name: 'CPR — มะเร็ง', sub: 'คุ้มครองโรคมะเร็ง', tag: '1ด.–65 · ไม่คู่ DCI', fields: [
-        { k: 'sa', t: 'num', label: 'จำนวนเงินเอาประกันภัย (บาท)', val: 1000000, step: 100000 } ] },
-    { code: 'hic', name: 'HIC — ชดเชยมะเร็ง', sub: 'ชดเชยรายวันโรคมะเร็ง', tag: 'ต้องซื้อคู่ CPR', fields: [
-        { k: 'sa', t: 'num', label: 'จำนวนเงินชดเชย (บาท)', val: 10000, step: 1000 } ] },
     { code: 'mhp', name: 'iHealthy Ultra — สุขภาพเหมาจ่าย', sub: 'ค่ารักษาเหมาจ่ายครบวงจร', tag: '6–80 ปี', fields: [
         { k: 'plan', t: 'selectDyn', label: 'แผน', dyn: 'mhpPlan' },
         { k: 'area', t: 'selectDyn', label: 'พื้นที่ความคุ้มครอง', dyn: 'mhpArea' },
-        { k: 'coverage', t: 'select', label: 'รูปแบบความรับผิดส่วนแรก', opts: [['Full', 'ความคุ้มครองเต็มจำนวน'], ['Deductible', 'มีความรับผิดส่วนแรก'], ['Co-Payment', 'ร่วมจ่าย Co-Payment']] } ] },
-    { code: 'mci', name: 'โรคร้ายโซชิลด์ (CI)', sub: 'คุ้มครองโรคร้ายแรง So Shield', tag: '1ด.–65 ปี', fields: [
-        { k: 'plan', t: 'select', label: 'แผน', opts: [['S', 'แผน S'], ['M', 'แผน M'], ['L', 'แผน L'], ['XL', 'แผน XL']] } ] }
+        { k: 'coverage', t: 'select', label: 'รูปแบบความรับผิดส่วนแรก', opts: [['Full', 'ความคุ้มครองเต็มจำนวน'], ['Deductible', 'มีความรับผิดส่วนแรก'], ['Co-Payment', 'ร่วมจ่าย Co-Payment']] } ] }
   ];
   const RD = {};
   RIDERS.forEach(r => { RD[r.code] = { on: false }; r.fields.forEach(f => RD[r.code][f.k] = (f.val != null ? f.val : (f.opts ? f.opts[0][0] : ''))); });

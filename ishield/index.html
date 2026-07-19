@@ -13,7 +13,7 @@
 <title>โปรแกรมคำนวณเบี้ยประกัน iShield</title>
 <link rel="stylesheet" href="../assets/global-header.css?v=5" />
 <link rel="stylesheet" href="../assets/theme.css?v=2" />
-<link rel="stylesheet" href="css/styles.css?v=4" />
+<link rel="stylesheet" href="css/styles.css?v=5" />
 </head>
 <body class="az-theme">
 <script src="../assets/global-header.js?v=6"></script>
@@ -496,21 +496,37 @@ function _renderCore(){
   // side-by-side halves for print so the whole table fits a single A4 page
   let prevCum=0;
   const rowsHtml=R.rows.map(r=>{
-    const dcol=r.diff>=0?'#0f8a4d':'#c0392b';
-    const dtxt=(r.diff>=0?'+':'')+fmt(r.diff,0);
     const be=(r.yr===R.breakEvenYr);
     const yearPrem=r.cumPrem-prevCum; prevCum=r.cumPrem;
-    const premCell=(yearPrem>0?fmt(yearPrem,0):'')+(be?' <span class="be-tag" style="color:#0f8a4d;font-weight:800;font-size:10.5px">จุดคุ้มทุน</span>':'');
-    return `<tr${be?' style="background:#e7f6ee!important;font-weight:700"':''}><td style="text-align:center">${r.age}</td><td style="text-align:center">${r.yr}</td><td>${premCell}</td><td>${fmt(r.cumPrem,0)}</td><td>${fmt(r.cv)}</td><td style="color:${dcol};font-weight:700">${dtxt}</td><td>${fmt(R.SA)}</td></tr>`;
+    const gain=r.diff; // เงินค่าเวนคืน − เบี้ยประกันภัยสะสม
+    let gainCls,gainCell;
+    if(be){gainCls='break-even-cell';gainCell='<span class="be-badge">จุดคุ้มทุน</span>';}
+    else{gainCls=gain>0?'pos':(gain<0?'neg':'neu');gainCell=(gain>0?'+':'')+fmt(gain,0);}
+    return `<tr${be?' class="break-even"':''}>`
+      +`<td class="c-age">${r.age}</td>`
+      +`<td class="c-yr">${r.yr}</td>`
+      +`<td>${yearPrem>0?fmt(yearPrem,0):'–'}</td>`
+      +`<td>${fmt(r.cumPrem,0)}</td>`
+      +`<td>${fmt(r.death,0)}</td>`
+      +`<td>${r.cv?fmt(r.cv,0):'–'}</td>`
+      +`<td class="${gainCls}">${gainCell}</td>`
+      +`</tr>`;
   });
-  h+=`<div class="illus-wrap screen-only"><table class="tb"><thead><tr>
-      <th>อายุ</th><th>ปี</th><th>เบี้ยประกัน</th><th>เบี้ยประกันสะสม</th><th>มูลค่าเวนคืน</th><th>ส่วนต่าง<br><span class="mini">(เวนคืน − เบี้ยสะสม)</span></th><th>ทุนประกัน</th></tr></thead><tbody>${rowsHtml.join('')}</tbody></table></div>`;
-  const theadP=`<thead><tr><th>อายุ</th><th>ปี</th><th>เบี้ยประกัน</th><th>เบี้ยสะสม</th><th>เวนคืน</th><th>ส่วนต่าง</th><th>ทุนประกัน</th></tr></thead>`;
+  h+=`<div class="illus-wrap screen-only"><table class="benefit-table">`
+    +`<colgroup><col><col><col><col><col><col><col></colgroup>`
+    +`<thead>`
+    +`<tr><th rowspan="2">อายุ</th><th rowspan="2">ปี<br>กรมธรรม์ที่</th><th colspan="2">เบี้ยประกันภัยสัญญาหลัก</th>`
+    +`<th rowspan="2">ความคุ้มครองกรณีเสียชีวิต<br><small>(ณ สิ้นปีกรมธรรม์)</small></th>`
+    +`<th rowspan="2">เงินค่าเวนคืนกรมธรรม์ประกันภัย<br><small>(ณ สิ้นปีกรมธรรม์)</small></th>`
+    +`<th rowspan="2">กำไร<br><small>(เวนคืน − เบี้ยสะสม)</small></th></tr>`
+    +`<tr><th>ต่อปี</th><th>สะสม</th></tr>`
+    +`</thead><tbody>${rowsHtml.join('')}</tbody></table></div>`;
+  const theadP=`<thead><tr><th>อายุ</th><th>ปี</th><th>เบี้ยต่อปี</th><th>เบี้ยสะสม</th><th>ความคุ้มครอง</th><th>เวนคืน</th><th>กำไร</th></tr></thead>`;
   // ~33 rows fit one A4 column under the chart; use 3 columns for very long tables (young ages)
   const nCols=Math.max(2,Math.ceil(rowsHtml.length/33));
   const perCol=Math.ceil(rowsHtml.length/nCols);
   let splitCols='';
-  for(let c=0;c<nCols;c++)splitCols+=`<div><table class="tb">${theadP}<tbody>${rowsHtml.slice(c*perCol,(c+1)*perCol).join('')}</tbody></table></div>`;
+  for(let c=0;c<nCols;c++)splitCols+=`<div><table class="benefit-table">${theadP}<tbody>${rowsHtml.slice(c*perCol,(c+1)*perCol).join('')}</tbody></table></div>`;
   h+=`<div class="print-split print-only${nCols>2?' cols3':''}">${splitCols}</div>`;
   h+=`</section>`;
 

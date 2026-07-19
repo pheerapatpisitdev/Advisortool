@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ตารางมูลค่ากรมธรรม์ — ดีไซน์แบบ Easy Protect 6</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   ตารางแสดงผลประโยชน์ / มูลค่ากรมธรรม์  — ดีไซน์มาตรฐาน
+   ยกมาจาก easy-protect6 (.benefit-table) แบบตรงตัว
+   คัดลอกบล็อกระหว่าง  === TABLE START ===  ถึง  === TABLE END ===
+   ไปใช้กับทุกแบบประกันที่มีตารางได้ทันที
+   ============================================================ */
+
+:root{
+  --ep-blue:#171aa8;
+  --ep-blue-dark:#10137d;
+  --ep-blue-pale:#f0f1ff;
+  --ep-ink:#232323;
+  --ep-muted:#666;
+  --ep-line:#c8c8c8;
+  --ep-bg:#f4f4f4;
+  --ep-white:#fff;
+  --ep-danger:#a51e2b;
+  --ep-body:"IBM Plex Sans Thai",Tahoma,sans-serif;
+  --ep-display:"Kanit","IBM Plex Sans Thai",sans-serif;
+}
+
+/* demo page chrome (ไม่ใช่ส่วนของคอมโพเนนต์) */
+*{box-sizing:border-box}
+body{margin:0;background:var(--ep-bg);color:var(--ep-ink);font-family:var(--ep-body);-webkit-font-smoothing:antialiased;padding:34px 16px}
+
+/* ===================== TABLE START ===================== */
+.benefit-document{width:min(984px,100%);margin:0 auto;padding-top:10px}
+
+.benefit-title{text-align:center}
+.benefit-title h2{margin:0;color:#111;font-family:var(--ep-display);font-size:clamp(18px,1.8vw,26px);font-weight:600}
+.benefit-title p{margin:12px 0 24px;color:#222;font-size:clamp(14px,1.3vw,20px)}
+
+.benefit-meta{margin-bottom:12px;padding:10px 14px;border:1px solid #777;background:#fff;display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 22px;font-size:13px}
+.benefit-meta b{color:var(--ep-blue);font-family:var(--ep-display);font-weight:600}
+
+.document-table-wrap{width:100%;overflow-x:auto;background:#fff}
+
+.benefit-table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;min-width:940px}
+.benefit-table col:nth-child(1){width:6%}
+.benefit-table col:nth-child(2){width:8%}
+.benefit-table col:nth-child(3){width:12%}
+.benefit-table col:nth-child(4){width:14%}
+.benefit-table col:nth-child(5){width:18%}
+.benefit-table col:nth-child(6){width:19%}
+.benefit-table col:nth-child(7){width:23%}
+.benefit-table th,.benefit-table td{padding:5px 8px;border:1px solid #111}
+.benefit-table thead th{padding:16px 9px;background:#fff;font-family:var(--ep-display);font-size:clamp(15px,1.25vw,21px);font-weight:600;line-height:1.35;text-align:center;vertical-align:middle}
+.benefit-table thead tr:nth-child(2) th{padding:10px 9px}
+.benefit-table thead small{font-family:var(--ep-body);font-size:.75em;font-weight:500}
+.benefit-table td{height:33px;background:#fff;font-size:14px;text-align:right}
+.benefit-table td:first-child,.benefit-table td:nth-child(2){text-align:center}
+.benefit-table td.positive{color:#08783f;font-weight:700}
+.benefit-table td.negative{color:var(--ep-danger)}
+.benefit-table td.neutral{color:#555;font-weight:600}
+.benefit-table tr.break-even td{background:#e7f6ef!important;border-top-color:#159454;border-bottom-color:#159454;font-weight:700}
+.benefit-table td.break-even-cell{text-align:center}
+.break-even-badge{display:inline-flex;align-items:center;justify-content:center;min-height:28px;padding:3px 12px;border-radius:999px;background:#10934f;color:#fff;font-family:var(--ep-display);font-size:13px;font-weight:600;line-height:1;white-space:nowrap}
+.benefit-table tr:nth-child(even) td{background:#fafafa}
+.benefit-table tr.maturity td{background:var(--ep-blue-pale);color:var(--ep-blue-dark);font-weight:700}
+
+.disclaimer{width:min(984px,100%);margin:28px auto 0;padding:18px 0;border-top:1px solid #999;color:#666;font-size:11px;line-height:1.65}
+
+@media print{
+  body{background:#fff;padding:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .benefit-document{width:100%;margin-top:0;padding-top:0}
+  .benefit-meta{margin-bottom:6px;padding:5px 7px;gap:3px 10px;font-size:8px}
+  .document-table-wrap{overflow:visible}
+  .benefit-title{break-inside:avoid}
+  .benefit-title h2{font-size:14px;line-height:1.25}
+  .benefit-title p{margin:5px 0 8px;font-size:9px}
+  .benefit-table{min-width:0}
+  .benefit-table thead{display:table-header-group}
+  .benefit-table tr{break-inside:avoid}
+  .benefit-table th{padding:4px 2px;font-size:7.3px;line-height:1.2}
+  .benefit-table thead tr:nth-child(2) th{padding:3px 2px}
+  .benefit-table td{height:auto;padding:1.5px 2px;font-size:6.8px;line-height:1.2}
+  .break-even-badge{min-height:18px;padding:2px 6px;font-size:7px}
+  .disclaimer{margin-top:10px;padding-top:7px;font-size:7px}
+}
+/* ===================== TABLE END ===================== */
+</style>
+</head>
+<body>
+
+<section class="benefit-document">
+  <div class="benefit-title">
+    <h2>ตัวอย่าง ตารางแสดงผลประโยชน์ที่ได้รับจากแบบประกัน</h2>
+    <p>ตารางมูลค่ากรมธรรม์ ณ สิ้นปีกรมธรรม์ • หน่วย: บาท</p>
+  </div>
+
+  <div class="benefit-meta">
+    <span>ผู้เอาประกันภัย: <b>คุณลูกค้าตัวอย่าง</b></span>
+    <span>เพศ: <b>หญิง</b></span>
+    <span>อายุ: <b>60 ปี</b></span>
+    <span>ทุนประกัน: <b>1,000,000 บาท</b></span>
+  </div>
+
+  <div class="document-table-wrap benefit-scroll">
+    <table class="benefit-table">
+      <colgroup><col><col><col><col><col><col><col></colgroup>
+      <thead>
+        <tr>
+          <th rowspan="2">อายุ</th>
+          <th rowspan="2">ปี<br>กรมธรรม์ที่</th>
+          <th colspan="2">เบี้ยประกันภัยสัญญาหลัก</th>
+          <th rowspan="2">ความคุ้มครองกรณีเสียชีวิต<br><small>(ณ สิ้นปีกรมธรรม์)</small></th>
+          <th rowspan="2">เงินค่าเวนคืนกรมธรรม์ประกันภัย<br><small>(ณ สิ้นปีกรมธรรม์)</small></th>
+          <th rowspan="2">กำไร<br><small>(เงินค่าเวนคืนกรมธรรม์ − เบี้ยประกันภัยสะสม)</small></th>
+        </tr>
+        <tr>
+          <th>ต่อปี</th>
+          <th>สะสม</th>
+        </tr>
+      </thead>
+      <tbody id="benefitBody"><!-- rows injected --></tbody>
+    </table>
+  </div>
+</section>
+
+<footer class="disclaimer">
+  เอกสารนี้เป็นเพียงตัวอย่างเพื่อประกอบการเสนอขาย ผลประโยชน์ ความคุ้มครอง เงื่อนไข และข้อยกเว้นเป็นไปตามที่กำหนดในกรมธรรม์
+  ผู้ซื้อควรทำความเข้าใจรายละเอียดก่อนตัดสินใจทำประกันภัยทุกครั้ง
+</footer>
+
+<script>
+/* ---------- helpers (ตรงกับ easy-protect6) ---------- */
+function money(v){ return Number(v).toLocaleString('en-US'); }               // คั่นหลักพัน ไม่มีทศนิยม
+function signedMoney(v){ return v > 0 ? '+' + money(v) : money(v); }
+
+/* ---------- ข้อมูลตัวอย่างจากตารางอ้างอิง ----------
+   [อายุ, ปีที่, เบี้ยต่อปี, เบี้ยสะสม, ความคุ้มครองเสียชีวิต, เงินค่าเวนคืน]
+   (null = "–")  •  กำไร = เวนคืน − เบี้ยสะสม  คำนวณให้อัตโนมัติ           */
+var ROWS = [
+  [60,1,77600,77600,1000000,null],
+  [61,2,77600,155200,1000000,26000],
+  [62,3,77600,232800,1000000,78000],
+  [63,4,77600,310400,1000000,134000],
+  [64,5,77600,388000,1000000,192000],
+  [65,6,77600,465600,1000000,256000],
+  [66,7,77600,543200,1000000,329000],
+  [67,8,77600,620800,1000000,389000],
+  [68,9,77600,698400,1000000,452000],
+  [69,10,77600,776000,1000000,517000],
+  [70,11,77600,853600,1000000,584000],
+  [71,12,77600,931200,1000000,656000],
+  [72,13,77600,1008800,1018888,730000],
+  [73,14,77600,1086400,1097264,804000],
+  [74,15,77600,1164000,1175640,880000],
+  [75,16,77600,1241600,1254016,956000],
+  [76,17,77600,1319200,1332392,1033000],
+  [77,18,77600,1396800,1410768,1110000],
+  [78,19,null,1396800,1410768,1125000],
+  [79,20,null,1396800,1410768,1139000],
+  [80,21,null,1396800,1410768,1153000],
+  [81,22,null,1396800,1410768,1166000],
+  [82,23,null,1396800,1410768,1179000],
+  [83,24,null,1396800,1410768,1192000],
+  [84,25,null,1396800,1410768,1204000],
+  [85,26,null,1396800,1410768,1216000],
+  [86,27,null,1396800,1410768,1228000],
+  [87,28,null,1396800,1410768,1240000],
+  [88,29,null,1396800,1410768,1251000],
+  [89,30,null,1396800,1410768,1262000],
+  [90,31,null,1396800,1410768,1273000],
+  [91,32,null,1396800,1410768,1284000],
+  [92,33,null,1396800,1410768,1295000],
+  [93,34,null,1396800,1410768,1306000],
+  [94,35,null,1396800,1410768,1318000],
+  [95,36,null,1396800,1410768,1332000]
+];
+
+/* จุดคุ้มทุน = ปีแรกที่เงินค่าเวนคืน ≥ เบี้ยสะสม (ในชุดข้อมูลนี้ไม่มี) */
+function firstBreakEven(rows){
+  for(var i=0;i<rows.length;i++){
+    var csv=rows[i][5]||0, acc=rows[i][3]||0;
+    if(acc>0 && csv>=acc) return rows[i][1];
+  }
+  return -1;
+}
+
+function render(){
+  var breakEvenYear=firstBreakEven(ROWS), out='';
+  for(var i=0;i<ROWS.length;i++){
+    var r=ROWS[i];
+    var age=r[0], year=r[1], annual=r[2], acc=r[3], death=r[4], csv=r[5];
+    var gain=(csv||0)-acc;
+    var isBE=(year===breakEvenYear);
+    var isMaturity=(i===ROWS.length-1);            // แถวครบกำหนดสัญญา (แถวสุดท้าย)
+    var cls=(isMaturity?'maturity ':'')+(isBE?'break-even':'');
+    var gainCls=isBE?'break-even-cell':(gain>0?'positive':(gain<0?'negative':'neutral'));
+    var gainCell=isBE?'<span class="break-even-badge">จุดคุ้มทุน</span>':signedMoney(gain);
+    out+='<tr'+(cls.trim()?' class="'+cls.trim()+'"':'')+'>'
+      +'<td>'+age+'</td>'
+      +'<td>'+year+'</td>'
+      +'<td>'+(annual?money(annual):'–')+'</td>'
+      +'<td>'+money(acc)+'</td>'
+      +'<td>'+money(death)+'</td>'
+      +'<td>'+(csv?money(csv):'–')+'</td>'
+      +'<td class="'+gainCls+'">'+gainCell+'</td>'
+      +'</tr>';
+  }
+  document.getElementById('benefitBody').innerHTML=out;
+}
+render();
+</script>
+</body>
+</html>

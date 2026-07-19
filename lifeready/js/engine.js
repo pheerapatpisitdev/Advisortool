@@ -130,14 +130,6 @@ function calcRiders(D, inp, main){
     var ann=rd((rate-disc)*inp.pls.sa/1000,2);
     push(pcode, ann, rd(ann*f,2), {sa:inp.pls.sa, rate:rate});
   }
-  // MEX
-  if(inp.mex && inp.mex.plan){
-    var row=D.mexRate[String(age)]||D.mexRate[age];
-    var k=g+'-'+inp.mex.plan;
-    var rate=row?(row[k]||0):0;
-    var ann=rd(rate*occMul(inp.occ),2);
-    push('MEX', ann, rd(ann*f,2), {sa:inp.mex.plan, rate:rate});
-  }
   // iHealthy Ultra (MHP)
   if(inp.mhp && inp.mhp.plan){
     var covMap={'Full':'','Deductible':'D','Copay':'C'};
@@ -151,29 +143,6 @@ function calcRiders(D, inp, main){
     var rate = arr? (arr[age]||0):0;
     var ann=rd(rate*occMul(inp.occ),2);
     push('iHealthy Ultra', ann, rd(ann*f,2), {sa:key, rate:rate});
-  }
-  // MCI Roke Rai So Shield
-  if(inp.mci && inp.mci.plan){
-    var planNum={'S':1,'M':2,'L':3,'XL':4}[inp.mci.plan]||inp.mci.plan;
-    var key='MCI'+planNum+'-'+g;
-    var arr=D.mciRate[key];
-    var rate=arr?(arr[age]||0):0;
-    var ann=rd(rate*occMul(inp.occ),2);
-    push('Roke Rai So Shield', ann, rd(ann*f,2), {sa:inp.mci.plan, rate:rate});
-  }
-  // CPR
-  if(inp.cpr && inp.cpr.sa>0){
-    var row=D.cprRate['CPR-'+age];
-    var rate=row?(row[g]||0):0;
-    var ann=rd(rate*inp.cpr.sa/1000,2);
-    push('CPR', ann, rd(ann*f,2), {sa:inp.cpr.sa, rate:rate});
-  }
-  // HIC
-  if(inp.hic && inp.hic.sa>0){
-    var row=D.hicRate['HIC-'+age];
-    var rate=row?(row[g]||0):0;
-    var ann=rnd(rate*inp.hic.sa/1000,2);
-    push('HIC', ann, rd(ann*f,2), {sa:inp.hic.sa, rate:rate});
   }
   // CI 123
   if(inp.ci123 && inp.ci123.sa>0){

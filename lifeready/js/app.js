@@ -24,8 +24,6 @@ function ctlHTML(r,i){
   if(r.ctl==='pb') return '<select class="rin" id="in_pb_type"><option>PB Beyond</option><option>PB Fit</option></select>';
   if(r.ctl==='sa'||r.ctl==='saUnit') return '<input class="rin" type="number" id="in_'+r.key+'" value="'+(v.sa||r.smin||'')+'" step="10000"><div class="az-hint" id="hint_'+r.key+'"></div>';
   if(r.ctl==='planMEB'){ var o=MEB_PLANS(i.age).map(function(p){return '<option value="'+p+'">'+fmt0(p)+' บาท/วัน</option>'}).join(''); return '<select class="rin" id="in_'+r.key+'">'+o+'</select>'; }
-  if(r.ctl==='planMEX'){ var o=MEX_PLANS(i.age).map(function(p){return '<option value="'+p+'">แผน '+p+'</option>'}).join(''); return '<select class="rin" id="in_'+r.key+'">'+o+'</select>'; }
-  if(r.ctl==='planMCI'){ var o=MCI_PLANS(i.age).map(function(p){return '<option value="'+p[0]+'">'+p[1]+'</option>'}).join(''); return '<select class="rin" id="in_'+r.key+'">'+o+'</select>'; }
   if(r.ctl==='planMHP'){ var o=MHP_PLANS(i.age).map(function(p){return '<option value="'+p[0]+'">'+p[1]+'</option>'}).join('');
     return '<select class="rin" id="in_mhp_plan">'+o+'</select><select class="rin" id="in_mhp_area" style="margin-top:4px"><option>ประเทศไทย</option><option>เอเชีย</option><option>ทั่วโลก</option></select><select class="rin" id="in_mhp_cov" style="margin-top:4px"><option value="Full">Full Coverage</option><option value="Deductible">มีความรับผิดส่วนแรก</option><option value="Copay">ร่วมจ่าย</option></select>'; }
   return '';
@@ -38,19 +36,15 @@ function readRider(r,i){
   if(r.ctl==='pb'){ var t=$('in_pb_type'); return {buy:true, type:t?t.value:'PB Beyond', payerAge:parseInt($('payerAge').value)||0, payerSex:STATE.payerSex}; }
   if(r.ctl==='sa'||r.ctl==='saUnit'){ var el=$('in_'+r.key); return {sa:el?parseFloat(el.value)||0:0}; }
   if(r.ctl==='planMEB'){ var el=$('in_meb'); return {plan:el?parseInt(el.value):500}; }
-  if(r.ctl==='planMEX'){ var el=$('in_mex'); return {plan:el?parseInt(el.value):1200}; }
-  if(r.ctl==='planMCI'){ var el=$('in_mci'); return {plan:el?el.value:'S'}; }
   if(r.ctl==='planMHP'){ var p=$('in_mhp_plan'),a=$('in_mhp_area'),c=$('in_mhp_cov'); return {plan:p?parseInt(p.value):1, area:a?a.value:'ประเทศไทย', coverage:c?c.value:'Full'}; }
   return null;
 }
 function eligible(r,i){ return i.age>=r.min && i.age<=r.max; }
 function planName(seq){ var p=DATA.pptPlans[seq-1]; return p?p.th:'-'; }
-function matchRider(x,key){ var map={pb:'PB',wp:'WP',ap:'AP',ecare:'ECARE',meb:'MEB',dci:'DCI',pls:'PLS',mex:'MEX',mhp:'iHealthy',mci:'Roke',cpr:'CPR',hic:'HIC',ci123:'CI 123'}; return x.name.indexOf(map[key])>=0; }
+function matchRider(x,key){ var map={pb:'PB',wp:'WP',ap:'AP',ecare:'ECARE',meb:'MEB',dci:'DCI',pls:'PLS',mhp:'iHealthy',ci123:'CI 123'}; return x.name.indexOf(map[key])>=0; }
 function amountLabel(r,v){
   if(r.key==='mhp') return 'แผน '+(['','Smart','Bronze','Silver','Gold','Diamond','Platinum'][v.plan]||v.plan)+' / '+v.area;
-  if(r.key==='mci') return 'แผน '+v.plan;
   if(r.key==='meb') return fmt0(v.plan)+' บาท/วัน';
-  if(r.key==='mex') return 'แผน '+v.plan;
   if(r.key==='pb') return v.type+' (ผู้ชำระ '+v.payerAge+' ปี)';
   if(r.key==='wp') return 'ยกเว้นเบี้ยฯ';
   if(v.sa) return fmt0(v.sa)+' บาท';
@@ -86,8 +80,6 @@ function recalc(){
     inp[r.key]=note?null:rd;
     var h=$('hint_'+r.key); if(h && r.ctl==='sa') h.textContent='ทุน '+fmt0(r.smin||0)+' – '+fmt0(r.smax?r.smax(inp):0);
   });
-  if(inp.hic && !inp.cpr){ inp.hic=null; if($('note_hic'))$('note_hic').textContent='ต้องซื้อคู่กับ CPR'; }
-
   var res=LR.calc(DATA,CV,inp); LAST={res:res,inp:inp};
   // live feedback on input page
   var rateTxt=res.main.ok?(+res.main.rate.toFixed(4)):0;
@@ -100,8 +92,6 @@ function recalc(){
 }
 
 function render(res,inp){
-  $('custStrip').innerHTML=[['อายุ',inp.age+' ปี'],['เพศ',inp.sex],['แบบประกัน',planName(inp.seq)],['งวดชำระ',inp.mode]]
-    .map(function(x){return '<div class="it"><span>'+x[0]+': </span><b>'+x[1]+'</b></div>'}).join('');
   $('warnBox').innerHTML = res.main.ok?'':('<div class="warn">อายุ '+inp.age+' ปี ไม่อยู่ในเกณฑ์รับประกันของแผน “'+planName(inp.seq)+'” (รับอายุ '+res.main.amin+'–'+res.main.amax+' ปี) — กรุณากลับไปเลือกแผนหรือแก้ไขอายุ</div>');
   var body='<tr class="main"><td><span class="rn">สัญญาหลัก — ไลฟ์เรดดี้</span><br><span class="rd">'+(res.main.ok?('รหัส '+res.main.plancode+' · ชำระเบี้ย '+res.main.payYear+' ปี'):'')+'</span></td><td class="amt">'+fmt0(inp.mainSA)+' บาท</td><td class="pm">'+(res.main.ok?fmt(res.main.mode):'ไม่คุ้มครอง')+'</td></tr>';
   var nR=0;
@@ -136,12 +126,29 @@ function renderBenefit(res,inp){
   });
   if(rd.length){ rows.push(['<td class="cat" colspan="2">ความคุ้มครองสัญญาเพิ่มเติม</td>']); rd.forEach(function(x){rows.push([x])}); }
   $('benefitTbl').innerHTML='<thead><tr><th>ความคุ้มครองและผลประโยชน์</th><th>จำนวนเงิน / รายละเอียด</th></tr></thead><tbody>'+rows.map(function(r){return '<tr>'+r[0]+'</tr>'}).join('')+'</tbody>';
-  if($('dciSummary')) $('dciSummary').innerHTML=inp.dci?(
-    '<section class="dci-summary" aria-labelledby="dciSummaryTitle">'+
-      '<div class="dci-summary__head"><div><span class="dci-summary__eyebrow">สัญญาเพิ่มเติม DCI</span><h3 id="dciSummaryTitle">รายชื่อโรคร้ายแรงที่คุ้มครอง</h3><p>คุ้มครองกรณีเสียชีวิต และโรคร้ายแรง 31 โรค</p></div><div class="dci-summary__count"><strong>31</strong><span>โรค</span></div></div>'+
-      '<ol class="dci-disease-list">'+DCI_DISEASES.map(function(name){return '<li><span>'+name+'</span></li>';}).join('')+'</ol>'+
-      '<div class="dci-summary__note">ความคุ้มครองเป็นไปตามคำนิยาม หลักเกณฑ์ และเงื่อนไขที่กำหนดในกรมธรรม์</div>'+
-    '</section>') : '';
+  if($('dciSummary')){
+    if(inp.dci){
+      var dciR=res.riders.find(function(x){return x.name.indexOf('DCI')>=0;});
+      var dciSA=inp.dci.sa||0;
+      var dciPrem=dciR?dciR.annual:0;
+      var prem2=Number(dciPrem).toLocaleString('th-TH',{minimumFractionDigits:2,maximumFractionDigits:2});
+      var spec=function(l,v){return '<div class="dci-spec"><span class="dci-spec__lbl">'+l+'</span><span class="dci-spec__val">'+v+'</span></div>';};
+      $('dciSummary').innerHTML=
+        '<section class="dci-doc" aria-labelledby="dciDocTitle">'+
+          '<h3 class="dci-doc__title" id="dciDocTitle">คุ้มครองเสียชีวิตและโรคร้ายแรง 31 โรค (DCI)</h3>'+
+          '<div class="dci-doc__specs">'+
+            spec('ระยะเวลาคุ้มครอง','1 ปี')+
+            spec('ระยะเวลาชำระเบี้ย','1 ปี')+
+            spec('จำนวนเงินเอาประกันภัย', fmt0(dciSA)+' บาท')+
+            spec('เบี้ยประกันภัย', prem2+' บาท')+
+          '</div>'+
+          '<p class="dci-doc__desc">กรณีแพทย์วินิจฉัยว่าเป็นโรคร้ายแรง 1 ใน 31 โรค หรือเสียชีวิตภายในระยะเวลา 1 ปี จะได้รับเงินจำนวน <b>'+fmt0(dciSA)+'</b> บาท</p>'+
+          '<p class="dci-doc__subhead">31 โรคร้ายแรงประกอบด้วย</p>'+
+          '<ol class="dci-doc__list">'+DCI_DISEASES.map(function(name){return '<li>'+name+'</li>';}).join('')+'</ol>'+
+          '<p class="dci-doc__note">*ผู้เอาประกันที่อายุ 56 ปีขึ้นไป ต้องตรวจสุขภาพโดยแพทย์แต่งตั้งของบริษัททุกราย</p>'+
+        '</section>';
+    } else $('dciSummary').innerHTML='';
+  }
 }
 var CV_DIFF_VISIBLE=true;
 function applyCVDiffVisibility(){
