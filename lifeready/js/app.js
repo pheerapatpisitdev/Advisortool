@@ -61,6 +61,8 @@ var LAST=null;
 function recalc(){
   var i=getInputs();
   RIDERS.forEach(function(r){
+    var checked=$('ck_'+r.key)&&$('ck_'+r.key).checked;
+    var row=$('r_'+r.key); if(row) row.classList.toggle('is-selected',!!checked);
     STATE.riders[r.key]=readRider(r,i)||STATE.riders[r.key]||{};
     var ctl=$('ctl_'+r.key);
     if(ctl && (!ctl.dataset.age || ctl.dataset.age!=String(i.age) || ctl.innerHTML==='')){
@@ -128,15 +130,33 @@ function renderBenefit(res,inp){
     ['<td>กรณีเสียชีวิต (จำนวนเงินเอาประกันภัย)</td><td>'+fmt0(inp.mainSA)+' บาท</td>'],
     ['<td>ครบกำหนดสัญญา (อายุครบ 99 ปี)</td><td>'+fmt0(inp.mainSA)+' บาท</td>']];
   var rd=[];
-  RIDERS.forEach(function(r){ if(!inp[r.key]) return; rd.push('<td>'+r.name+' — '+r.desc+'</td><td>'+amountLabel(r,inp[r.key])+'</td>'); });
+  RIDERS.forEach(function(r){
+    if(!inp[r.key]) return;
+    rd.push('<td>'+r.name+' — '+r.desc+'</td><td>'+amountLabel(r,inp[r.key])+'</td>');
+  });
   if(rd.length){ rows.push(['<td class="cat" colspan="2">ความคุ้มครองสัญญาเพิ่มเติม</td>']); rd.forEach(function(x){rows.push([x])}); }
   $('benefitTbl').innerHTML='<thead><tr><th>ความคุ้มครองและผลประโยชน์</th><th>จำนวนเงิน / รายละเอียด</th></tr></thead><tbody>'+rows.map(function(r){return '<tr>'+r[0]+'</tr>'}).join('')+'</tbody>';
+  if($('dciSummary')) $('dciSummary').innerHTML=inp.dci?(
+    '<section class="dci-summary" aria-labelledby="dciSummaryTitle">'+
+      '<div class="dci-summary__head"><div><span class="dci-summary__eyebrow">สัญญาเพิ่มเติม DCI</span><h3 id="dciSummaryTitle">รายชื่อโรคร้ายแรงที่คุ้มครอง</h3><p>คุ้มครองกรณีเสียชีวิต และโรคร้ายแรง 31 โรค</p></div><div class="dci-summary__count"><strong>31</strong><span>โรค</span></div></div>'+
+      '<ol class="dci-disease-list">'+DCI_DISEASES.map(function(name){return '<li><span>'+name+'</span></li>';}).join('')+'</ol>'+
+      '<div class="dci-summary__note">ความคุ้มครองเป็นไปตามคำนิยาม หลักเกณฑ์ และเงื่อนไขที่กำหนดในกรมธรรม์</div>'+
+    '</section>') : '';
 }
+var CV_DIFF_VISIBLE=true;
+function applyCVDiffVisibility(){
+  document.querySelectorAll('.cv-diff-col').forEach(function(el){el.classList.toggle('cv-diff-col--hidden',!CV_DIFF_VISIBLE);});
+  var btn=$('cvDiffToggle'),lbl=$('cvDiffToggleLabel'),icon=btn&&btn.querySelector('.cv-diff-toggle__icon');
+  if(btn) btn.setAttribute('aria-pressed',CV_DIFF_VISIBLE?'true':'false');
+  if(lbl) lbl.textContent=CV_DIFF_VISIBLE?'ซ่อนคอลัมน์ส่วนต่าง':'แสดงคอลัมน์ส่วนต่าง';
+  if(icon) icon.textContent=CV_DIFF_VISIBLE?'−':'+';
+}
+function toggleCVDiff(){ CV_DIFF_VISIBLE=!CV_DIFF_VISIBLE; applyCVDiffVisibility(); }
 function renderCV(res,inp){
   $('cvSA').textContent=fmt0(inp.mainSA);
   var rows=res.main.ok?LR.cashValues(DATA,CV,inp,res.main):[];
   var payYear=res.main.ok?res.main.payYear:0;
-  var thead='<thead><tr><th>อายุ</th><th>ปี</th><th>เบี้ยประกัน</th><th>เบี้ยประกันสะสม</th><th>มูลค่าเวนคืน</th><th>ส่วนต่าง<br><span class="th-sub">(เวนคืน − เบี้ยสะสม)</span></th><th>ทุนประกัน</th></tr></thead>';
+  var thead='<thead><tr><th>อายุ</th><th>ปี</th><th>เบี้ยประกัน</th><th>เบี้ยประกันสะสม</th><th>มูลค่าเวนคืน</th><th class="cv-diff-col">ส่วนต่าง<br><span class="th-sub">(เวนคืน − เบี้ยสะสม)</span></th><th>ทุนประกัน</th></tr></thead>';
   var cum=0, breakeven=false, beAge=null, pts=[], rowsHtml=[];
   rows.forEach(function(r){
     var prem=r.year<=payYear?res.main.annual:0; cum+=prem;
@@ -144,7 +164,7 @@ function renderCV(res,inp){
     var mark='', rowcls='';
     if(!breakeven && cum>0 && diff>=0){ breakeven=true; beAge=r.age; mark=' <span class="be">จุดคุ้มทุน</span>'; rowcls=' class="be-row"'; }
     var diffTxt='<span class="'+(diff>=0?'gain':'loss')+'">'+(diff>=0?'+':'−')+fmt0(Math.abs(Math.round(diff)))+'</span>';
-    rowsHtml.push('<tr'+rowcls+'><td>'+r.age+'</td><td>'+r.year+'</td><td>'+(prem>0?fmt0(Math.round(prem)):'')+mark+'</td><td>'+fmt0(Math.round(cum))+'</td><td>'+fmt0(Math.round(r.surrender))+'</td><td>'+diffTxt+'</td><td>'+fmt0(inp.mainSA)+'</td></tr>');
+    rowsHtml.push('<tr'+rowcls+'><td>'+r.age+'</td><td>'+r.year+'</td><td>'+(prem>0?fmt0(Math.round(prem)):'')+mark+'</td><td>'+fmt0(Math.round(cum))+'</td><td>'+fmt0(Math.round(r.surrender))+'</td><td class="cv-diff-col">'+diffTxt+'</td><td>'+fmt0(inp.mainSA)+'</td></tr>');
     pts.push({year:r.year, age:r.age, cum:cum, surr:r.surrender, sa:inp.mainSA, diff:diff});
   });
   var body=rowsHtml.length?rowsHtml.join(''):'<tr><td colspan="7" style="text-align:center;padding:20px" class="muted">ไม่มีข้อมูลมูลค่ากรมธรรม์สำหรับแผนนี้</td></tr>';
@@ -152,7 +172,7 @@ function renderCV(res,inp){
   // print twin: split the rows into 2–3 side-by-side columns so the whole table fits one A4 page
   if($('cvPrint')){
     if(rowsHtml.length){
-      var theadP='<thead><tr><th>อายุ</th><th>ปี</th><th>เบี้ยประกัน</th><th>เบี้ยสะสม</th><th>เวนคืน</th><th>ส่วนต่าง</th><th>ทุนประกัน</th></tr></thead>';
+      var theadP='<thead><tr><th>อายุ</th><th>ปี</th><th>เบี้ยประกัน</th><th>เบี้ยสะสม</th><th>เวนคืน</th><th class="cv-diff-col">ส่วนต่าง</th><th>ทุนประกัน</th></tr></thead>';
       var nCols=Math.max(2,Math.ceil(rowsHtml.length/33)), perCol=Math.ceil(rowsHtml.length/nCols), cols='';
       for(var c=0;c<nCols;c++) cols+='<div><table class="cv-table">'+theadP+'<tbody>'+rowsHtml.slice(c*perCol,(c+1)*perCol).join('')+'</tbody></table></div>';
       $('cvPrint').className='print-split print-only'+(nCols>2?' cols3':'');
@@ -160,6 +180,7 @@ function renderCV(res,inp){
     } else { $('cvPrint').innerHTML=''; }
   }
   if($('cvChart')){ $('cvChart').innerHTML = pts.length ? buildCVChart(pts, beAge) : ''; if(pts.length) attachCVChart(); }
+  applyCVDiffVisibility();
 }
 
 // Interactive vanilla SVG line chart — 4 series over policy year/age, hover to read each year.
@@ -341,5 +362,6 @@ window.addEventListener('DOMContentLoaded',function(){
     var sa=saFromPremium(inp, numVal('mainPrem'));
     if(sa>0){ $('mainSA').value=fmt0(sa); recalc(); }
   });
+  if($('cvDiffToggle')) $('cvDiffToggle').addEventListener('click',toggleCVDiff);
   recalc();
 });

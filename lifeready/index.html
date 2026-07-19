@@ -16,7 +16,7 @@
 <meta http-equiv="Expires" content="0">
 <link rel="stylesheet" href="../assets/global-header.css?v=5" />
 <link rel="stylesheet" href="../assets/theme.css?v=1" />
-<link rel="stylesheet" href="css/styles.css?v=24">
+<link rel="stylesheet" href="css/styles.css?v=29">
 </head>
 <body class="az-theme">
 <script src="../assets/global-header.js?v=6"></script>
@@ -70,7 +70,7 @@
     </div>
   </div>
 
-  <div class="az-card">
+  <div class="az-card lr-riders-card">
     <div class="az-card__h"><span class="az-card__n">4</span><h2>สัญญาเพิ่มเติม</h2></div>
     <div class="az-card__b">
       <div id="pbExtra" class="az-grid2" style="display:none;background:#f6f8fb;padding:10px;border-radius:9px">
@@ -79,7 +79,7 @@
       </div>
       <table class="riders"><thead><tr><th style="width:30px"></th><th>สัญญาเพิ่มเติม</th><th>จำนวนเงิน / แผน</th></tr></thead>
       <tbody id="riderBody"></tbody></table>
-      <div class="muted" style="margin-top:8px">* ติ๊กเลือกสัญญาที่ต้องการ แล้วระบุจำนวนเงิน/แผน ระบบจะตรวจสอบเกณฑ์อายุและขั้นต่ำ–สูงสุดให้อัตโนมัติ</div>
+      <div class="muted lr-riders-note">* เลือกสัญญาที่ต้องการ แล้วระบุจำนวนเงินหรือแผน ระบบจะตรวจสอบเกณฑ์ให้อัตโนมัติ</div>
     </div>
   </div>
 
@@ -121,6 +121,7 @@
         <div class="az-card__h"><h2>ตารางผลประโยชน์ความคุ้มครอง</h2></div>
         <div class="az-card__b">
           <table class="benefit-tbl" id="benefitTbl"></table>
+          <div id="dciSummary"></div>
         </div>
       </div>
     </div>
@@ -130,10 +131,13 @@
     <div class="psec-head"><span class="n">2</span>ตารางมูลค่ากรมธรรม์</div>
     <div class="az-card">
       <div class="az-card__b">
-        <div class="muted" style="margin-bottom:10px">มูลค่ากรมธรรม์ต่อจำนวนเงินเอาประกันภัย <b id="cvSA">0</b> บาท (เฉพาะสัญญาหลัก ไลฟ์เรดดี้)</div>
-        <div class="cv-wrap screen-only"><table class="cv-table" id="cvTbl"></table></div>
+        <div class="cv-toolbar">
+          <div class="muted">มูลค่ากรมธรรม์ต่อจำนวนเงินเอาประกันภัย <b id="cvSA">0</b> บาท (เฉพาะสัญญาหลัก ไลฟ์เรดดี้)</div>
+          <button type="button" class="cv-diff-toggle" id="cvDiffToggle" aria-pressed="true"><span class="cv-diff-toggle__icon" aria-hidden="true">−</span><span id="cvDiffToggleLabel">ซ่อนคอลัมน์ส่วนต่าง</span></button>
+        </div>
         <h3 class="lr-chart-heading">กราฟเปรียบเทียบเบี้ยสะสม มูลค่าเวนคืน และความคุ้มครอง</h3>
         <div id="cvChart" class="cv-chart-wrap"></div>
+        <div class="cv-wrap screen-only"><table class="cv-table" id="cvTbl"></table></div>
         <div id="cvPrint" class="print-split print-only"></div>
       </div>
     </div>
@@ -147,8 +151,8 @@
 
 <script src="js/data.js?v=15"></script>
 <script src="js/engine.js?v=15"></script>
-<script src="js/config.js?v=16"></script>
-<script src="js/app.js?v=23"></script>
+<script src="js/config.js?v=17"></script>
+<script src="js/app.js?v=27"></script>
 
 </body>
 </html>
