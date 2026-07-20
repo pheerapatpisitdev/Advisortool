@@ -89,7 +89,7 @@ Port the Excel `Cal` and `ตารางแสดงผลประโยชน
 - `annualPremium (mode) = ROUNDDOWN((rate − discount + adj) × ROUNDDOWN(SA/1000, 3), 2)`
 - `modePremium = ROUNDDOWN(annualPremium × modeFactor, 2)`
 - `annualTotal = modePremium × installments`
-- **Open item for validation:** the workbook computes a high-SA discount tier (`Cal!B34`) but the main-plan cell `Cal!F13` is 0. The exact application (whether/where the discount reduces the main rate for W80F06) must be resolved cell-by-cell against Excel during implementation; the validation harness is the arbiter.
+- **RESOLVED (ground truth):** the workbook computes a high-SA discount tier (`Cal!B34`, e.g. 3 for SA ≥ 1M) but **does not apply it to the main plan** — `Cal!F13` = 0 and `adj` = 0. Verified: age 44/F/SA 1,000,000 → rate 287 × (1,000,000/1000) = **287,000** exactly, no discount. So `discount = 0` and `adj = 0` for the W80F06 main premium.
 
 ### 4.3 Benefit illustration, per policy year (`ตารางแสดงผลประโยชน์` rows 14+)
 Let `C` = policy year (1-based), `B` = attained age, `SA` = sum assured.
