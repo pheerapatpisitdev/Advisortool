@@ -86,10 +86,10 @@ window.IS80 = (function () {
       var mann = rd(mrate * occMul(inp.occ), 2);
       push('MEB', mann, rd(mann * f, 2), { sa: inp.meb.plan, rate: mrate });
     }
-    // MEX — table value IS the annual premium; ×1.5 if occ 4
+    // MEX — table value IS the annual premium; keyed gender-plan (e.g. 'M-3200'); ×1.5 if occ 4
     if (inp.mex && inp.mex.plan) {
       var xrow = D.mexRate[String(age)] || D.mexRate[age];
-      var xrate = xrow ? (xrow[String(inp.mex.plan)] || 0) : 0;
+      var xrate = xrow ? (xrow[g + '-' + inp.mex.plan] || 0) : 0;
       var xann = rd(xrate * occMul(inp.occ), 2);
       push('MEX', xann, rd(xann * f, 2), { sa: inp.mex.plan, rate: xrate });
     }
