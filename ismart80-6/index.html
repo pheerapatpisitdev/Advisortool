@@ -16,7 +16,7 @@
 <meta http-equiv="Expires" content="0">
 <link rel="stylesheet" href="../assets/global-header.css?v=5" />
 <link rel="stylesheet" href="../assets/theme.css?v=1" />
-<link rel="stylesheet" href="css/styles.css?v=1">
+<link rel="stylesheet" href="css/styles.css?v=2">
 </head>
 <body class="az-theme">
 <script src="../assets/global-header.js?v=6"></script>
@@ -58,11 +58,21 @@
           <option value="รายเดือน">รายเดือน</option>
         </select>
       </label>
-      <label>จำนวนเงินเอาประกันภัย (บาท)
-        <input type="number" id="fSA" min="150000" step="1000" value="1000000" />
-      </label>
       <label>ขั้นอาชีพ (สำหรับสัญญาอุบัติเหตุ)
         <select id="fOcc"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option></select>
+      </label>
+    </div>
+    <div class="calcby">
+      <span class="calcby__lbl">คำนวณจาก:</span>
+      <label class="seg"><input type="radio" name="calcby" value="SA" checked> ทุนประกันภัย</label>
+      <label class="seg"><input type="radio" name="calcby" value="PREM"> เบี้ยสัญญาหลัก</label>
+    </div>
+    <div class="grid2">
+      <label id="wrapSA">จำนวนเงินเอาประกันภัย (บาท)
+        <input type="number" id="fSA" min="150000" step="1000" value="1000000" />
+      </label>
+      <label id="wrapPrem" style="display:none">เบี้ยสัญญาหลักที่ต้องการ (ต่องวด, บาท)
+        <input type="number" id="fPrem" min="0" step="100" placeholder="เช่น 287000" />
       </label>
     </div>
     <p class="hint">ไอสมาร์ท 80/6 · ชำระเบี้ย 6 ปี · คุ้มครองถึงอายุ 80 ปี · จ่ายเงินคืนรายปี 1% (ปี 1–5) / 2% (ปีถัดไป) · ครบสัญญารับ 200% ทุนประกัน</p>
@@ -91,6 +101,6 @@
 <script src="js/data.js?v=1"></script>
 <script src="js/engine.js?v=1"></script>
 <script src="js/config.js?v=1"></script>
-<script src="js/app.js?v=2"></script>
+<script src="js/app.js?v=3"></script>
 </body>
 </html>

@@ -3,15 +3,29 @@
   var DATA = window.DATA, CV = window.CV, IS80 = window.IS80;
 
   // ---------- form: main inputs ----------
+  function modeFactor(mode) { var m = DATA.modes.filter(function (x) { return x.th === mode; })[0]; return m ? m.factor : 1; }
+  function mainRate(age, sex) { var arr = DATA.mainRate['06' + IS80.genderLetter(sex)] || []; return arr[age] || 0; }
+  function currentCalcBy() { var r = document.querySelector('input[name=calcby]:checked'); return r ? r.value : 'SA'; }
+
+  // reverse of  modePrem = rd(rd(rate × rd(SA/1000,3),2) × factor, 2)  →  SA ≈ prem/factor/rate×1000
+  function deriveSA(age, sex, mode, prem) {
+    var rate = mainRate(age, sex), f = modeFactor(mode);
+    if (!rate || !prem) return 0;
+    return Math.max(0, Math.round((prem / f / rate * 1000) / 1000) * 1000); // ปัดเป็นหลักพัน
+  }
+
   function mainInputs() {
+    var age = parseInt($('fAge').value, 10), sex = $('fSex').value, mode = $('fMode').value, by = currentCalcBy();
+    var sa;
+    if (by === 'PREM') {
+      sa = deriveSA(age, sex, mode, parseFloat($('fPrem').value) || 0);
+      $('fSA').value = sa || '';
+    } else {
+      sa = parseFloat($('fSA').value) || 0;
+    }
     return {
-      name: $('fName').value || 'คุณคนพิเศษ',
-      age: parseInt($('fAge').value, 10),
-      sex: $('fSex').value,
-      mode: $('fMode').value,
-      mainSA: parseFloat($('fSA').value) || 0,
-      sa: parseFloat($('fSA').value) || 0,
-      occ: parseInt($('fOcc').value, 10)
+      name: $('fName').value || 'คุณคนพิเศษ', age: age, sex: sex, mode: mode,
+      mainSA: sa, sa: sa, occ: parseInt($('fOcc').value, 10), calcBy: by
     };
   }
 
@@ -117,7 +131,8 @@
     if (inp.mode !== 'รายปี') rows += '<tr class="total"><td>รวมเบี้ยประกันภัยรายปี</td><td></td><td>' + money(res.annualTotal) + ' บาท</td></tr>';
     return '<div class="res-section"><div class="res-h">สรุปเบี้ยประกันภัย</div>' +
       '<div class="res-meta">ผู้เอาประกันภัย: ' + inp.name + ' · เพศ ' + inp.sex + ' · อายุ ' + inp.age + ' ปี · งวดชำระ ' + inp.mode +
-      ' · ชำระเบี้ย 6 ปี คุ้มครองถึงอายุ 80 ปี</div>' +
+      ' · ชำระเบี้ย 6 ปี คุ้มครองถึงอายุ 80 ปี' +
+      (inp.calcBy === 'PREM' ? ' · <span style="color:#94a3b8">คำนวณจากเบี้ย (ทุนประกันปัดเป็นหลักพัน)</span>' : '') + '</div>' +
       '<div class="tbl-scroll"><table class="sumtbl"><thead><tr><th>ความคุ้มครอง</th><th>ทุนประกัน/แผน</th><th>เบี้ย (' + inp.mode + ')</th></tr></thead><tbody>' +
       rows + '</tbody></table></div></div>';
   }
@@ -162,6 +177,13 @@
 
   function init() {
     buildRiders();
+    Array.prototype.forEach.call(document.getElementsByName('calcby'), function (r) {
+      r.addEventListener('change', function () {
+        var prem = currentCalcBy() === 'PREM';
+        $('wrapPrem').style.display = prem ? '' : 'none';
+        $('wrapSA').style.display = prem ? 'none' : '';
+      });
+    });
     $('fAge').addEventListener('change', buildRiders);
     $('fSex').addEventListener('change', function () { STATE.sex = $('fSex').value; });
     $('btnCalc').addEventListener('click', doCalc);

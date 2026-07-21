@@ -17,6 +17,13 @@ input:focus, select:focus { outline: 2px solid var(--is-accent); border-color: v
 .hint { margin: 14px 0 0; font-size: .82rem; color: var(--az-muted, #666); line-height: 1.6;
   background: var(--az-soft, #f6f8fb); padding: 10px 12px; border-radius: 8px; }
 
+.calcby { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 14px 0 4px; }
+.calcby__lbl { font-size: .85rem; font-weight: 700; color: var(--az-ink-strong, #1a1a1a); }
+.seg { flex-direction: row; align-items: center; gap: 6px; font-weight: 600; color: var(--az-ink, #333);
+  border: 1px solid var(--az-line, #ccc); border-radius: 999px; padding: 6px 14px; cursor: pointer; }
+.seg input { width: auto; accent-color: var(--is-accent); }
+.seg:has(input:checked) { border-color: var(--is-accent); background: var(--az-soft, #eef4ff); color: var(--is-accent); }
+
 /* rider rows */
 .rider { display: grid; grid-template-columns: 26px 1.4fr 1.6fr; align-items: center; gap: 12px;
   padding: 11px 4px; border-bottom: 1px dashed var(--az-line, #e6e6e6); }
