@@ -57,6 +57,8 @@ input:focus, select:focus { outline: 2px solid var(--is-accent); border-color: v
 .bentbl td:nth-child(1), .bentbl td:nth-child(2) { text-align: center; }
 .bentbl tbody tr:nth-child(even) { background: var(--az-soft, #fafbfd); }
 .bentbl tr.mat td { font-weight: 800; background: #fff7e6; }
+.bentbl td.net-pos { color: #2563eb; font-weight: 700; }
+.bentbl tfoot tr.tot td { font-weight: 700; background: #eef4ff; border-top: 2px solid var(--is-accent); }
 .res-h { font-size: 1.05rem; font-weight: 800; color: var(--is-accent); margin: 22px 0 6px; }
 .res-meta { font-size: .86rem; color: var(--az-muted, #555); margin: 2px 0 8px; line-height: 1.7; }
 .tbl-scroll { overflow-x: auto; }
