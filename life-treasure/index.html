@@ -49,7 +49,7 @@ header.app{
   color:var(--ink);padding:1.5rem 2rem 1.35rem;position:relative;
   border-bottom:1px solid var(--line);
 }
-.brandline{display:flex;flex-wrap:wrap;align-items:baseline;gap:.4rem 1.2rem;max-width:1180px;margin:0 auto;position:relative;padding-left:16px}
+.brandline{display:flex;flex-wrap:wrap;align-items:baseline;gap:.4rem 1.2rem;max-width:984px;margin:0 auto;position:relative;padding-left:16px}
 .brandline::before{content:'';position:absolute;left:0;top:3px;bottom:3px;width:4px;border-radius:2px;background:var(--gold)}
 h1{font-family:var(--serif);font-weight:700;font-size:1.7rem;letter-spacing:-.01em;color:var(--ink-strong)}
 h1 .thin{color:var(--muted);font-weight:400}
@@ -58,11 +58,11 @@ h1 .thin{color:var(--muted);font-weight:400}
 .effnote{font-size:.78rem;color:var(--muted);width:100%}
 
 /* ================= layout ================= */
-.wrap{max-width:1280px;margin:1.4rem auto 4rem;padding:0 1.2rem;display:grid;grid-template-columns:minmax(0,1fr) 390px;gap:1.4rem;align-items:start}
+/* ทั้งหน้าใช้ความกว้างเดียวกัน 984px (แนวเดียวกับ Easy Protect 6) */
+.wrap{max-width:984px;margin:1.4rem auto 4rem;padding:0 1.2rem;display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.4rem;align-items:start}
 @media(max-width:1020px){.wrap{grid-template-columns:1fr}}
-.wrap-calc{max-width:900px;margin:1.4rem auto 4rem;padding:0 1.2rem}
-.wrap-full{max-width:1280px;margin:0 auto 4rem;padding:0 1.2rem}
-.wrap-full.wrap-ill{max-width:984px}   /* ตารางมูลค่า: กว้างเท่า Easy Protect 6 */
+.wrap-calc{max-width:984px;margin:1.4rem auto 4rem;padding:0 1.2rem}
+.wrap-full{max-width:984px;margin:0 auto 4rem;padding:0 1.2rem}
 .calcbar{position:sticky;bottom:0;z-index:20;margin:1rem -1.2rem 0;padding:.9rem 1.2rem 1.1rem;
   background:var(--card);border-top:1px solid var(--line);
   box-shadow:0 -8px 22px rgba(17,24,39,.08);display:flex;gap:.7rem}
@@ -403,8 +403,8 @@ table.ill tr:hover td{background:var(--blue-l)}
     </div>
   </div>
 
-  <!-- ============ ตารางผลประโยชน์ (กว้างเท่า Easy Protect 6) ============ -->
-  <div class="wrap-full wrap-ill">
+  <!-- ============ ตารางผลประโยชน์ ============ -->
+  <div class="wrap-full">
     <div class="card illwrap">
       <div class="illhead">
         <h2>ตารางแสดงผลประโยชน์ (สัญญาหลัก)</h2>
