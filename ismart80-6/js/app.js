@@ -127,6 +127,7 @@
     var rows = b.map(function (r) {
       var cls = r.age === 79 ? ' class="mat"' : '';
       return '<tr' + cls + '><td>' + r.age + '</td><td>' + r.year + '</td><td>' + fmt0(r.premium) + '</td>' +
+        '<td>' + fmt0(r.cumPrem) + '</td>' +
         '<td>' + fmt0(r.cashback) + '</td><td>' + fmt0(Math.round(r.accum)) + '</td>' +
         '<td>' + fmt0(r.death) + '</td><td>' + fmt0(r.deathInclCoupons) + '</td><td>' + fmt0(r.surrender) + '</td></tr>';
     }).join('');
@@ -134,7 +135,7 @@
       '<div class="res-meta">เงินจ่ายคืนรายปี 1% (ปี 1–5) / 2% (ปี 6 เป็นต้นไป) · ครบกำหนดสัญญาอายุ 80 ปี รับ 200% ของทุนประกัน · ' +
       'ความคุ้มครองเสียชีวิตขั้นต่ำ 200% ของทุนประกัน</div>' +
       '<div class="tbl-scroll"><table class="bentbl"><thead><tr>' +
-      '<th>อายุ</th><th>ปีที่</th><th>เบี้ยสัญญาหลัก</th><th>เงินจ่ายคืน<br>(ต่อปี)</th><th>เงินจ่ายคืนสะสม<br>(ดอกเบี้ย 0.5%)</th>' +
+      '<th>อายุ</th><th>ปีที่</th><th>เบี้ยประกันภัย<br>สัญญาหลัก (ต่อปี)</th><th>เบี้ยประกันภัย<br>สะสม</th><th>เงินจ่ายคืน<br>(ต่อปี)</th><th>เงินจ่ายคืนสะสม<br>(ดอกเบี้ย 0.5%)</th>' +
       '<th>ความคุ้มครอง<br>เสียชีวิต</th><th>ผลประโยชน์เสียชีวิต<br>รวมเงินคืนที่จ่ายแล้ว</th><th>มูลค่าเวนคืน<br>กรมธรรม์</th>' +
       '</tr></thead><tbody>' + rows + '</tbody></table></div>' +
       '<p class="res-meta">หมายเหตุ: ตัวเลขเป็นเพียงตัวอย่างประกอบการเสนอขาย ผลประโยชน์และเงื่อนไขเป็นไปตามที่กำหนดในกรมธรรม์</p></div>';
