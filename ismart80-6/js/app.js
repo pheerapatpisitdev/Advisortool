@@ -33,11 +33,6 @@
   function riderControl(r, age) {
     // returns HTML for the control cell of rider r
     var id = 'r_' + r.key;
-    if (r.ctl === 'pb') {
-      return '<label class="chk"><input type="checkbox" id="' + id + '_buy"> ซื้อ</label>' +
-        '<input type="number" id="' + id + '_page" placeholder="อายุผู้ชำระ" min="20" max="70">' +
-        '<select id="' + id + '_psex"><option value="ชาย">ชาย</option><option value="หญิง">หญิง</option></select>';
-    }
     if (r.ctl === 'buy') {
       return '<label class="chk"><input type="checkbox" id="' + id + '_buy"> ซื้อ</label>';
     }
@@ -47,10 +42,7 @@
     }
     // plan pickers
     var opts = '', list = [];
-    if (r.ctl === 'planMEB') list = MEB_PLANS(age).map(function (p) { return [p, fmt0(p) + ' บาท/วัน']; });
-    if (r.ctl === 'planMEX') list = MEX_PLANS(age).map(function (p) { return [p, 'แผน ' + fmt0(p)]; });
     if (r.ctl === 'planMHP') list = MHP_PLANS(age);
-    if (r.ctl === 'planMCI') list = MCI_PLANS(age);
     opts = '<option value="">ไม่ซื้อ</option>' + list.map(function (o) { return '<option value="' + o[0] + '">' + o[1] + '</option>'; }).join('');
     return '<select id="' + id + '_plan">' + opts + '</select>';
   }
@@ -73,16 +65,12 @@
   function readRiders(inp) {
     RIDERS.forEach(function (r) {
       var id = 'r_' + r.key, buy = $(id + '_buy'), plan = $(id + '_plan'), sa = $(id + '_sa');
-      if (r.ctl === 'pb') {
-        if (buy && buy.checked) inp.pb = { buy: true, type: 'PB Beyond', payerAge: parseInt(($(id + '_page') || {}).value, 10), payerSex: ($(id + '_psex') || {}).value };
-      } else if (r.ctl === 'buy') {
+      if (r.ctl === 'buy') {
         if (buy && buy.checked) inp.wp = { buy: true };
       } else if (r.ctl === 'sa') {
         if (buy && buy.checked && sa && parseFloat(sa.value) > 0) inp[r.key] = { sa: parseFloat(sa.value) };
       } else if (plan && plan.value) {
-        var v = plan.value;
-        var key = (r.ctl === 'planMEB' || r.ctl === 'planMEX') ? { plan: parseInt(v, 10) } : { plan: v };
-        inp[r.key === 'mhp' ? 'mhp' : r.key === 'mci' ? 'mci' : r.key] = key;
+        inp[r.key] = { plan: plan.value };
       }
     });
     return inp;
@@ -95,9 +83,7 @@
     if (inp.mainSA < PLAN.saMin) errs.push('จำนวนเงินเอาประกันภัยขั้นต่ำ ' + fmt0(PLAN.saMin) + ' บาท');
     // rider SA min/max + age windows
     RIDERS.forEach(function (r) {
-      var sel = inp[r.key === 'pb' ? 'pb' : r.key === 'wp' ? 'wp' : r.key];
-      var active = (r.key === 'pb' && inp.pb) || (r.key === 'wp' && inp.wp) || (r.ctl === 'sa' && inp[r.key]) ||
-        (/^plan/.test(r.ctl) && inp[r.key === 'mhp' ? 'mhp' : r.key === 'mci' ? 'mci' : r.key]);
+      var active = (r.ctl === 'buy' && inp.wp) || (r.ctl === 'sa' && inp[r.key]) || (/^plan/.test(r.ctl) && inp[r.key]);
       if (!active) return;
       if (inp.age < r.min || inp.age > r.max) errs.push(r.name + ': อายุไม่เข้าเกณฑ์ (' + r.min + '–' + r.max + ')');
       if (r.ctl === 'sa' && inp[r.key]) {
@@ -108,14 +94,8 @@
     });
     // exclusive / dependency
     RIDER_RULES.exclusive.forEach(function (pair) {
-      var a = inp[pair[0]] || (pair[0] === 'pb' && inp.pb) || (pair[0] === 'wp' && inp.wp);
-      var b = inp[pair[1]] || (pair[1] === 'pb' && inp.pb) || (pair[1] === 'wp' && inp.wp);
-      if (a && b) errs.push('เลือก ' + pair[0].toUpperCase() + ' หรือ ' + pair[1].toUpperCase() + ' อย่างใดอย่างหนึ่ง');
+      if (inp[pair[0]] && inp[pair[1]]) errs.push('เลือก ' + pair[0].toUpperCase() + ' หรือ ' + pair[1].toUpperCase() + ' อย่างใดอย่างหนึ่ง');
     });
-    if (inp.hic && !inp.cpr) errs.push('HIC ต้องซื้อคู่กับ CPR');
-    var apEc = (inp.ap ? inp.ap.sa : 0) + (inp.ecare ? inp.ecare.sa : 0);
-    if (apEc > 5 * inp.mainSA) errs.push('AP + ECARE รวมกันเกิน 5 เท่าของทุนประกัน');
-    if (inp.pb && (!inp.pb.payerAge || inp.pb.payerAge < 20 || inp.pb.payerAge > 70)) errs.push('PB Beyond: อายุผู้ชำระเบี้ยต้องอยู่ระหว่าง 20–70 ปี');
     return errs;
   }
 
@@ -143,14 +123,14 @@
       var cls = r.age === 79 ? ' class="mat"' : '';
       return '<tr' + cls + '><td>' + r.age + '</td><td>' + r.year + '</td><td>' + fmt0(r.premium) + '</td>' +
         '<td>' + fmt0(r.cumPrem) + '</td>' +
-        '<td>' + fmt0(r.cashback) + '</td><td>' + fmt0(Math.round(r.accum)) + '</td>' +
+        '<td>' + fmt0(r.cashback) + '</td>' +
         '<td>' + fmt0(r.death) + '</td><td>' + fmt0(r.deathInclCoupons) + '</td><td>' + fmt0(r.surrender) + '</td></tr>';
     }).join('');
     return '<div class="res-section"><div class="res-h">ตารางแสดงผลประโยชน์ (ทุนประกัน ' + fmt0(inp.mainSA) + ' บาท)</div>' +
       '<div class="res-meta">เงินจ่ายคืนรายปี 1% (ปี 1–5) / 2% (ปี 6 เป็นต้นไป) · ครบกำหนดสัญญาอายุ 80 ปี รับ 200% ของทุนประกัน · ' +
       'ความคุ้มครองเสียชีวิตขั้นต่ำ 200% ของทุนประกัน</div>' +
       '<div class="tbl-scroll"><table class="bentbl"><thead><tr>' +
-      '<th>อายุ</th><th>ปีที่</th><th>เบี้ยประกันภัย<br>สัญญาหลัก (ต่อปี)</th><th>เบี้ยประกันภัย<br>สะสม</th><th>เงินจ่ายคืน<br>(ต่อปี)</th><th>เงินจ่ายคืนสะสม<br>(ดอกเบี้ย 0.5%)</th>' +
+      '<th>อายุ</th><th>ปีที่</th><th>เบี้ยประกันภัย<br>สัญญาหลัก (ต่อปี)</th><th>เบี้ยประกันภัย<br>สะสม</th><th>เงินจ่ายคืน<br>(ต่อปี)</th>' +
       '<th>ความคุ้มครอง<br>เสียชีวิต</th><th>ผลประโยชน์เสียชีวิต<br>รวมเงินคืนที่จ่ายแล้ว</th><th>มูลค่าเวนคืน<br>กรมธรรม์</th>' +
       '</tr></thead><tbody>' + rows + '</tbody></table></div>' +
       '<p class="res-meta">หมายเหตุ: ตัวเลขเป็นเพียงตัวอย่างประกอบการเสนอขาย ผลประโยชน์และเงื่อนไขเป็นไปตามที่กำหนดในกรมธรรม์</p></div>';
