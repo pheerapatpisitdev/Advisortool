@@ -3,7 +3,6 @@
 <head>
   <link rel="stylesheet" href="../assets/pin-gate.css" />
   <script src="../assets/pin-gate.config.js"></script>
-  <script src="../assets/supabase.min.js"></script>
   <script src="../assets/pin-gate.js?v=20260719-2"></script>
   <script src="../assets/click-sound.js"></script>
   <link rel="icon" type="image/png" href="../assets/favicon.png?v=20260719" />
@@ -68,7 +67,7 @@ h1,h2,h3,h4{letter-spacing:0}
 .grid3{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:16px 24px}
 .field{margin-bottom:18px}
 .field label{display:block;font-size:1rem;font-weight:500;color:#333;margin-bottom:8px}
-.field .hint{font-weight:400;color:#85858c;font-size:.78rem}
+.field .hint{font-weight:400;color:#5c5c66;font-size:.82rem}
 input[type=text],input[type=number],select{
   width:100%;min-height:58px;padding:13px 16px;border:1px solid #555;border-radius:0;
   font:inherit;font-size:1.12rem;background:#fff;color:var(--ink);
@@ -187,11 +186,13 @@ tfoot td{background:#f0f1f8;font-weight:700;color:#111}
 /* ---------- print ---------- */
 .print-head{display:none}
 @media print{
-  @page{size:A4;margin:11mm 10mm}
+  /* margin:0 keeps the browser from printing URL/date/page-number into the PDF;
+     paper margins are simulated with wrapper padding instead */
+  @page{size:A4;margin:0}
   body{background:#fff;font-size:11.5px}
   .masthead,.no-print,.steps{display:none!important}
   .page{display:none!important;padding:0}
-  #pageResult{display:block!important}
+  #pageResult{display:block!important;padding:10mm 8mm 6mm}
   .panel{border:0}
   .panel-b{padding:0}
   .tabpage{display:block!important}
@@ -214,7 +215,7 @@ tfoot td{background:#f0f1f8;font-weight:700;color:#111}
   .sum-cards{margin:10px 0 14px;break-inside:avoid}
   .sum-card{min-height:0;padding:11px 14px}
   .footnote-list{margin-top:8px}
-  #tabBenefit,#tabTax{break-before:page}
+  #tabBenefit,#tabTax{break-before:page;padding-top:10mm}
   #tabBenefit table{font-size:8px}
   #tabBenefit th,#tabBenefit td{padding:1.2px 5px;line-height:1.25}
 }
@@ -250,10 +251,10 @@ tfoot td{background:#f0f1f8;font-weight:700;color:#111}
       <div class="panel-h"><span class="badge-n">1</span><h2>งวดการชำระเบี้ยประกันภัย</h2></div>
       <div class="panel-b">
         <div class="field" style="margin-bottom:0">
-          <div class="seg" id="segMode">
-            <button data-v="M">รายเดือน</button>
-            <button data-v="S">ราย 6 เดือน</button>
-            <button data-v="A" class="on">รายปี</button>
+          <div class="seg" id="segMode" role="radiogroup" aria-label="งวดการชำระเบี้ยประกันภัย">
+            <button type="button" role="radio" aria-checked="false" data-v="M">รายเดือน</button>
+            <button type="button" role="radio" aria-checked="false" data-v="S">ราย 6 เดือน</button>
+            <button type="button" role="radio" aria-checked="true" data-v="A" class="on">รายปี</button>
           </div>
         </div>
       </div>
@@ -264,18 +265,18 @@ tfoot td{background:#f0f1f8;font-weight:700;color:#111}
       <div class="panel-b">
         <div class="grid3">
           <div class="field">
-            <label>ชื่อผู้เอาประกันภัย <span class="hint">(ไม่บังคับ)</span></label>
+            <label for="inName">ชื่อผู้เอาประกันภัย <span class="hint">(ไม่บังคับ)</span></label>
             <input type="text" id="inName" placeholder="ลูกค้าคนพิเศษ">
           </div>
           <div class="field">
-            <label>อายุ (ปี)</label>
+            <label for="inAge">อายุ (ปี)</label>
             <select id="inAge"></select>
           </div>
           <div class="field">
-            <label>เพศ</label>
-            <div class="seg" id="segSex">
-              <button data-v="F" class="on">หญิง</button>
-              <button data-v="M">ชาย</button>
+            <label id="lblSex">เพศ</label>
+            <div class="seg" id="segSex" role="radiogroup" aria-labelledby="lblSex">
+              <button type="button" role="radio" aria-checked="true" data-v="F" class="on">หญิง</button>
+              <button type="button" role="radio" aria-checked="false" data-v="M">ชาย</button>
             </div>
           </div>
         </div>
@@ -286,19 +287,19 @@ tfoot td{background:#f0f1f8;font-weight:700;color:#111}
       <div class="panel-h"><span class="badge-n">3</span><h2>สัญญาหลัก</h2></div>
       <div class="panel-b">
         <div class="field">
-          <label>แผนการชำระเบี้ย</label>
-          <div class="seg">
-            <button class="on" disabled>12 ปี · คุ้มครองถึงอายุ 85 ปี</button>
+          <label id="lblPlan">แผนการชำระเบี้ย</label>
+          <div class="seg" role="radiogroup" aria-labelledby="lblPlan">
+            <button type="button" role="radio" aria-checked="true" class="on" disabled aria-disabled="true">12 ปี · คุ้มครองถึงอายุ 85 ปี</button>
           </div>
         </div>
         <div class="calc-pair">
           <div class="field">
-            <label>จำนวนเงินเอาประกันภัย (บาท)</label>
+            <label for="inSA">จำนวนเงินเอาประกันภัย (บาท)</label>
             <input type="text" inputmode="numeric" id="inSA" value="1,000,000">
           </div>
           <div class="calc-bridge">คำนวณ<br>อัตโนมัติ</div>
           <div class="field">
-            <label>เบี้ยสัญญาหลัก/งวด (บาท)</label>
+            <label for="inPrem">เบี้ยสัญญาหลัก/งวด (บาท)</label>
             <input type="text" inputmode="decimal" id="inPrem" placeholder="—">
           </div>
         </div>
@@ -319,11 +320,11 @@ tfoot td{background:#f0f1f8;font-weight:700;color:#111}
           <div id="ihBody" style="display:none;margin-top:16px">
             <div class="grid2">
               <div class="field">
-                <label>แผน</label>
+                <label for="ihPlan">แผน</label>
                 <select id="ihPlan"></select>
               </div>
               <div class="field">
-                <label>ลักษณะความคุ้มครอง</label>
+                <label for="ihCov">ลักษณะความคุ้มครอง</label>
                 <select id="ihCov">
                   <option value="FULL">Full Coverage</option>
                   <option value="DEDUCT">Deductible (รับผิดส่วนแรก)</option>
@@ -331,7 +332,7 @@ tfoot td{background:#f0f1f8;font-weight:700;color:#111}
                 </select>
               </div>
               <div class="field">
-                <label>ขั้นอาชีพ</label>
+                <label for="inOcc">ขั้นอาชีพ</label>
                 <select id="inOcc">
                   <option value="1">ขั้น 1</option><option value="2">ขั้น 2</option>
                   <option value="3">ขั้น 3</option><option value="4">ขั้น 4</option>
@@ -356,7 +357,7 @@ tfoot td{background:#f0f1f8;font-weight:700;color:#111}
       <div class="panel-b">
         <div class="grid2">
           <div class="field">
-            <label>อัตราภาษีเงินได้ <span class="hint">(สำหรับประมาณผลประโยชน์ลดหย่อน)</span></label>
+            <label for="inTax">อัตราภาษีเงินได้ <span class="hint">(สำหรับประมาณผลประโยชน์ลดหย่อน)</span></label>
             <select id="inTax">
               <option value="0">0%</option><option value="0.05">5%</option>
               <option value="0.1" selected>10%</option><option value="0.15">15%</option>
@@ -397,7 +398,7 @@ tfoot td{background:#f0f1f8;font-weight:700;color:#111}
     </div>
     <div class="spacer"></div>
     <button class="btn btn-ghost no-print" id="btnBack">กลับไปแก้ไข</button>
-    <button class="btn btn-print no-print btn" style="background:#fff;color:var(--blue-deep);border:1px solid var(--blue)" onclick="window.print()">พิมพ์ / บันทึก PDF</button>
+    <button class="btn btn-print no-print btn" style="background:#fff;color:var(--blue-deep);border:1px solid var(--blue)" onclick="if(window.azPrint)window.azPrint();else window.print()">พิมพ์ / บันทึก PDF</button>
   </div>
 
   <section class="panel">
@@ -963,14 +964,16 @@ function segWire(segId, onPick) {
   document.querySelectorAll('#' + segId + ' button').forEach(b =>
     b.addEventListener('click', () => {
       if (b.disabled) return;
-      document.querySelectorAll('#' + segId + ' button').forEach(x => x.classList.remove('on'));
-      b.classList.add('on');
+      document.querySelectorAll('#' + segId + ' button').forEach(x => { x.classList.remove('on'); x.setAttribute('aria-checked', 'false'); });
+      b.classList.add('on'); b.setAttribute('aria-checked', 'true');
       onPick(b.dataset.v);
     }));
 }
 function segSet(segId, val) {
-  document.querySelectorAll('#' + segId + ' button').forEach(b =>
-    b.classList.toggle('on', b.dataset.v === String(val)));
+  document.querySelectorAll('#' + segId + ' button').forEach(b => {
+    var on = b.dataset.v === String(val);
+    b.classList.toggle('on', on); b.setAttribute('aria-checked', String(on));
+  });
 }
 
 // ---------- iHealthy plan segmented (Thailand only) ----------

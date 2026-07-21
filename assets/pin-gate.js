@@ -1,6 +1,6 @@
-/* Advisortool — PIN gate. ตรวจรหัส frontend ก่อน แล้วตรวจ PIN ปกติผ่าน Supabase RPC
-   (az_gate_verify) ฝั่งเซิร์ฟเวอร์. include ใน <head> ของทุกหน้า หลัง
-   supabase.min.js + pin-gate.config.js. รันแบบ synchronous เพื่อไม่ให้หน้าจริงแว้บก่อนฉากล็อก
+/* Advisortool — PIN gate. ตรวจ PIN ปกติผ่าน Supabase RPC (az_gate_verify) ด้วย fetch โดยตรง
+   (ไม่ต้องโหลด supabase-js). include ใน <head> ของทุกหน้า หลัง pin-gate.config.js.
+   รันแบบ synchronous เพื่อไม่ให้หน้าจริงแว้บก่อนฉากล็อก
    (การตรวจ PIN เองเป็น async แต่การซ่อน/แสดงหน้ายังคง synchronous เหมือนเดิม). */
 (function () {
   var pinGateScript = document.currentScript;
@@ -35,14 +35,7 @@
   var LOCK_ICON = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
 
   var mem = null; // fallback ถ้า localStorage ใช้ไม่ได้ (โหมดส่วนตัว)
-  var sb = null;
 
-  function getSb() {
-    if (!sb && window.supabase && CFG.supabaseUrl && CFG.supabaseAnonKey) {
-      sb = window.supabase.createClient(CFG.supabaseUrl, CFG.supabaseAnonKey);
-    }
-    return sb;
-  }
   function toolId() {
     var seg = location.pathname.split('/').filter(Boolean)[0];
     return seg || 'hub';
@@ -174,36 +167,47 @@
       try { window.dispatchEvent(new Event('resize')); } catch (e) {}
     }, 260);
   }
-  function handleConnectionFailure() {
+  // Supabase ตอบไม่ได้ (offline/timeout/error): รับเฉพาะรหัสฉุกเฉิน frontendPin เท่านั้น
+  // รหัสปกติต้องผ่าน Supabase เสมอเพื่อให้ถูกบันทึกใน az_gate_access_log
+  function handleConnectionFailure(pin) {
+    if (FRONTEND_OK && pin === FRONTEND_PIN) {
+      completeUnlock();
+      return;
+    }
     checking = false;
     setDisabled(false);
     reset();
-    setMsg(FRONTEND_OK ? 'เชื่อมต่อ Supabase ไม่ได้ กรุณาใช้รหัสฉุกเฉิน' : 'เชื่อมต่อไม่ได้ ลองใหม่อีกครั้ง');
+    shake();
+    setMsg(FRONTEND_OK
+      ? 'เชื่อมต่อไม่ได้ กรุณาลองใหม่ หรือใช้รหัสฉุกเฉิน'
+      : 'เชื่อมต่อไม่ได้ กรุณาลองใหม่อีกครั้ง');
   }
-  function verifyWithSupabase(client, pin) {
-    return new Promise(function (resolve, reject) {
-      var settled = false;
-      var timer = setTimeout(function () {
-        if (settled) return;
-        settled = true;
-        resolve({ error: { message: 'Supabase request timed out' } });
-      }, SUPABASE_TIMEOUT);
-
-      client.rpc('az_gate_verify', {
+  // เรียก az_gate_verify ผ่าน REST โดยตรง (ไม่ต้องโหลด supabase-js 204KB)
+  function verifyWithSupabase(pin) {
+    var base = String(CFG.supabaseUrl || '').replace(/\/+$/, '');
+    var url = base + '/rest/v1/rpc/az_gate_verify';
+    var ctrl = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+    var timer = setTimeout(function () { if (ctrl) { try { ctrl.abort(); } catch (e) {} } }, SUPABASE_TIMEOUT);
+    return fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': CFG.supabaseAnonKey,
+        'Authorization': 'Bearer ' + CFG.supabaseAnonKey
+      },
+      body: JSON.stringify({
         input_pin: pin,
         input_tool: toolId(),
         input_ua: navigator.userAgent
-      }).then(function (res) {
-        if (settled) return;
-        settled = true;
-        clearTimeout(timer);
-        resolve(res);
-      }).catch(function (error) {
-        if (settled) return;
-        settled = true;
-        clearTimeout(timer);
-        reject(error);
-      });
+      }),
+      signal: ctrl ? ctrl.signal : undefined
+    }).then(function (r) {
+      clearTimeout(timer);
+      if (!r.ok) return { error: { message: 'HTTP ' + r.status } };
+      return r.json().then(function (data) { return { data: data }; });
+    }).catch(function (e) {
+      clearTimeout(timer);
+      return { error: { message: String((e && e.message) || e) } };
     });
   }
   function submit() {
@@ -215,29 +219,24 @@
       return;
     }
 
-    // รหัสพิเศษฝั่ง frontend: ตรวจและปลดล็อกทันทีโดยไม่เรียก Supabase
-    if (FRONTEND_OK && pin === FRONTEND_PIN) {
-      completeUnlock();
+    // ไม่มี Supabase config → frontendPin เป็นทางเดียว
+    if (!SUPABASE_OK) {
+      if (FRONTEND_OK && pin === FRONTEND_PIN) completeUnlock();
+      else { reset(); shake(); setMsg('รหัสไม่ถูกต้อง ลองใหม่'); }
       return;
     }
 
     checking = true;
     setDisabled(true);
     setMsg('กำลังตรวจสอบ...');
-    var client = getSb();
-    if (!client) {
-      handleConnectionFailure();
-      return;
-    }
-    verifyWithSupabase(client, pin).then(function (res) {
-      checking = false;
-      setDisabled(false);
+    verifyWithSupabase(pin).then(function (res) {
       if (res.error) {
-        checking = true;
-        setDisabled(true);
-        handleConnectionFailure();
+        // Supabase ล่มจริง → ให้ handleConnectionFailure ลองรหัสฉุกเฉิน
+        handleConnectionFailure(pin);
         return;
       }
+      checking = false;
+      setDisabled(false);
       var data = res.data || {};
       if (data.ok) {
         completeUnlock();
@@ -253,8 +252,7 @@
       if (attempts >= MAX) startLockout();
       else setMsg('รหัสไม่ถูกต้อง ลองใหม่');
     }).catch(function () {
-      // เผื่อ RPC promise reject เอง (ไม่ใช่ res.error) — ลองรหัสฉุกเฉินแทน
-      handleConnectionFailure();
+      handleConnectionFailure(pin);
     });
   }
   function startLockout() {

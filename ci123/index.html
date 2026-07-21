@@ -3,7 +3,6 @@
 <head>
   <link rel="stylesheet" href="../assets/pin-gate.css" />
   <script src="../assets/pin-gate.config.js"></script>
-  <script src="../assets/supabase.min.js"></script>
   <script src="../assets/pin-gate.js?v=20260719-2"></script>
   <script src="../assets/click-sound.js"></script>
   <meta charset="utf-8" />
@@ -18,6 +17,9 @@
 
     @keyframes ci-fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
     .animate-fadeIn { animation: ci-fadeIn 0.4s ease-out forwards; }
+
+    /* iOS auto-zooms a focused control under 16px — force 16px on the age select on mobile */
+    @media (max-width: 639px) { #age-select { font-size: 16px; } }
 
     /* CI123 disease list — numbered rows */
     .ci123-scope .disease-list {
@@ -141,7 +143,7 @@
           <tbody id="benefit-rows"></tbody>
         </table>
       </div>
-      <p class="mt-2 text-xs text-gray-400 text-center">ผลประโยชน์เทียบกับจำนวนเงินเอาประกันภัยเริ่มต้นของโรคร้ายแรงระยะรุนแรง</p>
+      <p class="mt-2 text-xs text-gray-600 text-center">ผลประโยชน์เทียบกับจำนวนเงินเอาประกันภัยเริ่มต้นของโรคร้ายแรงระยะรุนแรง</p>
     </section>
 
     <!-- Covered critical illnesses -->
@@ -233,8 +235,8 @@
         <div class="mx-auto mb-4 sm:mb-6 max-w-[400px] noprint">
           <label class="mb-3 block text-xs sm:text-sm font-semibold text-gray-700">เพศตามกำเนิด</label>
           <div role="group" aria-label="เพศตามกำเนิด" class="flex overflow-hidden rounded-[10px] border-2 border-[#1b2b7a]">
-            <button type="button" id="g-male" class="flex-1 px-6 py-3 text-sm sm:text-[15px] font-semibold transition-colors bg-[#1b2b7a] text-white">ชาย</button>
-            <button type="button" id="g-female" class="flex-1 px-6 py-3 text-sm sm:text-[15px] font-semibold transition-colors bg-white text-[#1b2b7a]">หญิง</button>
+            <button type="button" id="g-male" aria-pressed="true" class="flex-1 px-6 py-3 text-sm sm:text-[15px] font-semibold transition-colors bg-[#1b2b7a] text-white">ชาย</button>
+            <button type="button" id="g-female" aria-pressed="false" class="flex-1 px-6 py-3 text-sm sm:text-[15px] font-semibold transition-colors bg-white text-[#1b2b7a]">หญิง</button>
           </div>
         </div>
         <div class="mx-auto mb-5 sm:mb-6 max-w-[400px] noprint">
@@ -267,7 +269,9 @@
               <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 5.69 2 10.23c0 4.07 3.55 7.48 8.35 8.12.32.07.77.21.88.49.1.25.06.64.03.89l-.14.85c-.04.25-.2.99.86.54 1.06-.45 5.72-3.37 7.8-5.77C21.1 13.7 22 12.05 22 10.23 22 5.69 17.52 2 12 2z" /></svg>
               แชร์ไป LINE
             </button>
-            <button type="button" id="print-btn" class="flex h-12 min-w-[220px] items-center justify-center gap-2.5 rounded-full border-2 border-[#1b2b7a] bg-white px-7 text-base font-semibold text-[#1b2b7a] transition-colors hover:bg-[#eef0f9]">🖨️ พิมพ์ / บันทึก PDF</button>
+            <button type="button" id="print-btn" class="flex h-12 min-w-[220px] items-center justify-center gap-2.5 rounded-full border-2 border-[#1b2b7a] bg-white px-7 text-base font-semibold text-[#1b2b7a] transition-colors hover:bg-[#eef0f9]">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 6 2 18 2 18 9" /><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" /><rect x="6" y="14" width="12" height="8" /></svg>
+              พิมพ์ / บันทึก PDF</button>
           </div>
         </div>
       </div>
@@ -392,6 +396,8 @@ document.addEventListener('click', (e) => {
     gender = g;
     gMale.className = `flex-1 px-6 py-3 text-sm sm:text-[15px] font-semibold transition-colors ${g === 'male' ? 'bg-[#1b2b7a] text-white' : 'bg-white text-[#1b2b7a]'}`;
     gFemale.className = `flex-1 px-6 py-3 text-sm sm:text-[15px] font-semibold transition-colors ${g === 'female' ? 'bg-[#1b2b7a] text-white' : 'bg-white text-[#1b2b7a]'}`;
+    gMale.setAttribute('aria-pressed', g === 'male' ? 'true' : 'false');
+    gFemale.setAttribute('aria-pressed', g === 'female' ? 'true' : 'false');
   };
   gMale.addEventListener('click', () => setGender('male'));
   gFemale.addEventListener('click', () => setGender('female'));

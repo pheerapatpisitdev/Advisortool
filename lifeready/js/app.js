@@ -21,11 +21,11 @@ function buildRiders(){
 function ctlHTML(r,i){
   var v=STATE.riders[r.key]||{};
   if(r.ctl==='buy') return '<span class="muted" style="font-size:12px">เลือกช่องด้านซ้ายเพื่อซื้อ</span>';
-  if(r.ctl==='pb') return '<select class="rin" id="in_pb_type"><option>PB Beyond</option><option>PB Fit</option></select>';
-  if(r.ctl==='sa'||r.ctl==='saUnit') return '<input class="rin" type="number" id="in_'+r.key+'" value="'+(v.sa||r.smin||'')+'" step="10000"><div class="az-hint" id="hint_'+r.key+'"></div>';
-  if(r.ctl==='planMEB'){ var o=MEB_PLANS(i.age).map(function(p){return '<option value="'+p+'">'+fmt0(p)+' บาท/วัน</option>'}).join(''); return '<select class="rin" id="in_'+r.key+'">'+o+'</select>'; }
+  if(r.ctl==='pb') return '<select class="rin" id="in_pb_type" aria-label="เลือกแผน '+r.name+'"><option>PB Beyond</option><option>PB Fit</option></select>';
+  if(r.ctl==='sa'||r.ctl==='saUnit') return '<input class="rin" type="number" id="in_'+r.key+'" aria-label="จำนวนเงินเอาประกันภัย '+r.name+'" value="'+(v.sa||r.smin||'')+'" step="10000"><div class="az-hint" id="hint_'+r.key+'"></div>';
+  if(r.ctl==='planMEB'){ var o=MEB_PLANS(i.age).map(function(p){return '<option value="'+p+'">'+fmt0(p)+' บาท/วัน</option>'}).join(''); return '<select class="rin" id="in_'+r.key+'" aria-label="เลือกแผน '+r.name+'">'+o+'</select>'; }
   if(r.ctl==='planMHP'){ var o=MHP_PLANS(i.age).map(function(p){return '<option value="'+p[0]+'">'+p[1]+'</option>'}).join('');
-    return '<select class="rin" id="in_mhp_plan">'+o+'</select><select class="rin" id="in_mhp_area" style="margin-top:4px"><option>ประเทศไทย</option><option>เอเชีย</option><option>ทั่วโลก</option></select><select class="rin" id="in_mhp_cov" style="margin-top:4px"><option value="Full">Full Coverage</option><option value="Deductible">มีความรับผิดส่วนแรก</option><option value="Copay">ร่วมจ่าย</option></select>'; }
+    return '<select class="rin" id="in_mhp_plan" aria-label="เลือกแผน '+r.name+'">'+o+'</select><select class="rin" id="in_mhp_area" style="margin-top:4px" aria-label="พื้นที่ความคุ้มครอง '+r.name+'"><option>ประเทศไทย</option><option>เอเชีย</option><option>ทั่วโลก</option></select><select class="rin" id="in_mhp_cov" style="margin-top:4px" aria-label="รูปแบบความรับผิดส่วนแรก '+r.name+'"><option value="Full">Full Coverage</option><option value="Deductible">มีความรับผิดส่วนแรก</option><option value="Copay">ร่วมจ่าย</option></select>'; }
   return '';
 }
 function numVal(id){ var e=$(id); return e?(parseFloat(String(e.value).replace(/,/g,''))||0):0; }
@@ -194,7 +194,7 @@ function renderCV(res,inp){
 var CVCHART=null;
 // series colours: distinct hues that stay legible on the light background
 var CV_SERIES=[
-  {key:'cum',  name:'เบี้ยสะสม',            color:'#f59e0b'},
+  {key:'cum',  name:'เบี้ยสะสม',            color:'#d97706'},
   {key:'surr', name:'มูลค่าเวนคืนเงินสด',   color:'#2563eb'},
   {key:'sa',   name:'ความคุ้มครองเสียชีวิต', color:'#111827'}
 ];

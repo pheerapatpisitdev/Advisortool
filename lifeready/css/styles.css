@@ -207,7 +207,7 @@ table{width:100%;border-collapse:collapse;font-size:13.5px}
 .lr-riders-card .rdesc::before{content:' · '}
 .lr-riders-card .rnote{font-size:10.5px;line-height:1.25}
 .az-theme .lr-riders-card .riders .rin,.az-theme .lr-riders-card .riders select.rin{width:100%;min-width:0;max-width:none;min-height:34px;height:34px;padding:4px 8px;font-size:12.5px}
-.lr-riders-card .riders .az-hint{margin-top:2px;font-size:9.5px;line-height:1.2}
+.lr-riders-card .riders .az-hint{margin-top:2px;font-size:11.5px;line-height:1.25;color:#4b5563}
 .lr-riders-card .riders tr:not(.is-selected) td:nth-child(3)>*{display:none!important}
 .lr-riders-card .riders tr:not(.is-selected) td:nth-child(3)::after{content:'—';color:#aaa;font-size:12px}
 .lr-riders-card .riders tr.is-selected td{background:#f5f6ff}
@@ -293,6 +293,14 @@ table{width:100%;border-collapse:collapse;font-size:13.5px}
   .cv-toolbar{align-items:flex-start;flex-direction:column}.cv-diff-toggle{width:100%;justify-content:center}
   .lr-riders-card .riders th:nth-child(3){width:42%}.lr-riders-card .rname+br{display:initial}.lr-riders-card .rdesc::before{content:''}
   .az-theme .lr-riders-card .riders .rin,.az-theme .lr-riders-card .riders select.rin{min-height:40px;height:40px;font-size:14px}
+}
+
+/* iOS Safari auto-zooms any focused field whose font-size < 16px — force >=16px on
+   all inputs/selects at the mobile breakpoint (overrides the smaller rider-cell rules) */
+@media(max-width:640px){
+  input,select,textarea,
+  .rin,.riders .rin,.riders select.rin,
+  .az-theme .lr-riders-card .riders .rin,.az-theme .lr-riders-card .riders select.rin{font-size:16px!important}
 }
 
 /* ===== print: หน้า 1 สรุปความคุ้มครอง • หน้า 2 ตารางมูลค่ากรมธรรม์+กราฟ =====

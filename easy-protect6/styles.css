@@ -100,7 +100,7 @@ button { cursor: pointer; }
 .insured-grid { padding: 4px 0 26px; display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
 .insured-grid .full { grid-column: 1 / -1; }
 .insured-grid label > span:first-child, .insured-grid legend { min-height: 24px; }
-.insured-grid label small { color: #8a8a8a; font-size: 11px; font-weight: 400; }
+.insured-grid label small { color: #6b7280; font-size: 11px; font-weight: 400; }
 .insured-grid label > input { width: 100%; height: 52px; padding: 0 14px; border: 1px solid #777; background: #fff; outline: 0; }
 .insured-grid label > input:focus, .insured-grid fieldset:focus-within { border-color: var(--ep-blue); outline: 2px solid var(--ep-blue-pale); }
 .insured-grid .input-unit { height: 52px; border-color: #777; }
@@ -195,7 +195,7 @@ button { cursor: pointer; }
 .chart-legend-item { display: inline-flex; align-items: center; gap: 7px; white-space: nowrap; }
 .chart-legend-item i, .chart-tooltip span i { display: inline-block; flex: 0 0 auto; width: 18px; height: 4px; border-radius: 999px; }
 .chart-legend-item strong { color: #222; font-variant-numeric: tabular-nums; }
-.benefit-chart-hint { margin: 7px 0 2px; color: #8a8a8a; font-size: 11px; text-align: center; }
+.benefit-chart-hint { margin: 7px 0 2px; color: #6b7280; font-size: 11px; text-align: center; }
 .benefit-chart-plot { position: relative; }
 .benefit-chart-canvas { display: block; width: 100%; height: 470px; outline: none; touch-action: none; }
 .benefit-chart-canvas:focus-visible { outline: 3px solid #7779ff; outline-offset: -3px; }
@@ -274,6 +274,8 @@ button { cursor: pointer; }
   .insured-grid .full { grid-column: auto; }
   .rider-section { margin-top: 42px; }
   .section-title span { display: none; }
+  /* iOS auto-zooms any focused form control under 16px — force 16px on mobile */
+  .rider-control input, .rider-control select, .rider-control .input-unit input { font-size: 16px; }
   .action-bar { min-height: auto; padding: 14px; flex-direction: column; }
   .action-bar > div { grid-template-columns: auto 1fr; }
   .action-bar span { grid-column: 1 / -1; }
@@ -298,11 +300,12 @@ button { cursor: pointer; }
 }
 
 @media print {
-  @page { size: A4 portrait; margin: 10mm; }
+  /* margin:0 กันเบราว์เซอร์พิมพ์ URL/วันที่/เลขหน้าลง PDF — ขอบกระดาษจำลองด้วย padding แทน */
+  @page { size: A4 portrait; margin: 0; }
   html, body { width: 100%; background: #fff; }
   body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .global-header, [class*="global-header"], .no-print { display: none !important; }
-  .result-page { width: 100%; margin: 0; padding: 0; }
+  .result-page { width: 100%; margin: 0; padding: 9mm 8mm 0; }
   .result-product-head { padding: 0 0 7px; border-top-width: 2px; }
   .result-product-head b { font-size: 15px; }
   .result-case { margin-top: 8px; padding-bottom: 8px; font-size: 10px; }
@@ -326,7 +329,7 @@ button { cursor: pointer; }
   .benefit-chart-hint { margin: 3px 0 0; font-size: 7px; }
   .benefit-chart-canvas { height: 230px; }
   .chart-tooltip { display: none; }
-  .benefit-document { width: 100%; margin-top: 0; padding-top: 0; break-before: page; }
+  .benefit-document { width: 100%; margin-top: 0; padding: 9mm 8mm 0; break-before: page; }
   .benefit-title { break-inside: avoid; }
   .benefit-title h2 { font-size: 14px; line-height: 1.25; }
   .benefit-title p { margin: 5px 0 8px; font-size: 9px; }

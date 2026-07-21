@@ -27,11 +27,14 @@
 .prem-tbl td.lbl{text-align:left;font-weight:500}
 .prem-tbl tr.total td{border-top:2px solid var(--az-line);border-bottom:0;font-weight:700;color:var(--az-ink-strong);font-size:15px;padding-top:11px}
 .prem-tbl tr.sub-h td{color:var(--az-muted);font-size:11.5px;font-weight:600;padding-top:12px;padding-bottom:3px;letter-spacing:.4px}
-.tbl-scroll{overflow:visible;border:1px solid var(--az-line);border-radius:10px}
+.tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--az-line);border-radius:10px}
 .annu-band td{background:var(--az-blue-l,#eef4ff)!important}
-.collapse-h{padding:13px 18px;display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none}
-.collapse-h:hover{background:var(--az-soft)}
-.collapse-h .arr{margin-left:auto;transition:.2s;color:var(--az-muted)}
+.collapse-h{margin:0;font-size:inherit;font-weight:inherit}
+.collapse-btn{width:100%;padding:13px 18px;display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none;background:none;border:0;font:inherit;text-align:left;color:inherit}
+.collapse-btn:hover{background:var(--az-soft)}
+.collapse-btn:focus-visible{outline:2px solid var(--az-teal);outline-offset:-2px;background:var(--az-soft)}
+.collapse-ttl{font-size:15.5px;font-weight:600;color:var(--az-navy)}
+.collapse-btn .arr{margin-left:auto;transition:.2s;color:var(--az-muted)}
 .collapse.open .arr{transform:rotate(180deg)}
 .collapse-b{display:none;padding:0 18px 18px}
 .collapse.open .collapse-b{display:block}
@@ -40,8 +43,16 @@
 .tax-out{background:var(--az-blue-l,#eef4ff);border:1px solid #d6e2fb;border-radius:12px;padding:14px;margin-top:6px}
 .tax-out .big{font-size:24px;font-weight:600;color:var(--az-blue-d,#1d4ed8)}
 
+/* @page margin:0 keeps the browser from printing URL/date/page-number into the PDF;
+   simulate paper margins with wrapper padding instead */
+@page{size:A4 portrait;margin:0}
 @media print{
   .resbar,.calc-bar{display:none!important}
   #viewInput{display:none!important}
-  .tbl-scroll{max-height:none;overflow:visible}.collapse-b{display:block!important}
+  .az-wrap{padding:8mm 8mm 4mm}
+  .tbl-scroll{max-height:none;overflow:visible;border:0}.collapse-b{display:block!important}
+  /* long ~75-row yearly table must paginate cleanly */
+  .az-card{break-inside:auto}
+  thead{display:table-header-group}
+  tr{break-inside:avoid}
 }

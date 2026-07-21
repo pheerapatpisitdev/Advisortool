@@ -3,7 +3,6 @@
 <head>
   <link rel="stylesheet" href="../assets/pin-gate.css" />
   <script src="../assets/pin-gate.config.js"></script>
-  <script src="../assets/supabase.min.js"></script>
   <script src="../assets/pin-gate.js?v=20260719-2"></script>
   <script src="../assets/click-sound.js"></script>
 <meta charset="UTF-8">
@@ -28,7 +27,7 @@
   </div>
 </header>
 <div class="az-wrap">
-  <div class="az-steps" id="isSteps" style="max-width:760px;margin:0 auto">
+  <div class="az-steps is-steps-wrap" id="isSteps">
     <div class="az-s az-active" id="stepA"><span class="az-n">1</span> กรอกข้อมูล</div>
     <div class="az-bar" id="stepBar"></div>
     <div class="az-s" id="stepB"><span class="az-n">2</span> ผลการคำนวณ</div>
@@ -84,7 +83,7 @@
         <div class="rider" id="r_pb">
           <div class="rh"><div><div class="name">PB – พีบี (ผู้ชำระเบี้ย)</div>
             <div class="desc">คุ้มครองผู้ชำระเบี้ย กรณีเสียชีวิต/ทุพพลภาพ (+โรคร้ายแรง)</div></div>
-            <label class="switch"><input type="checkbox" data-r="pb"><span class="slider"></span></label></div>
+            <label class="switch"><input type="checkbox" data-r="pb" aria-label="เปิด/ปิด PB – พีบี (ผู้ชำระเบี้ย)"><span class="slider"></span></label></div>
           <div class="body">
             <label class="fld"><span class="lab">แผน</span>
               <div class="az-seg" id="pbPlan"><button data-v="fit" class="on">PB Fit</button><button data-v="beyond">PB Beyond</button></div></label>
@@ -99,7 +98,7 @@
         <div class="rider" id="r_ap">
           <div class="rh"><div><div class="name">AP – อุบัติเหตุ</div>
             <div class="desc">ความคุ้มครองการเสียชีวิต/สูญเสียอวัยวะจากอุบัติเหตุ</div></div>
-            <label class="switch"><input type="checkbox" data-r="ap"><span class="slider"></span></label></div>
+            <label class="switch"><input type="checkbox" data-r="ap" aria-label="เปิด/ปิด AP – อุบัติเหตุ"><span class="slider"></span></label></div>
           <div class="body"><label class="fld"><span class="lab">จำนวนเงินเอาประกันภัย AP (บาท)</span>
             <input type="text" inputmode="numeric" class="money" id="apSA" value="500,000"></label></div>
         </div>
@@ -107,7 +106,7 @@
         <div class="rider" id="r_ecare">
           <div class="rh"><div><div class="name">ECARE</div>
             <div class="desc">ความคุ้มครองอุบัติเหตุเพิ่มเติม (อายุ 16–60)</div></div>
-            <label class="switch"><input type="checkbox" data-r="ecare"><span class="slider"></span></label></div>
+            <label class="switch"><input type="checkbox" data-r="ecare" aria-label="เปิด/ปิด ECARE"><span class="slider"></span></label></div>
           <div class="body"><label class="fld"><span class="lab">จำนวนเงินเอาประกันภัย ECARE (บาท)</span>
             <input type="text" inputmode="numeric" class="money" id="ecareSA" value="500,000"></label></div>
         </div>
@@ -115,7 +114,7 @@
         <div class="rider" id="r_meb">
           <div class="rh"><div><div class="name">MEB – ชดเชยรายวัน</div>
             <div class="desc">ค่าชดเชยรายวันกรณีนอนโรงพยาบาล (อายุ 6–65)</div></div>
-            <label class="switch"><input type="checkbox" data-r="meb"><span class="slider"></span></label></div>
+            <label class="switch"><input type="checkbox" data-r="meb" aria-label="เปิด/ปิด MEB – ชดเชยรายวัน"><span class="slider"></span></label></div>
           <div class="body"><label class="fld"><span class="lab">แผนความคุ้มครอง (บาท/วัน)</span>
             <select id="mebPlan"><option value="500">500</option><option value="1000">1,000</option>
             <option value="2000">2,000</option><option value="3000">3,000</option>
@@ -125,7 +124,7 @@
         <div class="rider" id="r_pls">
           <div class="rh"><div><div class="name">PLS10 – ปลดหนี้</div>
             <div class="desc">คุ้มครองชีวิตเพิ่มเติม 10 ปี (อายุ 20–59)</div></div>
-            <label class="switch"><input type="checkbox" data-r="pls"><span class="slider"></span></label></div>
+            <label class="switch"><input type="checkbox" data-r="pls" aria-label="เปิด/ปิด PLS10 – ปลดหนี้"><span class="slider"></span></label></div>
           <div class="body"><label class="fld"><span class="lab">จำนวนเงินเอาประกันภัย PLS (บาท)</span>
             <input type="text" inputmode="numeric" class="money" id="plsSA" value="500,000"></label></div>
         </div>
@@ -139,7 +138,7 @@
   <div id="screenResult" style="display:none">
     <div class="resbar">
       <button class="az-btn az-btn-back" id="backBtn">←&nbsp; แก้ไขข้อมูล / คำนวณใหม่</button>
-      <button class="az-btn az-btn-ghost" id="printBtn">🖨️ พิมพ์ / บันทึก PDF</button>
+      <button class="az-btn az-btn-ghost" id="printBtn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-3px;margin-right:6px"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>พิมพ์ / บันทึก PDF</button>
     </div>
     <div class="az-card" id="results">
       <div class="az-card__b">
@@ -291,16 +290,12 @@ function calcAll(inp){
 
   // ----- determine SA -----
   let SA, annBase, modeBase;
-  if(inp.dir==='sa'){
-    SA=inp.sa;
-    if(SA<100000){out.err.push('จำนวนเงินเอาประกันภัยขั้นต่ำ 100,000 บาท');return out;}
-    if(SA>5000000){out.err.push('จำนวนเงินเอาประกันภัยสูงสุด 5,000,000 บาท');return out;}
-  }else{
-    const annTarget=inp.targetPrem/M.f;            // annualize the per-mode target
-    SA=rup(annTarget*1000/rate,0);
-    if(SA<100000){out.err.push('เบี้ยที่ระบุต่ำเกินไป (ทุนประกันที่คำนวณได้ต่ำกว่า 100,000 บาท)');return out;}
-    if(SA>5000000){out.err.push('เบี้ยที่ระบุสูงเกินไป (ทุนประกันที่คำนวณได้เกิน 5,000,000 บาท) — โปรดลดเบี้ย');return out;}
-  }
+  // SA always comes straight from the #sa field: typing เบี้ยสัญญาหลัก (#targetPrem) writes its
+  // computed sum-assured back into #sa via syncSA, so there is no separate reverse-calc direction.
+  // (The old inp.dir!=='sa' branch was dead code — dirV was hard-wired to 'sa' — and has been removed.)
+  SA=inp.sa;
+  if(SA<100000){out.err.push('จำนวนเงินเอาประกันภัยขั้นต่ำ 100,000 บาท');return out;}
+  if(SA>5000000){out.err.push('จำนวนเงินเอาประกันภัยสูงสุด 5,000,000 บาท');return out;}
   annBase=rdown(rate*SA/1000,2);
   modeBase=rdown(rate*SA/1000*M.f,2);
   const annualizedBase=rdown(modeBase*M.n,2); // total base premium paid per year (for cumulative)
@@ -388,9 +383,13 @@ function calcAll(inp){
 /* ===================== UI ===================== */
 function $(id){return document.getElementById(id);}
 function moneyVal(id){return +(($(id).value||'').replace(/[^0-9.]/g,''))||0;}
-function seg(container,cb){container.querySelectorAll('button').forEach(b=>b.onclick=()=>{
-  container.querySelectorAll('button').forEach(x=>x.classList.remove('on'));b.classList.add('on');cb&&cb(b.dataset.v);});}
-let sexV='ชาย',dirV='sa',pbPlanV='fit',productV='iShield 10',modeV='รายปี';
+function seg(container,cb){
+  const btns=container.querySelectorAll('button');
+  const syncAria=active=>btns.forEach(x=>x.setAttribute('aria-pressed',x===active?'true':'false'));
+  syncAria(container.querySelector('button.on'));
+  btns.forEach(b=>b.onclick=()=>{
+    btns.forEach(x=>x.classList.remove('on'));b.classList.add('on');syncAria(b);cb&&cb(b.dataset.v);});}
+let sexV='ชาย',pbPlanV='fit',productV='iShield 10',modeV='รายปี';
 seg($('sexSeg'),v=>{sexV=v;syncPrem();});
 seg($('pbPlan'),v=>pbPlanV=v);
 seg($('productSeg'),v=>{productV=v;fillAgeOptions(PROD[v].maxIssue);syncPrem();});
@@ -408,7 +407,7 @@ document.querySelectorAll('.rider input[type=checkbox]').forEach(c=>c.onchange=(
 
 function gather(){
   return {name:'ผู้เอาประกันภัย',age:+$('age').value,sex:sexV,product:productV,
-    mode:modeV,dir:dirV,sa:moneyVal('sa'),targetPrem:moneyVal('targetPrem'),occ:$('occ').value,
+    mode:modeV,sa:moneyVal('sa'),targetPrem:moneyVal('targetPrem'),occ:$('occ').value,
     pb:$('r_pb').querySelector('input').checked,pbPlan:pbPlanV,payerAge:+$('payerAge').value,payerSex:$('payerSex').value,
     ap:$('r_ap').querySelector('input').checked,apSA:moneyVal('apSA'),
     ecare:$('r_ecare').querySelector('input').checked,ecareSA:moneyVal('ecareSA'),
@@ -450,7 +449,7 @@ function _renderCore(){
   </div>`;
   // premium breakdown
   h+=`<div class="sech"><span class="bar"></span>สรุปเบี้ยประกันภัย</div>`;
-  h+=`<table class="tb"><thead><tr><th>รายการ</th><th>ทุนประกัน</th><th>เบี้ย/ปี</th><th>เบี้ย (${modeLab})</th></tr></thead><tbody>`;
+  h+=`<table class="tb"><thead><tr><th scope="col">รายการ</th><th scope="col">ทุนประกัน</th><th scope="col">เบี้ย/ปี</th><th scope="col">เบี้ย (${modeLab})</th></tr></thead><tbody>`;
   h+=`<tr><td>สัญญาหลัก ${R.product} <span class="tag">เรต ${fmt(R.rate,2)}</span></td><td>${fmt(R.SA)}</td><td>${fmt(R.annBase,2)}</td><td>${fmt(R.modeBase,2)}</td></tr>`;
   R.riders.forEach(r=>{h+=`<tr><td>${r.name}${r.note?` <span class="mini">${r.note}</span>`:''}</td><td>${fmt(r.sa)}</td><td>${fmt(r.ann,2)}</td><td>${fmt(r.mode,2)}</td></tr>`;});
   h+=`<tr class="total"><td>รวมทั้งหมด</td><td></td><td>${fmt(R.totAnn,2)}</td><td>${fmt(R.totMode,2)}</td></tr>`;
@@ -515,13 +514,13 @@ function _renderCore(){
   h+=`<div class="illus-wrap screen-only"><table class="benefit-table">`
     +`<colgroup><col><col><col><col><col><col><col></colgroup>`
     +`<thead>`
-    +`<tr><th rowspan="2">อายุ</th><th rowspan="2">ปี<br>กรมธรรม์ที่</th><th colspan="2">เบี้ยประกันภัยสัญญาหลัก</th>`
-    +`<th rowspan="2">ความคุ้มครองกรณีเสียชีวิต<br><small>(ณ สิ้นปีกรมธรรม์)</small></th>`
-    +`<th rowspan="2">เงินค่าเวนคืนกรมธรรม์ประกันภัย<br><small>(ณ สิ้นปีกรมธรรม์)</small></th>`
-    +`<th rowspan="2">กำไร<br><small>(เวนคืน − เบี้ยสะสม)</small></th></tr>`
-    +`<tr><th>ต่อปี</th><th>สะสม</th></tr>`
+    +`<tr><th scope="col" rowspan="2">อายุ</th><th scope="col" rowspan="2">ปี<br>กรมธรรม์ที่</th><th scope="colgroup" colspan="2">เบี้ยประกันภัยสัญญาหลัก</th>`
+    +`<th scope="col" rowspan="2">ความคุ้มครองกรณีเสียชีวิต<br><small>(ณ สิ้นปีกรมธรรม์)</small></th>`
+    +`<th scope="col" rowspan="2">เงินค่าเวนคืนกรมธรรม์ประกันภัย<br><small>(ณ สิ้นปีกรมธรรม์)</small></th>`
+    +`<th scope="col" rowspan="2">กำไร<br><small>(เวนคืน − เบี้ยสะสม)</small></th></tr>`
+    +`<tr><th scope="col">ต่อปี</th><th scope="col">สะสม</th></tr>`
     +`</thead><tbody>${rowsHtml.join('')}</tbody></table></div>`;
-  const theadP=`<thead><tr><th>อายุ</th><th>ปี</th><th>เบี้ยต่อปี</th><th>เบี้ยสะสม</th><th>ความคุ้มครอง</th><th>เวนคืน</th><th>กำไร</th></tr></thead>`;
+  const theadP=`<thead><tr><th scope="col">อายุ</th><th scope="col">ปี</th><th scope="col">เบี้ยต่อปี</th><th scope="col">เบี้ยสะสม</th><th scope="col">ความคุ้มครอง</th><th scope="col">เวนคืน</th><th scope="col">กำไร</th></tr></thead>`;
   // ~33 rows fit one A4 column under the chart; use 3 columns for very long tables (young ages)
   const nCols=Math.max(2,Math.ceil(rowsHtml.length/33));
   const perCol=Math.ceil(rowsHtml.length/nCols);
@@ -554,7 +553,10 @@ function showScreen(w){
   $('screenResult').style.display = (w==='result')?'block':'none';
   try{window.scrollTo({top:0,behavior:'smooth'});}catch(_){try{window.scrollTo(0,0);}catch(__){}}
 }
-$('calcBtn').onclick=function(){ if(render()) showScreen('result'); };
+$('calcBtn').onclick=function(){
+  if(render()){ showScreen('result'); }
+  else { const wbI=$('warnBoxInput'); if(wbI) wbI.scrollIntoView({behavior:'smooth',block:'center'}); }
+};
 $('backBtn').onclick=function(){ showScreen('input'); };
 $('printBtn').onclick=function(){ azPrint(); };
 // age dropdown — rebuild options 0..maxIssue, preserving the current pick if still valid

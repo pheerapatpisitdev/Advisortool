@@ -3,11 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../assets/pin-gate.css" />
+<script src="../assets/pin-gate.config.js"></script>
+<script src="../assets/pin-gate.js?v=20260719-2"></script>
+<script src="../assets/click-sound.js"></script>
+<link rel="stylesheet" href="../assets/global-header.css?v=5" />
 <title>ไลฟ์เทรเชอร์ — โปรแกรมคำนวณเบี้ยประกัน A2026-1</title>
-<link rel="icon" type="image/png" href="../../assets/favicon.png?v=20260719">
+<link rel="icon" type="image/png" href="../assets/favicon.png?v=20260719">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Thai:wght@400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap');
 :root{
@@ -117,6 +122,10 @@ input[type=text],input[type=number],select{
 select{color-scheme:light}
 input:focus,select:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(37,99,235,.12)}
 input:disabled,select:disabled{background:var(--panel);color:#9aa1ab;cursor:not-allowed}
+/* iOS Safari auto-zooms any focused field with font-size < 16px — force >=16px on mobile */
+@media(max-width:640px){
+  input[type=text],input[type=number],select{font-size:16px}
+}
 input::placeholder{color:#9aa1ab}
 .hint{font-size:.72rem;color:var(--muted);margin-top:.22rem}
 .errmsg{font-size:.76rem;color:var(--err);margin-top:.24rem;font-weight:600}
@@ -258,6 +267,7 @@ table.ill tr:hover td{background:var(--blue-l)}
 </style>
 </head>
 <body>
+<script src="../assets/global-header.js?v=6"></script>
 
 <header class="app">
   <div class="brandline">
@@ -273,21 +283,21 @@ table.ill tr:hover td{background:var(--blue-l)}
     <div class="sec">
       <h2 class="numbered"><span class="secnum">1</span>ข้อมูลผู้เอาประกันภัย</h2>
       <div class="field">
-        <label class="f">ชื่อผู้เอาประกันภัย</label>
+        <label class="f" for="name">ชื่อผู้เอาประกันภัย</label>
         <input type="text" id="name" value="คุณคนพิเศษ">
       </div>
       <div class="field">
-        <label class="f">อายุ (ปี)</label>
+        <label class="f" for="age">อายุ (ปี)</label>
         <select id="age"></select>
         <div class="field-cap hint">รับประกันอายุ 1 เดือน – 70 ปี (เลือก 0 สำหรับต่ำกว่า 1 ปี)</div>
       </div>
       <div class="field">
-        <label class="f">เพศ</label>
-        <div class="segmented" id="gender"></div>
+        <label class="f" id="genderLbl">เพศ</label>
+        <div class="segmented" id="gender" aria-labelledby="genderLbl"></div>
       </div>
       <div class="field">
-        <label class="f">งวดการชำระเบี้ย</label>
-        <div class="segmented" id="mode"></div>
+        <label class="f" id="modeLbl">งวดการชำระเบี้ย</label>
+        <div class="segmented" id="mode" aria-labelledby="modeLbl"></div>
         <div class="field-cap hint" id="modehint"></div>
       </div>
     </div>
@@ -295,16 +305,16 @@ table.ill tr:hover td{background:var(--blue-l)}
     <div class="sec">
       <h2 class="numbered"><span class="secnum">2</span>แบบประกัน &amp; จำนวนเงินเอาประกันภัย</h2>
       <div class="field">
-        <label class="f">แผนการชำระเบี้ย</label>
-        <div class="segmented" id="plan"></div>
+        <label class="f" id="planLbl">แผนการชำระเบี้ย</label>
+        <div class="segmented" id="plan" aria-labelledby="planLbl"></div>
       </div>
       <div class="grid g2">
         <div>
-          <label class="f">จำนวนเงินเอาประกันภัย (บาท)</label>
+          <label class="f" for="sa">จำนวนเงินเอาประกันภัย (บาท)</label>
           <input type="text" id="sa" inputmode="numeric" value="10,000,000">
         </div>
         <div>
-          <label class="f">เบี้ยสัญญาหลัก / งวด (บาท)</label>
+          <label class="f" for="premInput">เบี้ยสัญญาหลัก / งวด (บาท)</label>
           <input type="text" id="premInput" inputmode="numeric">
         </div>
       </div>
@@ -323,20 +333,20 @@ table.ill tr:hover td{background:var(--blue-l)}
         <div class="chips" id="waiver"></div>
         <div class="grid g3" id="payorbox" style="margin-top:.85rem">
           <div>
-            <label class="f" id="waiverVariantLabel">แบบความคุ้มครอง</label>
+            <label class="f" id="waiverVariantLabel" for="waiverVariant">แบบความคุ้มครอง</label>
             <select id="waiverVariant"></select>
           </div>
           <div class="payor-only">
-            <label class="f">อายุผู้ชำระเบี้ย (ปี)</label>
+            <label class="f" for="payorAge">อายุผู้ชำระเบี้ย (ปี)</label>
             <input type="number" id="payorAge" min="0" max="99" value="40">
             <div class="hint">รับอายุ 20 – 70 ปี</div>
           </div>
           <div class="payor-only">
-            <label class="f">เพศผู้ชำระเบี้ย</label>
-            <div class="chips" id="payorGender"></div>
+            <label class="f" id="payorGenderLbl">เพศผู้ชำระเบี้ย</label>
+            <div class="chips" id="payorGender" aria-labelledby="payorGenderLbl"></div>
           </div>
           <div>
-            <label class="f">ขั้นอาชีพ (ตัวคูณ)</label>
+            <label class="f" for="waiverMult">ขั้นอาชีพ (ตัวคูณ)</label>
             <select id="waiverMult"><option value="1">ขั้น 1–2 (×1)</option><option value="1.5">×1.5</option><option value="2">×2</option></select>
           </div>
         </div>
@@ -873,24 +883,28 @@ const fmt2 = n => (typeof n==='number') ? n.toLocaleString('th-TH',{minimumFract
 const parseNum = s => { const n = Number(String(s).replace(/[,\s]/g,'')); return isFinite(n)&&n>0 ? n : ''; };
 
 function chips(elId, options, cur, onpick){
-  const el = $(elId); el.innerHTML = '';
+  const el = $(elId); el.innerHTML = ''; el.setAttribute('role','radiogroup');
   options.forEach(o=>{
     const b = document.createElement('button');
-    b.type='button'; b.className='chip'+(o===cur?' on':''); b.textContent=o;
+    const on = o===cur;
+    b.type='button'; b.setAttribute('role','radio'); b.setAttribute('aria-checked',String(on));
+    b.className='chip'+(on?' on':''); b.textContent=o;
     b.onclick=()=>{ onpick(o); render(); };
     el.appendChild(b);
   });
 }
 /* ปุ่มแบบ segmented: options = [{val,label,sub?,disabled?}] หรือ [string,...] */
 function segmented(elId, options, cur, onpick){
-  const el = $(elId); el.innerHTML = '';
+  const el = $(elId); el.innerHTML = ''; el.setAttribute('role','radiogroup');
   options.forEach(o=>{
     const opt = (typeof o==='string') ? {val:o,label:o} : o;
     const b = document.createElement('button');
-    b.type='button';
-    b.className = String(opt.val)===String(cur) ? 'on' : '';
+    b.type='button'; b.setAttribute('role','radio');
+    const on = String(opt.val)===String(cur);
+    b.className = on ? 'on' : '';
+    b.setAttribute('aria-checked', String(on));
     b.innerHTML = opt.label + (opt.sub?`<small>${opt.sub}</small>`:'');
-    if(opt.disabled) b.disabled=true;
+    if(opt.disabled){ b.disabled=true; b.setAttribute('aria-disabled','true'); }
     else b.onclick=()=>{ onpick(opt.val); };
     el.appendChild(b);
   });
@@ -963,12 +977,14 @@ function buildStatic(){
   chips('payorGender',['ชาย','หญิง'],state.payorGender,v=>state.payorGender=v);
   const age = state.age===''?0:Number(state.age);
   // waiver chips
-  const wEl = $('waiver'); wEl.innerHTML='';
+  const wEl = $('waiver'); wEl.innerHTML=''; wEl.setAttribute('role','radiogroup'); wEl.setAttribute('aria-label','ยกเว้นเบี้ย');
   [['none','ไม่ซื้อ'],['pb','PB — ผู้ชำระเบี้ย'],['wp','WP — ผู้เอาประกัน']].forEach(([v,t])=>{
     const b=document.createElement('button'); b.type='button';
-    b.className='chip'+(state.waiver===v?' on':''); b.textContent=t;
-    if(v==='wp'&&(age<16||age>70)){ b.disabled=true; b.style.opacity=.45; b.title='WP รับอายุ 16–70 ปี'; }
-    if(v==='pb'&&age>70){ b.disabled=true; b.style.opacity=.45; }
+    const on = state.waiver===v;
+    b.setAttribute('role','radio'); b.setAttribute('aria-checked',String(on));
+    b.className='chip'+(on?' on':''); b.textContent=t;
+    if(v==='wp'&&(age<16||age>70)){ b.disabled=true; b.setAttribute('aria-disabled','true'); b.style.opacity=.45; b.title='WP รับอายุ 16–70 ปี'; }
+    if(v==='pb'&&age>70){ b.disabled=true; b.setAttribute('aria-disabled','true'); b.style.opacity=.45; }
     b.onclick=()=>{ state.waiver=v; buildStatic(); render(); };
     wEl.appendChild(b);
   });
@@ -1323,7 +1339,7 @@ function printQuote(){
     </div>
     <div class="qfoot"><span>ไลฟ์เทรเชอร์ เวอร์ชั่น A2026-1</span><span>หน้า 2</span></div>
   </div>`;
-  window.print();
+  if (window.azPrint) window.azPrint(); else window.print();
 }
 
 /* ---------- init ---------- */

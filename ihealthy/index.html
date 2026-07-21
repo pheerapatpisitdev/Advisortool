@@ -3,7 +3,6 @@
 <head>
   <link rel="stylesheet" href="../assets/pin-gate.css" />
   <script src="../assets/pin-gate.config.js"></script>
-  <script src="../assets/supabase.min.js"></script>
   <script src="../assets/pin-gate.js?v=20260719-2"></script>
   <script src="../assets/click-sound.js"></script>
   <meta charset="utf-8" />
@@ -15,7 +14,9 @@
   <link rel="manifest" href="manifest.json" />
   <link rel="stylesheet" href="styles.css" />
   <style>
-    body { font-family: "Google Sans", system-ui, -apple-system, "Segoe UI", "IBM Plex Sans Thai", sans-serif; }
+    body { font-family: "IBM Plex Sans Thai", system-ui, -apple-system, "Segoe UI", sans-serif; }
+    /* iOS auto-zooms a focused control under 16px — force 16px on the selects on mobile */
+    @media (max-width: 767px) { #age-select, #freq-select { font-size: 16px; } }
     .ihealthy-scope * { border-color: hsl(60 3% 8% / 1); }
     table { border-collapse: collapse; }
     /* Dropdown menu */
@@ -95,7 +96,7 @@
 </div>
 
 <!-- toast -->
-<div id="ih-toast" class="fixed bottom-4 right-4 z-[100] hidden max-w-xs rounded-lg bg-brand-ink px-4 py-3 text-sm text-white shadow-lg print:hidden"></div>
+<div id="ih-toast" role="status" aria-live="polite" class="fixed bottom-4 right-4 z-[100] hidden max-w-xs rounded-lg bg-brand-ink px-4 py-3 text-sm text-white shadow-lg print:hidden"></div>
 
 <script src="data.js"></script>
 <script src="html2canvas.min.js" defer></script>
@@ -198,7 +199,7 @@
         ' <span class="hidden md:inline">' + esc(t("as_incurred")) + "</span></div>";
     }
     if (isNotCovered(value)) {
-      return '<span class="text-muted-foreground/80 text-[9px] sm:text-[10px] md:text-sm">' + esc(t("not_covered")) + "</span>";
+      return '<span class="text-muted-foreground/80 text-[11px] sm:text-xs md:text-sm">' + esc(t("not_covered")) + "</span>";
     }
     var displayValue = value.replace(/บาท/g, t("baht"));
     if (state.language !== "th" && value.indexOf("คืน") !== -1) {
@@ -206,9 +207,9 @@
     }
     if (value.indexOf("6,000") !== -1 || value.indexOf("12,000") !== -1) {
       return '<div class="flex items-center justify-center gap-0.5 md:gap-2">' + checkSvg +
-        ' <span class="text-foreground text-[9px] sm:text-xs md:text-sm">' + esc(displayValue) + "</span></div>";
+        ' <span class="text-foreground text-[11px] sm:text-xs md:text-sm">' + esc(displayValue) + "</span></div>";
     }
-    return '<span class="text-foreground text-[9px] sm:text-[10px] md:text-sm">' + esc(displayValue) + "</span>";
+    return '<span class="text-foreground text-[11px] sm:text-xs md:text-sm">' + esc(displayValue) + "</span>";
   }
 
   // per-plan vertical merge of identical AS_INCURRED / NOT_COVERED runs
@@ -261,8 +262,8 @@
     if (benefit.id === "20" && state.age >= 66) return "";
 
     var cellContent = '<div class="flex gap-0.5 md:gap-4">' +
-      '<span class="text-muted-foreground w-3 md:w-4 flex-shrink-0 text-[9px] sm:text-[10px] md:text-sm">' + esc(benefit.id || "") + "</span>" +
-      '<span class="flex-1 text-[9px] sm:text-[10px] md:text-sm leading-tight">' + esc(benefit.name[lang]) + "</span></div>";
+      '<span class="text-muted-foreground w-3 md:w-4 flex-shrink-0 text-[11px] sm:text-xs md:text-sm">' + esc(benefit.id || "") + "</span>" +
+      '<span class="flex-1 text-[11px] sm:text-xs md:text-sm leading-tight">' + esc(benefit.name[lang]) + "</span></div>";
     if (benefit.subBenefit) {
       cellContent += '<p class="ih-sub text-[9px] sm:text-[10px] md:text-xs text-muted-foreground mt-0.5 md:mt-1 ml-3 md:ml-10 print:hidden">' + esc(benefit.subBenefit[lang]) + "</p>";
     }
@@ -374,7 +375,7 @@
     // ---- selector controls ----
     var genderBtn = function (val, id) {
       var active = state.gender === val;
-      return '<div class="flex items-center"><button data-gender="' + val + '" id="' + id + '" ' +
+      return '<div class="flex items-center"><button data-gender="' + val + '" id="' + id + '" aria-pressed="' + active + '" ' +
         'class="ih-gender flex w-full min-h-[44px] items-center justify-center gap-2 rounded-lg md:rounded-xl border px-3 py-2.5 md:py-3 text-xs md:text-base font-medium cursor-pointer transition-colors ' +
         (active ? "border-primary bg-primary text-primary-foreground hover:bg-primary/90" : "border-border/60 bg-background text-muted-foreground hover:bg-muted") + '">' +
         '<svg class="h-4 w-4 md:h-5 md:w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>' +
@@ -395,6 +396,7 @@
     var globeSvg = '<svg class="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>';
     var share2Svg = '<svg class="h-3 w-3 md:h-4 md:w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>';
     var printSvg = '<svg class="h-3 w-3 md:h-4 md:w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>';
+    var cameraSvg = '<svg class="h-3 w-3 md:h-4 md:w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>';
 
     // language menu
     var menuItems = languages.map(function (l) {
@@ -404,9 +406,9 @@
 
     // ---- table header ----
     var headHtml = '<tr class="hover:bg-transparent border-b border-border/60">' +
-      '<th class="ih-print-lg font-semibold text-left bg-gradient-to-b from-brand-ink to-brand-blue-deep text-brand-cream w-[40%] pl-1 pr-1 md:pl-6 border-r border-white/20 text-[9px] sm:text-[10px] md:text-sm tracking-wide py-0.5 md:py-0">' + esc(t("benefit_header")) + "</th>";
+      '<th scope="col" class="ih-print-lg font-semibold text-left bg-gradient-to-b from-brand-ink to-brand-blue-deep text-brand-cream w-[40%] pl-1 pr-1 md:pl-6 border-r border-white/20 text-[9px] sm:text-[10px] md:text-sm tracking-wide py-0.5 md:py-0">' + esc(t("benefit_header")) + "</th>";
     displayedPlans.forEach(function (plan) {
-      headHtml += '<th class="font-semibold text-center w-[12%] sm:w-[14%] md:w-[15%] ' + planHeaderStyles[plan] + ' border-l border-white/20 p-0">' +
+      headHtml += '<th scope="col" class="font-semibold text-center w-[12%] sm:w-[14%] md:w-[15%] ' + planHeaderStyles[plan] + ' border-l border-white/20 p-0">' +
         '<div class="flex flex-col items-center justify-center p-0.5 md:py-2 h-full"><span class="text-[9px] sm:text-xs md:text-lg">' +
         esc(planDetails[plan].name[lang].toUpperCase()) + "</span></div></th>";
     });
@@ -498,7 +500,7 @@
         '<button id="btn-line" class="inline-flex items-center gap-1.5 md:gap-2 rounded-md bg-brand-green hover:bg-brand-green-dark text-white border-0 text-xs md:text-base min-h-[44px] h-8 md:h-10 px-3 md:px-4 font-medium">' +
           share2Svg + esc(t("share_all_plans_button_n").replace("{n}", String(displayedPlans.length))) + "</button>" +
         '<button id="btn-image" class="inline-flex items-center gap-1.5 md:gap-2 rounded-md bg-brand-blue hover:bg-brand-blue-dark text-white border-0 text-xs md:text-base min-h-[44px] h-8 md:h-10 px-3 md:px-4 font-medium">' +
-          share2Svg + " 📸 " + esc(t("share_image_button") || "Share as Image") + "</button>" +
+          cameraSvg + esc(t("share_image_button") || "Share as Image") + "</button>" +
         '<button id="btn-print" class="inline-flex items-center gap-1.5 md:gap-2 rounded-md bg-brand-ink hover:bg-brand-ink-light text-white border-0 text-xs md:text-base min-h-[44px] h-8 md:h-10 px-3 md:px-4 font-medium">' +
           printSvg + esc(t("print_pdf_button")) + "</button>" +
       "</div>" +
@@ -556,7 +558,7 @@
       window.open("https://line.me/R/msg/text/?" + encodeURIComponent(txt), "_blank", "noopener,noreferrer");
     });
 
-    document.getElementById("btn-print").addEventListener("click", function () { azPrint(); });
+    document.getElementById("btn-print").addEventListener("click", function () { if (window.azPrint) azPrint(); else window.print(); });
 
     document.getElementById("btn-image").addEventListener("click", handleShareImage);
   }
@@ -570,18 +572,30 @@
   function handleShareImage() {
     var el = document.getElementById("ih-table");
     if (!el || typeof html2canvas === "undefined") { showToast(t("share_image_error"), true); return; }
+    var btn = document.getElementById("btn-image");
+    var prevHtml = btn ? btn.innerHTML : "";
     var prev = { width: el.style.width, maxWidth: el.style.maxWidth, margin: el.style.margin };
+    function restore() {
+      el.style.width = prev.width; el.style.maxWidth = prev.maxWidth; el.style.margin = prev.margin;
+      if (btn) { btn.disabled = false; btn.removeAttribute("aria-busy"); btn.innerHTML = prevHtml; }
+    }
+    // html2canvas at scale:2 takes several seconds on mobile — lock the button so it can't re-fire
+    if (btn) { btn.disabled = true; btn.setAttribute("aria-busy", "true"); btn.textContent = "กำลังสร้างภาพ…"; }
     el.style.width = "1200px"; el.style.maxWidth = "1200px"; el.style.margin = "0 auto";
-    html2canvas(el, { backgroundColor: "#faf9f5", scale: 2, logging: false, useCORS: true })
-      .then(function (canvas) {
-        var link = document.createElement("a");
-        link.href = canvas.toDataURL("image/png");
-        link.download = "iHealthy-Ultra-Plan-" + state.age + "yo-" + state.gender + ".png";
-        link.click();
-        showToast(t("share_image_downloaded"));
-      })
-      .catch(function (err) { console.error(err); showToast(t("share_image_error"), true); })
-      .finally(function () { el.style.width = prev.width; el.style.maxWidth = prev.maxWidth; el.style.margin = prev.margin; });
+    try {
+      html2canvas(el, { backgroundColor: "#faf9f5", scale: 2, logging: false, useCORS: true })
+        .then(function (canvas) {
+          var link = document.createElement("a");
+          link.href = canvas.toDataURL("image/png");
+          link.download = "iHealthy-Ultra-Plan-" + state.age + "yo-" + state.gender + ".png";
+          link.click();
+          showToast(t("share_image_downloaded"));
+        })
+        .catch(function (err) { console.error(err); showToast(t("share_image_error"), true); })
+        .finally(restore);
+    } catch (err) {
+      console.error(err); showToast(t("share_image_error"), true); restore();
+    }
   }
 
   // ---- init ----

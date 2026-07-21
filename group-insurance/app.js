@@ -391,7 +391,7 @@
       '<p class="text-xs text-slate-100">' + esc(t('premiumNote')) + '</p>' +
       '<div class="flex flex-wrap gap-3">' +
       '<button type="button" data-openquote="' + product + '"' + (!result.withinLimit ? ' disabled' : '') + ' class="inline-flex items-center justify-center gap-2 rounded-lg px-5 py-2.5 font-semibold text-white shadow-sm transition-all hover:opacity-90 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed" style="background-color:' + GOLD + ';">' + icon('FileText', 'w-4 h-4') + ' ' + esc(t('quoteButton')) + '</button>' +
-      '<button type="button" data-shareline="' + product + '" class="inline-flex items-center justify-center gap-2 rounded-lg px-5 py-2.5 font-semibold text-white shadow-sm transition-all hover:opacity-90 active:scale-[0.98]" style="background-color:#06C755;">' + icon('Send', 'w-4 h-4') + ' ' + esc(t('shareToLine')) + '</button>' +
+      '<button type="button" data-shareline="' + product + '"' + (!result.withinLimit ? ' disabled' : '') + ' class="inline-flex items-center justify-center gap-2 rounded-lg px-5 py-2.5 font-semibold text-white shadow-sm transition-all hover:opacity-90 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed" style="background-color:#06C755;">' + icon('Send', 'w-4 h-4') + ' ' + esc(t('shareToLine')) + '</button>' +
       '</div></div></div></div>';
   }
 
@@ -470,7 +470,9 @@
     return '<div class="max-w-6xl mx-auto">' +
       '<header class="mb-6 animate-slide-up"><div class="text-center">' +
       '<h1 class="text-2xl font-bold text-slate-900 tracking-tight">' + esc(t('bizTypePageTitle')) + '</h1>' +
-      '<p class="text-slate-500 mt-0.5">' + esc(t('bizTypePageSubtitle')) + '</p></div></header>' +
+      '<p class="text-slate-500 mt-0.5">' + esc(t('bizTypePageSubtitle')) + '</p>' +
+      (lang === 'en' ? '<p class="mt-2 inline-block rounded-md bg-amber-50 border border-amber-200 px-3 py-1 text-xs text-amber-800">' + esc(t('bizTypeThOnly')) + '</p>' : '') +
+      '</div></header>' +
       '<div class="mb-6 animate-slide-up"><div class="relative max-w-md mx-auto">' +
       '<span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">' + icon('Search', 'w-5 h-5') + '</span>' +
       '<input type="text" id="biz-search" value="' + esc(state.bizSearch) + '" placeholder="' + esc(t('searchBizType')) + '" class="w-full pl-12 pr-4 py-3 rounded-lg border border-slate-200 bg-white text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-600 transition-all" aria-label="' + esc(t('searchBizType')) + '" /></div>' +
@@ -494,9 +496,9 @@
     return '<footer class="w-full border-t border-amber-100/60 bg-gradient-to-b from-amber-50/40 via-white to-white">' +
       '<div class="container mx-auto max-w-lg px-4 sm:px-6 py-6 sm:py-10 text-center">' +
       '<div class="mt-6 rounded-xl border border-slate-200 bg-slate-50/80 px-4 py-4 text-left">' +
-      '<p class="text-xs sm:text-sm text-slate-600 leading-relaxed">ข้อมูลนี้จัดทำขึ้นเพื่อให้ความรู้ทั่วไปเท่านั้น ไม่ถือเป็นคำแนะนำทางการเงินหรือการประกันภัยเฉพาะบุคคล</p>' +
-      '<p class="mt-2 text-xs sm:text-sm text-slate-600 leading-relaxed">เงื่อนไขความคุ้มครองเป็นไปตามที่ระบุในกรมธรรม์ของบริษัทประกันภัย</p>' +
-      '<p class="mt-2 text-xs sm:text-sm text-slate-600 leading-relaxed">ผู้สนใจควรศึกษารายละเอียดเพิ่มเติมหรือปรึกษาตัวแทนก่อนตัดสินใจ</p>' +
+      '<p class="text-xs sm:text-sm text-slate-600 leading-relaxed">' + esc(t('disclaimer1')) + '</p>' +
+      '<p class="mt-2 text-xs sm:text-sm text-slate-600 leading-relaxed">' + esc(t('disclaimer2')) + '</p>' +
+      '<p class="mt-2 text-xs sm:text-sm text-slate-600 leading-relaxed">' + esc(t('disclaimer3')) + '</p>' +
       '</div>' +
       (showHealthFooter ? '<div class="mt-8 text-center text-blue-600 text-xs pb-2"><p>' + esc(t('healthFooter')) + '</p><p class="mt-2 text-slate-500">' + esc(t('appBy')) + '</p></div>' : '') +
       '</div></footer>';
@@ -509,7 +511,7 @@
     var ctx = quoteContext(product);
     var docHtml = renderQuoteDocument(product, ctx, state.quote);
 
-    return '<div class="fixed inset-0 z-[300] flex items-center justify-center p-4">' +
+    return '<div data-quote-modal="1" role="dialog" aria-modal="true" class="fixed inset-0 z-[300] flex items-center justify-center p-4">' +
       '<div data-quoteclose="1" class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>' +
       '<div class="relative bg-white rounded-xl shadow-2xl w-full max-w-3xl max-h-[92vh] flex flex-col overflow-hidden">' +
       '<div class="flex items-center justify-between px-5 py-3.5 border-b border-slate-200" style="background-color:' + NAVY + ';">' +
@@ -694,11 +696,15 @@
       state.quote.customerName = '';
       state.quote.quoteNo = makeQuoteNo(now);
       state.quote.quoteDate = now.toLocaleDateString(lang === 'en' ? 'en-GB' : 'th-TH');
-      render(); return;
+      render();
+      // move focus into the modal for keyboard users
+      var modalEl = document.querySelector('[data-quote-modal]');
+      if (modalEl) { var f = modalEl.querySelector('input, button, a[href]'); if (f) f.focus(); }
+      return;
     }
-    if (el.hasAttribute('data-shareline')) { shareToLine(el.getAttribute('data-shareline')); return; }
+    if (el.hasAttribute('data-shareline')) { if (el.disabled) return; shareToLine(el.getAttribute('data-shareline')); return; }
     if (el.hasAttribute('data-quoteclose')) { state.quote.open = false; render(); return; }
-    if (el.hasAttribute('data-pdf')) { runPdf(el.getAttribute('data-pdf')); return; }
+    if (el.hasAttribute('data-pdf')) { runPdf(el.getAttribute('data-pdf'), el); return; }
   });
 
   // input/change handlers — update state WITHOUT full re-render where it would steal focus
@@ -741,6 +747,18 @@
     if (e.key === 'Escape') {
       if (state.quote.open) { state.quote.open = false; render(); }
       else if (state.sidebarOpen) { state.sidebarOpen = false; render(); }
+      return;
+    }
+    // focus trap inside the quote modal
+    if (e.key === 'Tab' && state.quote.open) {
+      var modal = document.querySelector('[data-quote-modal]');
+      if (!modal) return;
+      var f = modal.querySelectorAll('a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])');
+      if (!f.length) return;
+      var first = f[0], last = f[f.length - 1];
+      if (!modal.contains(document.activeElement)) { e.preventDefault(); first.focus(); }
+      else if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
     }
   });
 
@@ -806,6 +824,27 @@
   }
 
   var A4_W = 210, A4_H = 297;
+
+  // Find a near-white horizontal scanline within [top, top+height) so page slices
+  // land in the gaps between table rows instead of cutting through a row.
+  // Searches UPWARD from idealBottom; returns the ideal cut if none found or if
+  // the canvas is tainted (getImageData throws).
+  function snapCutToRowGap(ctx, canvasWidth, top, idealBottom, maxSearchPx) {
+    try {
+      for (var s = 0; s < maxSearchPx; s++) {
+        var y = idealBottom - 1 - s;
+        if (y <= top + 4) break;
+        var data = ctx.getImageData(0, y, canvasWidth, 1).data;
+        var white = true;
+        for (var i = 0; i < data.length; i += 4) {
+          if (data[i] < 245 || data[i + 1] < 245 || data[i + 2] < 245) { white = false; break; }
+        }
+        if (white) return y + 1; // cut just below the white line
+      }
+    } catch (e) { /* tainted canvas — fall back to fixed slicing */ }
+    return idealBottom;
+  }
+
   function buildPdfFromElement(el) {
     return html2canvas(el, { scale: 2, backgroundColor: '#ffffff', useCORS: true, logging: false }).then(function (canvas) {
       var jsPDF = window.jspdf.jsPDF;
@@ -816,12 +855,21 @@
         return doc;
       }
       var pageHeightPx = (A4_H * canvas.width) / A4_W;
+      var srcCtx = canvas.getContext('2d');
+      // search window: up to ~12% of a page height (capped) to find a row gap
+      var maxSearchPx = Math.min(Math.floor(pageHeightPx * 0.12), 220);
       var renderedPx = 0, pageIndex = 0;
       while (renderedPx < canvas.height) {
-        var sliceHeightPx = Math.min(pageHeightPx, canvas.height - renderedPx);
+        var idealBottom = Math.min(renderedPx + pageHeightPx, canvas.height);
+        var bottom = idealBottom;
+        if (idealBottom < canvas.height) {
+          bottom = snapCutToRowGap(srcCtx, canvas.width, renderedPx, idealBottom, maxSearchPx);
+        }
+        var sliceHeightPx = bottom - renderedPx;
         var pageCanvas = document.createElement('canvas');
         pageCanvas.width = canvas.width; pageCanvas.height = sliceHeightPx;
         var cx = pageCanvas.getContext('2d');
+        cx.fillStyle = '#ffffff'; cx.fillRect(0, 0, canvas.width, sliceHeightPx);
         cx.drawImage(canvas, 0, renderedPx, canvas.width, sliceHeightPx, 0, 0, canvas.width, sliceHeightPx);
         var sliceHeightMM = (sliceHeightPx * A4_W) / canvas.width;
         if (pageIndex > 0) doc.addPage();
@@ -831,18 +879,70 @@
       return doc;
     });
   }
-  function runPdf(kind) {
+
+  // one-time spinner keyframe (does not depend on tailwind's animate-spin being present)
+  function ensureSpinCss() {
+    if (document.getElementById('gi-spin-css')) return;
+    var st = document.createElement('style');
+    st.id = 'gi-spin-css';
+    st.textContent = '@keyframes gi-spin{to{transform:rotate(360deg)}}.gi-spin{animation:gi-spin .8s linear infinite}';
+    document.head.appendChild(st);
+  }
+  var SPINNER_SVG = '<svg class="gi-spin w-4 h-4" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" style="opacity:.25"/><path d="M4 12a8 8 0 0 1 8-8" stroke="currentColor" stroke-width="4" stroke-linecap="round" style="opacity:.9"/></svg>';
+
+  function showPdfError(msg) {
+    var el = document.getElementById('gi-pdf-error');
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'gi-pdf-error';
+      el.setAttribute('role', 'alert');
+      el.style.cssText = 'position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:400;max-width:90vw;padding:10px 18px;border-radius:10px;background:#b91c1c;color:#fff;font-size:14px;font-weight:600;box-shadow:0 6px 20px rgba(0,0,0,.25);opacity:0;transition:opacity .2s;';
+      document.body.appendChild(el);
+    }
+    el.textContent = msg;
+    requestAnimationFrame(function () { el.style.opacity = '1'; });
+    clearTimeout(el._t);
+    el._t = setTimeout(function () { el.style.opacity = '0'; }, 3200);
+  }
+
+  function runPdf(kind, btn) {
     var el = document.getElementById('quote-doc');
     if (!el) return;
+    if (btn && btn.disabled) return;
     var target = el.firstElementChild || el;
+
+    // Open the target tab synchronously (inside the user gesture) so iOS/Safari
+    // does not block the popup after the async html2canvas render finishes.
+    // NOTE: no 'noopener' here — we need the handle to set its location later.
+    var win = (kind === 'download') ? null : window.open('', '_blank');
+
+    ensureSpinCss();
+    var buttons = Array.prototype.slice.call(document.querySelectorAll('[data-pdf]'));
+    buttons.forEach(function (b) { b.disabled = true; });
+    var origHtml = btn ? btn.innerHTML : '';
+    if (btn) btn.innerHTML = SPINNER_SVG + ' ' + esc(t('pdfGenerating'));
+
     buildPdfFromElement(target).then(function (doc) {
       var product = state.quote.product;
       var prefix = product === 'pa' ? 'quote-group-pa' : 'quote-group-health';
       var filename = prefix + '-' + state.quote.quoteNo + '.pdf';
-      if (kind === 'download') { doc.save(filename); }
-      else if (kind === 'print') { doc.autoPrint(); window.open(doc.output('bloburl'), '_blank', 'noopener,noreferrer'); }
-      else { window.open(doc.output('bloburl'), '_blank', 'noopener,noreferrer'); }
-    }).catch(function (err) { console.error('PDF generation failed', err); });
+      if (kind === 'download') {
+        doc.save(filename);
+      } else {
+        if (kind === 'print') { try { doc.autoPrint(); } catch (e) {} }
+        var url = doc.output('bloburl');
+        if (win) { win.location = url; }
+        else { window.open(url, '_blank', 'noopener,noreferrer'); }
+      }
+    }).catch(function (err) {
+      console.error('PDF generation failed', err);
+      if (win) { try { win.close(); } catch (e) {} }
+      showPdfError(t('pdfError'));
+    }).then(function () {
+      // finally: restore buttons regardless of outcome
+      buttons.forEach(function (b) { b.disabled = false; });
+      if (btn) btn.innerHTML = origHtml;
+    });
   }
 
   // ===================== INIT =====================

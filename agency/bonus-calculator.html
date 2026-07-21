@@ -3,7 +3,6 @@
 <head>
   <link rel="stylesheet" href="../assets/pin-gate.css" />
   <script src="../assets/pin-gate.config.js"></script>
-  <script src="../assets/supabase.min.js"></script>
   <script src="../assets/pin-gate.js?v=20260719-2"></script>
   <script src="../assets/click-sound.js"></script>
   <meta charset="utf-8" />
@@ -31,6 +30,10 @@
     input[type="range"] { -webkit-appearance: none; appearance: none; height: 6px; border-radius: 9999px; background: hsl(var(--secondary)); }
     input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; border-radius: 9999px; background: hsl(var(--primary)); border: 2px solid hsl(var(--card)); cursor: pointer; }
     input[type="range"]::-moz-range-thumb { width: 18px; height: 18px; border-radius: 9999px; background: hsl(var(--primary)); border: 2px solid hsl(var(--card)); cursor: pointer; }
+    /* iOS: font-size < 16px on form controls triggers auto-zoom on focus — force >= 16px on mobile */
+    @media (max-width: 640px) {
+      input, select, textarea { font-size: 16px; }
+    }
   </style>
 <link rel="stylesheet" href="../assets/global-header.css?v=5" />
 </head>
@@ -44,9 +47,16 @@
     <div class="az-gh__menu" id="azGh">
       <button class="az-gh__btn" type="button" aria-haspopup="true" aria-expanded="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg><span>เครื่องมือ</span><svg class="az-gh__chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
       <div class="az-gh__panel" role="menu">
+          <a href="../life-treasure/" role="menuitem"><span class="az-gh__dot"></span>ไลฟ์เทรเชอร์ LifeTreasure</a>
+          <a href="../12pl/" role="menuitem"><span class="az-gh__dot"></span>12PL ชำระสั้น 12 ปี</a>
+          <a href="../easy-protect6/" role="menuitem"><span class="az-gh__dot"></span>Easy Protect 6</a>
+          <a href="../lifeready/" role="menuitem"><span class="az-gh__dot"></span>ไลฟ์เรดดี้ Life Ready</a>
+          <a href="../ismart80-6/" role="menuitem"><span class="az-gh__dot"></span>ไอสมาร์ท 80/6 iSmart 80/6</a>
           <a href="../global-saving/" role="menuitem"><span class="az-gh__dot"></span>Global Saving Plus 15/8</a>
+          <a href="../pension-smart95/" role="menuitem"><span class="az-gh__dot"></span>บำนาญ สมาร์ท 95</a>
           <a href="../ihealthy/" role="menuitem"><span class="az-gh__dot"></span>iHealthy Ultra</a>
           <a href="../ci123/" role="menuitem"><span class="az-gh__dot"></span>CI 123 ประกันโรคร้ายแรง</a>
+          <a href="../ishield/" role="menuitem"><span class="az-gh__dot"></span>iShield</a>
           <a href="../group-insurance/" role="menuitem"><span class="az-gh__dot"></span>ประกันกลุ่ม Group Insurance</a>
           <a href="../fhc/" role="menuitem"><span class="az-gh__dot"></span>FHC — แบบสอบถามคุณภาพชีวิต</a>
           <a href="../career-agent/" role="menuitem"><span class="az-gh__dot"></span>Career-Agent-Question</a>
@@ -62,7 +72,7 @@
         <a href="index.html" class="inline-block">
           <img src="../assets/advisortool-mark.png?v=20260719-2" alt="Advisortool" width="64" height="64" class="mx-auto mb-4 rounded-lg object-cover hover:opacity-90 transition-opacity" />
         </a>
-        <div class="absolute top-1/2 -translate-y-1/2 left-0">
+        <div class="mb-4 flex justify-start sm:mb-0 sm:absolute sm:top-1/2 sm:-translate-y-1/2 sm:left-0">
           <a href="index.html" class="inline-flex items-center rounded-md px-4 py-2 text-sm font-medium hover:bg-secondary/20 transition-colors">
             <svg class="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
             กลับหน้าแรก
@@ -84,6 +94,7 @@
                 <label class="text-sm font-medium">เบี้ยประกันรายปี (APE)</label>
                 <input id="ape" type="text" inputmode="numeric" placeholder="เช่น 50,000"
                   class="mt-2 flex h-10 w-full rounded-md border bg-card px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring" />
+                <p id="ape-warning" role="alert" class="hidden mt-2 text-sm font-medium" style="color:hsl(var(--destructive))">กรุณากรอกเบี้ยประกันรายปี (APE) มากกว่า 0 ก่อนคำนวณ</p>
               </div>
               <div>
                 <label class="text-sm font-medium">แบบประกัน</label>
@@ -164,11 +175,21 @@
 
     document.getElementById('bonus-form').addEventListener('submit', e => {
       e.preventDefault();
-      render(agentIncomeCalculator(gather()), gather());
+      const f = gather();
+      const warn = document.getElementById('ape-warning');
+      if (!f.ape || f.ape <= 0) {
+        if (warn) warn.classList.remove('hidden');
+        apeEl.focus();
+        return;
+      }
+      if (warn) warn.classList.add('hidden');
+      render(agentIncomeCalculator(f), f);
     });
 
     document.getElementById('reset-btn').addEventListener('click', () => {
       apeEl.value = ''; productSel.value = insuranceProducts[0].id;
+      const apeWarn = document.getElementById('ape-warning');
+      if (apeWarn) apeWarn.classList.add('hidden');
       document.getElementById('mode').value = 'yearly';
       pmod.value = 100; document.getElementById('pmod-label').textContent = '100%';
       document.getElementById('results').classList.add('hidden');
@@ -183,6 +204,8 @@
     };
 
     function modeLabel(m) { return m === 'yearly' ? 'รายปี' : m === 'semi-annually' ? 'ราย 6 เดือน' : 'รายเดือน'; }
+    /* display-only percent: avoids float artifacts like "55.00000000000001%" (keeps up to 2 decimals) */
+    function pct(v) { return Math.round(v * 10000) / 100; }
 
     function generateShareText(result, f) {
       const product = insuranceProducts.find(p => p.id === f.productId);
@@ -236,7 +259,7 @@
             <div><h4 class="font-bold text-primary mb-1">2. ผลการคำนวณ NBC</h4><p class="text-xs text-muted-foreground">สูตร: Commission (ปีแรก) × Mode Credit</p></div>
             <div class="p-3 bg-muted/50 rounded-lg text-xs text-muted-foreground space-y-1">
               <p class="flex justify-between"><span>คอมมิชชั่น (ปีแรก):</span><span class="font-mono text-foreground">${formatCurrency(r.commission)}</span></p>
-              <p class="flex justify-between"><span>Mode Credit (${modeLabel(f.paymentMode)}):</span><span class="font-mono text-foreground"> × ${r.modeCreditRate * 100}%</span></p>
+              <p class="flex justify-between"><span>Mode Credit (${modeLabel(f.paymentMode)}):</span><span class="font-mono text-foreground"> × ${pct(r.modeCreditRate)}%</span></p>
             </div>
             <div class="text-center p-4 bg-primary/10 rounded-lg"><p class="text-xs text-primary">มูลค่าธุรกิจใหม่ (NBC Credit)</p><p class="text-2xl font-bold text-primary">${formatCurrency(r.nbc)}</p></div>
           </div>
@@ -244,7 +267,7 @@
             <div><h4 class="font-bold text-accent mb-1">3. โบนัสผลงานประจำไตรมาส (QVB)</h4><p class="text-xs text-muted-foreground">สูตร: NBC Credit × อัตรา QVB × Persistency Modifier</p></div>
             <div class="p-3 bg-muted/50 rounded-lg text-xs text-muted-foreground space-y-1">
               <p class="flex justify-between"><span>NBC Credit:</span><span class="font-mono text-foreground">${formatCurrency(r.nbc)}</span></p>
-              <p class="flex justify-between"><span>อัตราโบนัส QVB:</span><span class="font-mono text-foreground">× ${r.qvbRate * 100}%</span></p>
+              <p class="flex justify-between"><span>อัตราโบนัส QVB:</span><span class="font-mono text-foreground">× ${pct(r.qvbRate)}%</span></p>
               <p class="flex justify-between"><span>Persistency Modifier:</span><span class="font-mono text-foreground">× ${f.persistencyModifier}%</span></p>
             </div>
             <div class="text-center p-4 bg-accent/10 rounded-lg"><p class="text-xs text-accent">โบนัสไตรมาส (QVB)</p><p class="text-2xl font-bold text-accent">${formatCurrency(r.quarterlyBonus)}</p></div>
@@ -253,7 +276,7 @@
             <div><h4 class="font-bold text-primary mb-1">4. โบนัสสิ้นปี (YEB)</h4><p class="text-xs text-muted-foreground">สูตร: NBC ส่วนตัวทั้งปี × อัตรา YEB × Persistency Modifier</p></div>
             <div class="p-3 bg-muted/50 rounded-lg text-xs text-muted-foreground space-y-1">
               <p class="flex justify-between"><span>NBC ส่วนตัวทั้งปี (จากปีแรก):</span><span class="font-mono text-foreground">${formatCurrency(r.commission)}</span></p>
-              <p class="flex justify-between"><span>อัตราโบนัสสิ้นปี (YEB Rate):</span><span class="font-mono text-foreground">× ${r.yebRate * 100}%</span></p>
+              <p class="flex justify-between"><span>อัตราโบนัสสิ้นปี (YEB Rate):</span><span class="font-mono text-foreground">× ${pct(r.yebRate)}%</span></p>
               <p class="flex justify-between"><span>Persistency Modifier:</span><span class="font-mono text-foreground">× ${f.persistencyModifier}%</span></p>
             </div>
             <div class="text-center p-4 bg-primary/10 rounded-lg"><p class="text-xs text-primary">โบนัสสิ้นปี (YEB)</p><p class="text-2xl font-bold text-primary">${formatCurrency(r.yearlyBonus)}</p></div>
@@ -291,8 +314,15 @@
       const shareText = generateShareText(r, f);
       const copyBtn = document.getElementById('copy-btn');
       if (copyBtn) copyBtn.addEventListener('click', async () => {
-        try { await navigator.clipboard.writeText(shareText); copyBtn.innerHTML = IC.copy + 'คัดลอกแล้ว'; }
-        catch (e) { alert('ไม่สามารถคัดลอกได้'); }
+        try {
+          await navigator.clipboard.writeText(shareText);
+          copyBtn.innerHTML = IC.copy + 'คัดลอกแล้ว';
+          setTimeout(() => { copyBtn.innerHTML = IC.copy + 'คัดลอกข้อความ'; }, 2000);
+        }
+        catch (e) {
+          copyBtn.innerHTML = IC.copy + 'คัดลอกไม่สำเร็จ';
+          setTimeout(() => { copyBtn.innerHTML = IC.copy + 'คัดลอกข้อความ'; }, 2000);
+        }
       });
       const lineBtn = document.getElementById('line-btn');
       if (lineBtn) lineBtn.addEventListener('click', () =>

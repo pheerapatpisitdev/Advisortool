@@ -59,7 +59,7 @@
     btn.innerHTML = on ? ICON_ON : ICON_OFF;
     btn.title = on ? 'ปิดเสียง' : 'เปิดเสียง';
     btn.setAttribute('aria-label', on ? 'ปิดเสียง' : 'เปิดเสียง');
-    btn.style.opacity = on ? '0.6' : '0.35';
+    btn.style.opacity = on ? '0.7' : '0.55';
   }
   function mountBtn() {
     if (document.getElementById('az-sound-btn')) return;

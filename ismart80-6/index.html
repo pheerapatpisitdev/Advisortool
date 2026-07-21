@@ -3,7 +3,6 @@
 <head>
   <link rel="stylesheet" href="../assets/pin-gate.css" />
   <script src="../assets/pin-gate.config.js"></script>
-  <script src="../assets/supabase.min.js"></script>
   <script src="../assets/pin-gate.js?v=20260719-2"></script>
   <script src="../assets/click-sound.js"></script>
 <meta charset="UTF-8">
@@ -69,10 +68,10 @@
     </div>
     <div class="grid2">
       <label id="wrapSA">จำนวนเงินเอาประกันภัย (บาท)
-        <input type="number" id="fSA" min="150000" step="1000" value="1000000" />
+        <input type="text" inputmode="numeric" class="money" id="fSA" value="1000000" />
       </label>
       <label id="wrapPrem" style="display:none">เบี้ยสัญญาหลักที่ต้องการ (ต่องวด, บาท)
-        <input type="number" id="fPrem" min="0" step="100" placeholder="เช่น 287000" />
+        <input type="text" inputmode="numeric" class="money" id="fPrem" placeholder="เช่น 287,000" />
       </label>
     </div>
     <p class="hint">ไอสมาร์ท 80/6 · ชำระเบี้ย 6 ปี · คุ้มครองถึงอายุ 80 ปี · จ่ายเงินคืนรายปี 1% (ปี 1–5) / 2% (ปีถัดไป) · ครบสัญญารับ 200% ทุนประกัน</p>

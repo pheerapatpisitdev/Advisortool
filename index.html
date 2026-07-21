@@ -1,13 +1,12 @@
 <!doctype html>
 <html lang="th">
 <head>
-  <link rel="stylesheet" href="assets/pin-gate.css" />
-  <script src="assets/pin-gate.config.js"></script>
-  <script src="assets/supabase.min.js"></script>
-  <script src="assets/pin-gate.js?v=20260719-2"></script>
-  <script src="assets/click-sound.js"></script>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="assets/pin-gate.css" />
+  <script src="assets/pin-gate.config.js"></script>
+  <script src="assets/pin-gate.js?v=20260719-2"></script>
+  <script src="assets/click-sound.js"></script>
   <meta name="description" content="ศูนย์รวมเครื่องมือที่ปรึกษาประกันและการเงิน — คำนวณเบี้ย ผลประโยชน์ และแบบประเมิน ครบในที่เดียว" />
   <link rel="icon" type="image/png" href="assets/favicon.png?v=20260719" />
   <link rel="apple-touch-icon" href="assets/app-icon-192.png" />
@@ -194,7 +193,6 @@
   </style>
 </head>
 <body>
-<div class="wrap">
   <header class="hd">
     <a href="./" class="hd__brand" aria-label="หน้าแรก Advisortool">
       <span class="hd__mark"><img src="assets/advisortool-mark.png?v=20260719-2" alt="" width="44" height="44"></span>
@@ -222,10 +220,9 @@
     <h2>เลือกเครื่องมือ</h2>
     <span id="index-count"></span>
   </div>
-  <main class="grid" id="grid"></main>
+  <main class="grid" id="grid"><noscript><p style="grid-column:1/-1;text-align:center;color:var(--ink-soft);padding:24px">กรุณาเปิดใช้งาน JavaScript เพื่อแสดงรายการเครื่องมือ</p></noscript></main>
 
   <footer>Advisortool · ศูนย์รวมเครื่องมือที่ปรึกษาประกันและการเงิน</footer>
-</div>
 
 <script>
   const ICONS = {

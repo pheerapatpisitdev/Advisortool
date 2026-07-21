@@ -3,7 +3,6 @@
 <head>
   <link rel="stylesheet" href="../assets/pin-gate.css" />
   <script src="../assets/pin-gate.config.js"></script>
-  <script src="../assets/supabase.min.js"></script>
   <script src="../assets/pin-gate.js?v=20260719-2"></script>
   <script src="../assets/click-sound.js"></script>
   <meta charset="utf-8" />
@@ -63,11 +62,11 @@
       display: flex; align-items: center; gap: 10px; background: #FAF7F4;
       border: 1px solid #EDE8E1; border-radius: 10px; padding: 8px 12px; margin-top: 6px;
     }
-    .fhc-scope .calc-lbl { font-size: 12px; color: #8A8A8A; flex: 1; font-weight: 500; }
+    .fhc-scope .calc-lbl { font-size: 12px; color: #6B6B6B; flex: 1; font-weight: 500; }
     .fhc-scope .calc-val { font-size: 14px; font-weight: 700; color: #D97757; }
-    .fhc-scope .calc-unit { font-size: 11px; color: #ABABAB; font-weight: 500; }
+    .fhc-scope .calc-unit { font-size: 11px; color: #6B6B6B; font-weight: 500; }
 
-    .fhc-scope .av-lbl { font-size: 10px; color: #9A9A9A; text-align: center; max-width: 64px; font-weight: 500; }
+    .fhc-scope .av-lbl { font-size: 11px; color: #6B6B6B; text-align: center; max-width: 64px; font-weight: 500; }
     .fhc-scope .circ {
       border-radius: 50%; background: #FDDCCC; display: flex; align-items: center; justify-content: center;
       font-size: 12px; font-weight: 700; color: #7A3520; border: 2.5px solid transparent; cursor: pointer;
@@ -156,6 +155,9 @@
       .fhc-scope .row2, .fhc-scope .row3 { grid-template-columns: 1fr; }
       .fhc-scope .sum-grid { grid-template-columns: 1fr 1fr; }
       .fhc-scope { padding: 1rem 0.75rem 2rem; }
+      /* iOS: font-size < 16px on form controls triggers auto-zoom on focus — force >= 16px on mobile */
+      .fhc-scope .fg input, .fhc-scope .fg select, .fhc-scope .fg textarea,
+      .fhc-scope .person-row input, .fhc-scope .footer-field input { font-size: 16px; }
     }
 
     /* คำเฉลย 5 เหตุการณ์ — ซ่อนบนจอ (กดปุ่มเฉลยเอง) แต่พิมพ์ออกมาให้เห็นเสมอ */
@@ -240,7 +242,7 @@
 
 <div class="fhc-scope">
   <div class="wrap">
-    <div class="page-title"><span>แบบสอบถามคุณภาพชีวิต (ที่ดี)</span></div>
+    <h1 class="page-title"><span>แบบสอบถามคุณภาพชีวิต (ที่ดี)</span></h1>
 
     <div class="row2">
       <!-- LEFT -->
@@ -431,9 +433,9 @@ const setText = (id, v) => { const el = $(id); if (el) el.textContent = v; };
 
 /* ===== populate selects + persons + events ===== */
 (function init() {
-  const ac = $("ac"); range(20, 55).forEach((i) => ac.add(new Option(i + " ปี", i)));
-  const ar = $("ar"); [45, 50, 55, 60, 65].forEach((i) => ar.add(new Option(i + " ปี", i)));
-  const ae = $("ae"); range(80, 100).forEach((i) => ae.add(new Option(i + " ปี", i)));
+  const ac = $("ac"); range(20, 70).forEach((i) => ac.add(new Option(i + " ปี", i)));
+  const ar = $("ar"); [45, 50, 55, 60, 65, 70, 75].forEach((i) => ar.add(new Option(i + " ปี", i)));
+  const ae = $("ae"); range(75, 100).forEach((i) => ae.add(new Option(i + " ปี", i)));
 
   const personsEl = $("persons");
   for (let i = 0; i < 4; i++) {
@@ -484,7 +486,21 @@ function recalc() {
 /* ===== events ===== */
 // number inputs: format + recalc
 ["exp","im","s1","s2","s3","d1","d2","d3","f1","f2"].forEach((id) => {
-  $(id).addEventListener("input", (e) => { e.target.value = formatInput(e.target.value); recalc(); });
+  $(id).addEventListener("input", (e) => {
+    const el = e.target;
+    // count digits left of the caret BEFORE reformatting
+    const caret = el.selectionStart != null ? el.selectionStart : el.value.length;
+    const digitsLeft = el.value.slice(0, caret).replace(/[^0-9]/g, "").length;
+    el.value = formatInput(el.value);
+    // restore the caret after the same number of digits (skipping inserted commas)
+    let pos = 0, seen = 0;
+    while (pos < el.value.length && seen < digitsLeft) {
+      if (el.value.charCodeAt(pos) >= 48 && el.value.charCodeAt(pos) <= 57) seen++;
+      pos++;
+    }
+    try { el.setSelectionRange(pos, pos); } catch (err) {}
+    recalc();
+  });
 });
 ["ac","ar","ae","wa"].forEach((id) => $(id).addEventListener("change", recalc));
 

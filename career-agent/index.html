@@ -3,7 +3,6 @@
 <head>
   <link rel="stylesheet" href="../assets/pin-gate.css" />
   <script src="../assets/pin-gate.config.js"></script>
-  <script src="../assets/supabase.min.js"></script>
   <script src="../assets/pin-gate.js?v=20260719-2"></script>
   <script src="../assets/click-sound.js"></script>
   <meta charset="utf-8" />
@@ -15,8 +14,10 @@
   <!-- Tailwind (prebuilt, ไม่ต้อง compile runtime) -->
   <link rel="stylesheet" href="styles.css" />
 
-  <!-- SweetAlert2 (self-hosted) -->
-  <script src="sweetalert2.min.js" defer></script>
+  <!-- Suite font (IBM Plex Sans Thai) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
   <style>
     /* แอนิเมชันเดิมจาก career.css */
@@ -30,7 +31,9 @@
     }
     .animate-fadeIn { animation: caq-fadeIn 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
     .animate-scaleUp { animation: caq-scaleUp 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-    body { font-family: "Google Sans", system-ui, -apple-system, "Segoe UI", sans-serif; }
+    body { font-family: "IBM Plex Sans Thai", system-ui, -apple-system, "Segoe UI", sans-serif; }
+    /* validation highlight for unanswered/empty required fields */
+    .caq-invalid { outline: 2px solid #dc2626 !important; outline-offset: 3px; border-radius: 12px; }
   </style>
 <link rel="stylesheet" href="../assets/global-header.css?v=5" />
 </head>
@@ -191,6 +194,49 @@
     render();
   }
 
+  /* ===================== ตรวจสอบก่อนส่ง (validation) ===================== */
+  function validateAndSubmit() {
+    // 1) ต้องตอบคำถามปรนัยครบทุกข้อ (30 ข้อ)
+    const firstUnanswered = mcqQuestions.find((q) => !state.formData.mcq[q.id]);
+    if (firstUnanswered) {
+      const err = document.getElementById('mcq-error');
+      if (err) {
+        err.textContent = 'กรุณาตอบคำถามให้ครบทุกข้อก่อนส่งแบบสอบถาม';
+        err.classList.remove('hidden');
+      }
+      const wrap = document.querySelector(`[data-qwrap="${firstUnanswered.id}"]`);
+      if (wrap) {
+        wrap.classList.add('caq-invalid');
+        wrap.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      return;
+    }
+
+    // 2) ต้องกรอกข้อมูลส่วนตัวที่จำเป็น (ชื่อ-นามสกุล / หมายเลขโทรศัพท์)
+    const p = state.formData.personal || {};
+    const missing = [];
+    if (!String(p['ชื่อ-นามสกุล'] || '').trim()) missing.push('ชื่อ-นามสกุล');
+    if (!String(p['หมายเลขโทรศัพท์'] || '').trim()) missing.push('หมายเลขโทรศัพท์');
+    if (missing.length) {
+      state.step = 1;
+      render();
+      const err = document.getElementById('personal-error');
+      if (err) {
+        err.textContent = 'กรุณากรอก ' + missing.join(' และ ') + ' ก่อนส่งแบบสอบถาม';
+        err.classList.remove('hidden');
+      }
+      const field = document.querySelector(`[data-personal="${missing[0]}"]`);
+      if (field) {
+        field.classList.add('caq-invalid');
+        try { field.focus({ preventScroll: true }); } catch (e) { field.focus(); }
+        field.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      return;
+    }
+
+    submitAndShowResults();
+  }
+
   function shareSummaryToLine() {
     const personal = state.formData.personal ?? {};
     const openEnded = state.formData.openEnded ?? {};
@@ -269,10 +315,15 @@
             </select>
           </div>`;
       }
+      const inputAttrs = label === 'หมายเลขโทรศัพท์'
+        ? 'type="tel" inputmode="tel" autocomplete="tel"'
+        : label === 'Email Address'
+        ? 'type="email" inputmode="email" autocomplete="email"'
+        : 'type="text"';
       return `
         <div class="space-y-1.5">
           <label class="text-sm font-semibold text-text-secondary">${esc(label)}</label>
-          <input type="text" data-personal="${esc(label)}" value="${esc(p[label] || '')}" class="w-full min-h-[44px] p-3 bg-bubble-user-light border border-border-light rounded-xl focus:bg-surface-light focus:ring-2 focus:ring-[#D97757] outline-none transition-all text-base text-text-primary-light" />
+          <input ${inputAttrs} data-personal="${esc(label)}" value="${esc(p[label] || '')}" class="w-full min-h-[44px] p-3 bg-bubble-user-light border border-border-light rounded-xl focus:bg-surface-light focus:ring-2 focus:ring-[#D97757] outline-none transition-all text-base text-text-primary-light" />
         </div>`;
     }).join('');
 
@@ -293,6 +344,7 @@
         <div class="p-2 bg-[#D97757]/10 text-[#D97757] rounded-lg shrink-0">${icon.user('w-5 h-5 sm:w-6 sm:h-6')}</div>
         <h2 class="text-lg sm:text-xl font-bold text-text-primary-light">ข้อมูลส่วนตัว</h2>
       </div>
+      <p id="personal-error" role="alert" class="hidden text-sm sm:text-base font-semibold text-red-600 bg-red-50 border border-red-200 rounded-xl px-4 py-3"></p>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">${fields}</div>
       <div class="space-y-3">
         <label class="text-sm font-semibold text-text-secondary">สถานภาพสมรส</label>
@@ -332,7 +384,7 @@
             </label>`;
         }).join('');
         return `
-          <div class="space-y-3 sm:space-y-5">
+          <div class="space-y-3 sm:space-y-5" data-qwrap="${q.id}">
             <h3 class="text-base sm:text-lg font-bold text-text-primary-light leading-snug">
               <span class="text-[#D97757] mr-1.5 sm:mr-2 shrink-0">${startIndex + idx + 1}.</span>
               <span class="break-words">${esc(q.q)}</span>
@@ -358,6 +410,7 @@
         </p>
       </div>
       <div class="space-y-8 sm:space-y-14">${sections}</div>
+      <p id="mcq-error" role="alert" class="hidden text-sm sm:text-base font-semibold text-red-600 bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-center"></p>
       <div class="flex justify-between items-center gap-3 pt-6 sm:pt-10 border-t border-border-light">
         <button data-action="prev" class="min-h-[44px] px-4 sm:px-6 py-2.5 text-text-secondary hover:text-text-primary-light font-medium text-sm sm:text-base touch-manipulation">ย้อนกลับ</button>
         <button data-action="submit" class="min-h-[48px] px-6 sm:px-12 py-3 sm:py-4 bg-[#D97757] text-white rounded-xl sm:rounded-2xl font-black hover:bg-[#E8845C] active:bg-[#C4623F] flex items-center gap-2 sm:gap-3 shadow-xl transition-all hover:-translate-y-0.5 sm:hover:-translate-y-1 text-sm sm:text-base touch-manipulation">
@@ -478,17 +531,17 @@
         </div>
       </div>
 
-      <div class="flex flex-col items-center gap-2">
-        <button data-action="share-line" type="button" class="min-h-[44px] mt-2 px-5 sm:px-6 py-2.5 rounded-full text-xs sm:text-sm font-bold flex items-center gap-2 shadow-md touch-manipulation bg-[#D97757] text-white hover:bg-[#E8845C] active:bg-[#C4623F]" title="เปิด LINE เพื่อแชร์สรุปคำตอบ (ไม่ต้องตั้งค่า token)">
-          แชร์ส่งคำตอบไปที่ LINE
+      <div class="bg-[#D97757]/10 border-2 border-[#D97757]/40 p-4 sm:p-6 md:p-8 rounded-xl sm:rounded-2xl text-center space-y-3 sm:space-y-4">
+        <h4 class="text-lg sm:text-xl font-black text-text-primary-light">ขั้นตอนสำคัญ: ส่งคำตอบของคุณ</h4>
+        <p class="text-text-secondary text-xs sm:text-sm max-w-md mx-auto">คำตอบยังไม่ถูกจัดเก็บโดยอัตโนมัติ กรุณากดปุ่มด้านล่างเพื่อส่งสรุปคำตอบไปยังผู้ดูแลผ่าน LINE</p>
+        <button data-action="share-line" type="button" class="min-h-[52px] w-full sm:w-auto mx-auto px-8 sm:px-12 py-3.5 sm:py-4 rounded-full text-base sm:text-lg font-black flex items-center justify-center gap-2 shadow-xl touch-manipulation bg-[#D97757] text-white hover:bg-[#E8845C] active:bg-[#C4623F] hover:-translate-y-0.5 transition-all" title="เปิด LINE เพื่อแชร์สรุปคำตอบ (ไม่ต้องตั้งค่า token)">
+          ${icon.send('w-5 h-5 sm:w-6 sm:h-6 shrink-0')} แชร์ส่งคำตอบไปที่ LINE
         </button>
-        <p class="text-[10px] text-text-secondary text-center max-w-xs">กดแล้วจะเปิด LINE ให้เลือกผู้รับส่งได้ทันที</p>
+        <p class="text-[10px] sm:text-xs text-text-secondary text-center max-w-xs mx-auto">กดแล้วจะเปิด LINE ให้เลือกผู้รับส่งได้ทันที</p>
       </div>
 
-      <div class="bg-bg-dark p-4 sm:p-6 md:p-8 rounded-xl sm:rounded-2xl text-center text-text-primary-dark space-y-3 sm:space-y-4">
-        <h4 class="text-base sm:text-lg font-bold">บันทึกข้อมูลเรียบร้อยแล้ว</h4>
-        <p class="text-text-secondary text-xs sm:text-sm max-w-md mx-auto italic">ข้อมูลทัศนคติเบื้องต้นนี้จะถูกส่งไปยังฝ่ายบริหารงานบุคคล เพื่อใช้ประกอบการพิจารณาคัดเลือกพนักงานใหม่ในลำดับต่อไป</p>
-        <button data-action="restart" class="min-h-[44px] mt-3 sm:mt-4 px-6 sm:px-8 py-2.5 sm:py-3 bg-surface-light text-text-primary-light rounded-xl font-bold hover:bg-bubble-user-light transition-all active:scale-95 shadow-xl text-sm sm:text-base touch-manipulation">กลับไปเริ่มต้นใหม่</button>
+      <div class="text-center pt-2">
+        <button data-action="restart" class="min-h-[44px] px-6 sm:px-8 py-2.5 sm:py-3 bg-surface-light text-text-primary-light border border-border-light rounded-xl font-bold hover:bg-bubble-user-light transition-all active:scale-95 text-sm sm:text-base touch-manipulation">กลับไปเริ่มต้นใหม่</button>
       </div>
     </div>`;
   }
@@ -496,7 +549,8 @@
   /* ===================== Render + Events ===================== */
   function render() {
     const progress = (state.step > 0 && state.step < 3)
-      ? `<div class="w-full bg-[#D97757]/20 h-1.5 sm:h-2 flex"><div class="bg-[#D97757] h-full transition-all duration-1000 ease-in-out" style="width:${(state.step / 2) * 100}%"></div></div>`
+      ? `<div role="progressbar" aria-valuenow="${state.step}" aria-valuemin="1" aria-valuemax="2" aria-label="ความคืบหน้าแบบสอบถาม ส่วนที่ ${state.step} จาก 2" class="w-full bg-[#D97757]/20 h-1.5 sm:h-2 flex"><div class="bg-[#D97757] h-full transition-all duration-1000 ease-in-out" style="width:${(state.step / 2) * 100}%"></div></div>
+         <p class="text-center text-xs sm:text-sm text-text-secondary py-1.5">ส่วนที่ ${state.step} จาก 2</p>`
       : '';
 
     let body = '';
@@ -527,8 +581,12 @@
       const a = actionEl.getAttribute('data-action');
       if (a === 'next') { state.step += 1; render(); }
       else if (a === 'prev') { state.step -= 1; render(); }
-      else if (a === 'submit') { submitAndShowResults(); }
-      else if (a === 'restart') { window.location.reload(); }
+      else if (a === 'submit') { validateAndSubmit(); }
+      else if (a === 'restart') {
+        if (window.confirm('ต้องการเริ่มทำแบบสอบถามใหม่หรือไม่? คำตอบทั้งหมดที่กรอกไว้จะถูกล้าง')) {
+          window.location.reload();
+        }
+      }
       else if (a === 'share-line') { shareSummaryToLine(); }
       return;
     }

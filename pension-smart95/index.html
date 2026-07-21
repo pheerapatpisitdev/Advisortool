@@ -3,7 +3,6 @@
 <head>
   <link rel="stylesheet" href="../assets/pin-gate.css" />
   <script src="../assets/pin-gate.config.js"></script>
-  <script src="../assets/supabase.min.js"></script>
   <script src="../assets/pin-gate.js?v=20260719-2"></script>
   <script src="../assets/click-sound.js"></script>
 <meta charset="UTF-8">
@@ -42,7 +41,7 @@
         <div class="az-card__b">
           <div class="az-field"><label for="custName">ชื่อผู้เอาประกันภัย</label><input type="text" id="custName" placeholder="เช่น คุณลูกค้าคนพิเศษ" value="คุณลูกค้าคนพิเศษ"></div>
           <div class="az-grid2">
-            <div class="az-field"><label id="genderLbl">เพศ</label><div class="az-seg" id="genderSeg" role="group" aria-labelledby="genderLbl"><button data-v="ชาย" class="on">ชาย</button><button data-v="หญิง">หญิง</button></div></div>
+            <div class="az-field"><label id="genderLbl">เพศ</label><div class="az-seg" id="genderSeg" role="radiogroup" aria-labelledby="genderLbl"><button type="button" role="radio" aria-checked="true" data-v="ชาย" class="on">ชาย</button><button type="button" role="radio" aria-checked="false" data-v="หญิง">หญิง</button></div></div>
             <div class="az-field"><label for="age">อายุ (ปี)</label><select id="age"><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option><option value="24">24</option><option value="25">25</option><option value="26">26</option><option value="27">27</option><option value="28">28</option><option value="29">29</option><option value="30">30</option><option value="31">31</option><option value="32">32</option><option value="33">33</option><option value="34">34</option><option value="35">35</option><option value="36">36</option><option value="37">37</option><option value="38">38</option><option value="39">39</option><option value="40" selected>40</option><option value="41">41</option><option value="42">42</option><option value="43">43</option><option value="44">44</option><option value="45">45</option><option value="46">46</option><option value="47">47</option><option value="48">48</option><option value="49">49</option><option value="50">50</option><option value="51">51</option><option value="52">52</option><option value="53">53</option><option value="54">54</option><option value="55">55</option><option value="56">56</option><option value="57">57</option><option value="58">58</option><option value="59">59</option><option value="60">60</option><option value="61">61</option><option value="62">62</option><option value="63">63</option><option value="64">64</option><option value="65">65</option></select></div>
           </div>
           <div class="az-field"><label for="occ">ระดับอาชีพ (สำหรับสัญญาเพิ่มเติม)</label>
@@ -53,8 +52,8 @@
         <div class="az-card__h"><span class="az-card__n">2</span><h2>เลือกแบบประกัน</h2></div>
         <div class="az-card__b">
           <div class="az-field"><label id="payOptLbl">รูปแบบการชำระเบี้ย</label>
-            <div class="az-seg" id="payOptSeg" role="group" aria-labelledby="payOptLbl"><button data-v="ชำระเบี้ย จนรับเงินบำนาญ" class="on">ชำระจนรับบำนาญ</button><button data-v="ชำระเบี้ย 6 ปี">ชำระ 6 ปี</button></div></div>
-          <div class="az-field"><label id="annuityLbl">อายุที่เริ่มรับเงินบำนาญ</label><div class="az-seg" id="annuitySeg" role="group" aria-labelledby="annuityLbl"></div><div class="az-err" id="annuityErr"></div></div>
+            <div class="az-seg" id="payOptSeg" role="radiogroup" aria-labelledby="payOptLbl"><button type="button" role="radio" aria-checked="true" data-v="ชำระเบี้ย จนรับเงินบำนาญ" class="on">ชำระจนรับบำนาญ</button><button type="button" role="radio" aria-checked="false" data-v="ชำระเบี้ย 6 ปี">ชำระ 6 ปี</button></div></div>
+          <div class="az-field"><label id="annuityLbl">อายุที่เริ่มรับเงินบำนาญ</label><div class="az-seg" id="annuitySeg" role="radiogroup" aria-labelledby="annuityLbl"></div><div class="az-err" id="annuityErr"></div></div>
           <div class="az-field"><label for="mode">งวดการชำระเบี้ยประกันภัย</label>
             <select id="mode"><option>รายปี</option><option>ราย 6 เดือน</option><option>ราย 3 เดือน</option><option>รายเดือน</option></select></div>
         </div>
@@ -66,12 +65,12 @@
       <div class="az-card__b">
         <div class="az-grid2">
           <div class="az-field"><label id="inputTypeLbl">เลือกกำหนดจาก</label>
-            <div class="az-seg" id="inputTypeSeg" role="group" aria-labelledby="inputTypeLbl">
-              <button data-v="จำนวนเงินเอาประกันภัย" class="on">ทุนประกัน</button>
-              <button data-v="เบี้ยประกันภัย">เบี้ยประกัน</button>
-              <button data-v="เงินบำนาญรายเดือน">บำนาญ/เดือน</button></div></div>
+            <div class="az-seg" id="inputTypeSeg" role="radiogroup" aria-labelledby="inputTypeLbl">
+              <button type="button" role="radio" aria-checked="true" data-v="จำนวนเงินเอาประกันภัย" class="on">ทุนประกัน</button>
+              <button type="button" role="radio" aria-checked="false" data-v="เบี้ยประกันภัย">เบี้ยประกัน</button>
+              <button type="button" role="radio" aria-checked="false" data-v="เงินบำนาญรายเดือน">บำนาญ/เดือน</button></div></div>
           <div class="az-field"><label id="amtLabel" for="amount">จำนวนเงินเอาประกันภัย (บาท)</label>
-            <input type="number" id="amount" value="100000" step="1000">
+            <input type="text" inputmode="numeric" id="amount" value="100,000">
             <div class="az-hint" id="amtHint">ทุนประกันขั้นต่ำ 75,000 — สูงสุด 20,000,000 บาท</div></div>
         </div>
       </div>
@@ -109,9 +108,10 @@
     </div>
 
     <div class="az-card collapse open" id="illusCard">
-      <div class="collapse-h" onclick="document.getElementById('illusCard').classList.toggle('open')">
-        <span class="az-card__n">6</span><h2 style="font-size:15.5px;color:var(--az-navy)">ตารางแสดงผลประโยชน์รายปี (ตลอดสัญญา)</h2><span class="arr">▾</span></div>
-      <div class="collapse-b">
+      <h2 class="collapse-h">
+        <button type="button" class="collapse-btn" aria-expanded="true" aria-controls="illusCollapseBody" onclick="var c=document.getElementById('illusCard');var o=c.classList.toggle('open');this.setAttribute('aria-expanded',String(o))">
+          <span class="az-card__n">6</span><span class="collapse-ttl">ตารางแสดงผลประโยชน์รายปี (ตลอดสัญญา)</span><span class="arr">▾</span></button></h2>
+      <div class="collapse-b" id="illusCollapseBody">
         <div class="az-note" id="illusNote"></div>
         <div class="tbl-scroll" style="margin-top:10px"><table class="az-table"><thead><tr>
           <th>อายุ</th><th>ปีที่</th><th>เบี้ย/ปี</th><th>เบี้ยสะสม</th><th>เงินเวนคืน</th><th>คุ้มครองชีวิต</th><th>บำนาญ/ปี</th><th>บำนาญสะสม</th>
@@ -124,11 +124,11 @@
       <div class="az-card__b">
         <p class="az-hint" style="margin-bottom:12px">คำนวณเบี้ยประกันบำนาญสูงสุดที่ซื้อเพิ่มได้เพื่อใช้สิทธิลดหย่อนภาษีอย่างคุ้มค่า</p>
         <div class="tax-grid">
-          <div class="az-field"><label for="txIncome">เงินได้พึงประเมินต่อปี (บาท)</label><input type="number" id="txIncome" value="1000000" step="10000"></div>
+          <div class="az-field"><label for="txIncome">เงินได้พึงประเมินต่อปี (บาท)</label><input type="text" inputmode="numeric" id="txIncome" value="1,000,000"></div>
           <div class="az-field"><label for="txRate">อัตราภาษีส่วนเพิ่ม (%)</label><input type="number" id="txRate" value="10" step="5"></div>
-          <div class="az-field"><label for="txRetire">กองทุนเกษียณ (PVD/กบข./RMF) รวม (บาท)</label><input type="number" id="txRetire" value="0" step="10000"></div>
-          <div class="az-field"><label for="txOrdinary">เบี้ยประกันชีวิตทั่วไปที่มีอยู่ (บาท)</label><input type="number" id="txOrdinary" value="0" step="10000"></div>
-          <div class="az-field"><label for="txAnnuity">เบี้ยประกันบำนาญที่มีอยู่แล้ว (บาท)</label><input type="number" id="txAnnuity" value="0" step="10000"></div>
+          <div class="az-field"><label for="txRetire">กองทุนเกษียณ (PVD/กบข./RMF) รวม (บาท)</label><input type="text" inputmode="numeric" id="txRetire" value="0"></div>
+          <div class="az-field"><label for="txOrdinary">เบี้ยประกันชีวิตทั่วไปที่มีอยู่ (บาท)</label><input type="text" inputmode="numeric" id="txOrdinary" value="0"></div>
+          <div class="az-field"><label for="txAnnuity">เบี้ยประกันบำนาญที่มีอยู่แล้ว (บาท)</label><input type="text" inputmode="numeric" id="txAnnuity" value="0"></div>
         </div>
         <div class="tax-out">
           <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:8px">
@@ -145,8 +145,8 @@
     เอกสารนี้เป็นเพียงโปรแกรมช่วยคำนวณเพื่อประกอบการนำเสนอเบื้องต้นเท่านั้น มิใช่ส่วนหนึ่งของสัญญาประกันภัย ผลประโยชน์ ความคุ้มครอง และข้อยกเว้นเป็นไปตามที่กำหนดในกรมธรรม์ ตัวเลขลดหย่อนภาษีเป็นการประมาณการอย่างง่าย ผลประโยชน์ทางภาษีที่ได้รับจริงขึ้นอยู่กับเงินได้สุทธิของแต่ละบุคคลตามหลักเกณฑ์ของกรมสรรพากร · อ้างอิงอัตราเบี้ยและสูตรคำนวณจากไฟล์ทางการ บำนาญ สมาร์ท 95 (A2026-1)
   </p>
 </div>
-<script src="data/db.js"></script>
-<script src="src/engine.js"></script>
-<script src="src/app.js"></script>
+<script src="data/db.js?v=2"></script>
+<script src="src/engine.js?v=2"></script>
+<script src="src/app.js?v=2"></script>
 </body>
 </html>

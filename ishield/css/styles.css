@@ -41,11 +41,11 @@ label.fld .lab{font-size:13px;color:var(--muted);margin-bottom:5px;display:block
 .rider .body{margin-top:10px;display:none}
 .rider.open .body{display:block}
 
-/* on/off switch used by riders */
-.switch{position:relative;width:42px;height:23px;flex:none}
-.switch input{opacity:0;width:0;height:0}
-.slider{position:absolute;inset:0;background:#c4ccd6;border-radius:30px;transition:.2s;cursor:pointer}
-.slider:before{content:"";position:absolute;height:17px;width:17px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}
+/* on/off switch used by riders — 44x44 touch target with a 42x23 visual slider centered inside */
+.switch{position:relative;display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;flex:none;cursor:pointer}
+.switch input{opacity:0;width:0;height:0;margin:0}
+.slider{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:42px;height:23px;background:#c4ccd6;border-radius:30px;transition:background .2s;cursor:pointer}
+.slider:before{content:"";position:absolute;height:17px;width:17px;left:3px;top:3px;background:#fff;border-radius:50%;transition:transform .2s}
 .switch input:checked + .slider{background:var(--teal)}
 .switch input:checked + .slider:before{transform:translateX(19px)}
 
@@ -228,3 +228,6 @@ ol.dzlist li{margin-bottom:5px;line-height:1.45;break-inside:avoid}
 /* product segmented control: 4 options fit one row on desktop, wrap on narrow screens */
 #productSeg{flex-wrap:wrap}
 #productSeg button{flex:1 1 22%}
+
+/* step indicator wrapper — moved out of an inline style="" on #isSteps */
+.is-steps-wrap{max-width:760px;margin:0 auto}

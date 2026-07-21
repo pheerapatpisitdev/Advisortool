@@ -2,6 +2,23 @@
 (function () {
   var DATA = window.DATA, CV = window.CV, IS80 = window.IS80;
 
+  // ---------- money inputs (thousand separators; mirrors ishield) ----------
+  function grpMoney(v) { v = String(v == null ? '' : v).replace(/[^0-9]/g, ''); return v ? (+v).toLocaleString('en-US') : ''; }
+  function moneyVal(el) { return el ? (+(String(el.value || '').replace(/[^0-9.]/g, '')) || 0) : 0; }
+  // live comma grouping while typing; idempotent per element so it survives rider re-injection
+  function attachMoney(root) {
+    (root || document).querySelectorAll('input.money').forEach(function (el) {
+      if (el.dataset.moneyBound) return; el.dataset.moneyBound = '1';
+      el.value = grpMoney(el.value);
+      el.addEventListener('input', function () {
+        var start = el.selectionStart || 0, before = el.value.length;
+        el.value = grpMoney(el.value);
+        var pos = Math.max(0, start + (el.value.length - before));
+        try { el.setSelectionRange(pos, pos); } catch (e) {}
+      });
+    });
+  }
+
   // ---------- form: main inputs ----------
   function modeFactor(mode) { var m = DATA.modes.filter(function (x) { return x.th === mode; })[0]; return m ? m.factor : 1; }
   function mainRate(age, sex) { var arr = DATA.mainRate['06' + IS80.genderLetter(sex)] || []; return arr[age] || 0; }
@@ -18,10 +35,10 @@
     var age = parseInt($('fAge').value, 10), sex = $('fSex').value, mode = $('fMode').value, by = currentCalcBy();
     var sa;
     if (by === 'PREM') {
-      sa = deriveSA(age, sex, mode, parseFloat($('fPrem').value) || 0);
-      $('fSA').value = sa || '';
+      sa = deriveSA(age, sex, mode, moneyVal($('fPrem')));
+      $('fSA').value = sa ? grpMoney(sa) : '';
     } else {
-      sa = parseFloat($('fSA').value) || 0;
+      sa = moneyVal($('fSA'));
     }
     return {
       name: $('fName').value || 'คุณคนพิเศษ', age: age, sex: sex, mode: mode,
@@ -37,14 +54,14 @@
       return '<label class="chk"><input type="checkbox" id="' + id + '_buy"> ซื้อ</label>';
     }
     if (r.ctl === 'sa') {
-      return '<label class="chk"><input type="checkbox" id="' + id + '_buy"> ซื้อ</label>' +
-        '<input type="number" id="' + id + '_sa" placeholder="ทุน (บาท)" step="1000">';
+      return '<label class="chk"><input type="checkbox" id="' + id + '_buy" aria-label="ซื้อ ' + r.name + '"> ซื้อ</label>' +
+        '<input type="text" inputmode="numeric" class="money" id="' + id + '_sa" placeholder="ทุน (บาท)" aria-label="จำนวนเงินเอาประกันภัย ' + r.name + ' (บาท)">';
     }
     // plan pickers
     var opts = '', list = [];
     if (r.ctl === 'planMHP') list = MHP_PLANS(age);
     opts = '<option value="">ไม่ซื้อ</option>' + list.map(function (o) { return '<option value="' + o[0] + '">' + o[1] + '</option>'; }).join('');
-    return '<select id="' + id + '_plan">' + opts + '</select>';
+    return '<select id="' + id + '_plan" aria-label="เลือกแผน ' + r.name + '">' + opts + '</select>';
   }
 
   function buildRiders() {
@@ -59,6 +76,7 @@
         '</div>';
     }).join('');
     $('ridersBox').innerHTML = html;
+    attachMoney($('ridersBox'));
   }
 
   // ---------- read rider selections into engine input ----------
@@ -68,7 +86,12 @@
       if (r.ctl === 'buy') {
         if (buy && buy.checked) inp.wp = { buy: true };
       } else if (r.ctl === 'sa') {
-        if (buy && buy.checked && sa && parseFloat(sa.value) > 0) inp[r.key] = { sa: parseFloat(sa.value) };
+        if (buy && buy.checked) {
+          var v = moneyVal(sa);
+          if (v > 0) inp[r.key] = { sa: v };
+          // ticked "buy" but no SA entered → flag so validate() surfaces it (never drop coverage silently)
+          else (inp._missingSA || (inp._missingSA = [])).push(r.name);
+        }
       } else if (plan && plan.value) {
         inp[r.key] = { plan: plan.value };
       }
@@ -81,6 +104,8 @@
     var errs = [];
     if (isNaN(inp.age) || inp.age < PLAN.issueMin || inp.age > PLAN.issueMax) errs.push('อายุผู้เอาประกันต้องอยู่ระหว่าง ' + PLAN.issueMin + '–' + PLAN.issueMax + ' ปี');
     if (inp.mainSA < PLAN.saMin) errs.push('จำนวนเงินเอาประกันภัยขั้นต่ำ ' + fmt0(PLAN.saMin) + ' บาท');
+    // rider ticked "buy" but no sum-assured entered — block instead of silently dropping the rider
+    if (inp._missingSA) inp._missingSA.forEach(function (n) { errs.push(n + ': กรุณาระบุจำนวนเงินเอาประกันภัย (ทุน) หรือยกเลิกการเลือกซื้อ'); });
     // rider SA min/max + age windows
     RIDERS.forEach(function (r) {
       var active = (r.ctl === 'buy' && inp.wp) || (r.ctl === 'sa' && inp[r.key]) || (/^plan/.test(r.ctl) && inp[r.key]);
@@ -112,8 +137,8 @@
     return '<div class="res-section"><div class="res-h">สรุปเบี้ยประกันภัย</div>' +
       '<div class="res-meta">ผู้เอาประกันภัย: ' + inp.name + ' · เพศ ' + inp.sex + ' · อายุ ' + inp.age + ' ปี · งวดชำระ ' + inp.mode +
       ' · ชำระเบี้ย 6 ปี คุ้มครองถึงอายุ 80 ปี' +
-      (inp.calcBy === 'PREM' ? ' · <span style="color:#94a3b8">คำนวณจากเบี้ย (ทุนประกันปัดเป็นหลักพัน)</span>' : '') + '</div>' +
-      '<div class="tbl-scroll"><table class="sumtbl"><thead><tr><th>ความคุ้มครอง</th><th>ทุนประกัน/แผน</th><th>เบี้ย (' + inp.mode + ')</th></tr></thead><tbody>' +
+      (inp.calcBy === 'PREM' ? ' · <span style="color:#6b7280">คำนวณจากเบี้ย (ทุนประกันปัดเป็นหลักพัน)</span>' : '') + '</div>' +
+      '<div class="tbl-scroll"><table class="sumtbl"><thead><tr><th scope="col">ความคุ้มครอง</th><th scope="col">ทุนประกัน/แผน</th><th scope="col">เบี้ย (' + inp.mode + ')</th></tr></thead><tbody>' +
       rows + '</tbody></table></div></div>';
   }
 
@@ -130,8 +155,8 @@
       '<div class="res-meta">เงินจ่ายคืนรายปี 1% (ปี 1–5) / 2% (ปี 6 เป็นต้นไป) · ครบกำหนดสัญญาอายุ 80 ปี รับ 200% ของทุนประกัน · ' +
       'ความคุ้มครองเสียชีวิตขั้นต่ำ 200% ของทุนประกัน</div>' +
       '<div class="tbl-scroll"><table class="bentbl"><thead><tr>' +
-      '<th>อายุ</th><th>ปีที่</th><th>เบี้ยประกันภัย<br>สัญญาหลัก (ต่อปี)</th><th>เบี้ยประกันภัย<br>สะสม</th><th>เงินจ่ายคืน<br>(ต่อปี)</th>' +
-      '<th>ความคุ้มครอง<br>เสียชีวิต</th><th>ผลประโยชน์เสียชีวิต<br>รวมเงินคืนที่จ่ายแล้ว</th><th>มูลค่าเวนคืน<br>กรมธรรม์</th>' +
+      '<th scope="col">อายุ</th><th scope="col">ปีที่</th><th scope="col">เบี้ยประกันภัย<br>สัญญาหลัก (ต่อปี)</th><th scope="col">เบี้ยประกันภัย<br>สะสม</th><th scope="col">เงินจ่ายคืน<br>(ต่อปี)</th>' +
+      '<th scope="col">ความคุ้มครอง<br>เสียชีวิต</th><th scope="col">ผลประโยชน์เสียชีวิต<br>รวมเงินคืนที่จ่ายแล้ว</th><th scope="col">มูลค่าเวนคืน<br>กรมธรรม์</th>' +
       '</tr></thead><tbody>' + rows + '</tbody></table></div>' +
       '<p class="res-meta">หมายเหตุ: ตัวเลขเป็นเพียงตัวอย่างประกอบการเสนอขาย ผลประโยชน์และเงื่อนไขเป็นไปตามที่กำหนดในกรมธรรม์</p></div>';
   }
@@ -157,6 +182,7 @@
 
   function init() {
     buildRiders();
+    attachMoney(document); // static money inputs (fSA / fPrem)
     Array.prototype.forEach.call(document.getElementsByName('calcby'), function (r) {
       r.addEventListener('change', function () {
         var prem = currentCalcBy() === 'PREM';
@@ -171,7 +197,16 @@
       $('page-result').style.display = 'none'; $('page-input').style.display = '';
       $('stepB').classList.remove('az-active'); $('stepA').classList.add('az-active'); window.scrollTo(0, 0);
     });
-    $('btnPrint').addEventListener('click', function () { window.print(); });
+    $('btnPrint').addEventListener('click', function () { if (window.azPrint) azPrint(); else window.print(); });
+
+    // print-safety: if the user prints without generating a quote, auto-calculate with current
+    // values; if that can't produce a quote (invalid input), hide the form + show a hint (ci123 model)
+    window.addEventListener('beforeprint', function () {
+      var onResult = $('page-result').style.display !== 'none';
+      if (!onResult) { try { doCalc(); } catch (e) {} onResult = $('page-result').style.display !== 'none'; }
+      document.body.classList.toggle('print-noquote', !onResult);
+    });
+    window.addEventListener('afterprint', function () { document.body.classList.remove('print-noquote'); });
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();

@@ -3,7 +3,6 @@
 <head>
   <link rel="stylesheet" href="../assets/pin-gate.css" />
   <script src="../assets/pin-gate.config.js"></script>
-  <script src="../assets/supabase.min.js"></script>
   <script src="../assets/pin-gate.js?v=20260719-2"></script>
   <script src="../assets/click-sound.js"></script>
   <meta charset="utf-8" />
@@ -37,6 +36,10 @@
     .switch[data-on="true"] { background: hsl(var(--primary)); }
     .switch .knob { position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; border-radius: 9999px; background: #fff; transition: transform .2s; }
     .switch[data-on="true"] .knob { transform: translateX(20px); }
+    /* iOS: font-size < 16px on form controls triggers auto-zoom on focus — force >= 16px on mobile */
+    @media (max-width: 640px) {
+      input, select, textarea { font-size: 16px; }
+    }
   </style>
 <link rel="stylesheet" href="../assets/global-header.css?v=5" />
 </head>
@@ -50,9 +53,16 @@
     <div class="az-gh__menu" id="azGh">
       <button class="az-gh__btn" type="button" aria-haspopup="true" aria-expanded="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg><span>เครื่องมือ</span><svg class="az-gh__chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
       <div class="az-gh__panel" role="menu">
+          <a href="../life-treasure/" role="menuitem"><span class="az-gh__dot"></span>ไลฟ์เทรเชอร์ LifeTreasure</a>
+          <a href="../12pl/" role="menuitem"><span class="az-gh__dot"></span>12PL ชำระสั้น 12 ปี</a>
+          <a href="../easy-protect6/" role="menuitem"><span class="az-gh__dot"></span>Easy Protect 6</a>
+          <a href="../lifeready/" role="menuitem"><span class="az-gh__dot"></span>ไลฟ์เรดดี้ Life Ready</a>
+          <a href="../ismart80-6/" role="menuitem"><span class="az-gh__dot"></span>ไอสมาร์ท 80/6 iSmart 80/6</a>
           <a href="../global-saving/" role="menuitem"><span class="az-gh__dot"></span>Global Saving Plus 15/8</a>
+          <a href="../pension-smart95/" role="menuitem"><span class="az-gh__dot"></span>บำนาญ สมาร์ท 95</a>
           <a href="../ihealthy/" role="menuitem"><span class="az-gh__dot"></span>iHealthy Ultra</a>
           <a href="../ci123/" role="menuitem"><span class="az-gh__dot"></span>CI 123 ประกันโรคร้ายแรง</a>
+          <a href="../ishield/" role="menuitem"><span class="az-gh__dot"></span>iShield</a>
           <a href="../group-insurance/" role="menuitem"><span class="az-gh__dot"></span>ประกันกลุ่ม Group Insurance</a>
           <a href="../fhc/" role="menuitem"><span class="az-gh__dot"></span>FHC — แบบสอบถามคุณภาพชีวิต</a>
           <a href="../career-agent/" role="menuitem"><span class="az-gh__dot"></span>Career-Agent-Question</a>
@@ -87,14 +97,14 @@
             <form id="calc-form" class="space-y-6">
               <!-- Tabs -->
               <div>
-                <div class="grid w-full grid-cols-3 rounded-md bg-muted p-1 gap-1">
-                  <button type="button" class="tab-btn rounded-sm py-1.5 text-sm font-medium transition" data-tab="direct" data-active="true">หน่วยตรง</button>
-                  <button type="button" class="tab-btn rounded-sm py-1.5 text-sm font-medium transition" data-tab="child">หน่วยลูก</button>
-                  <button type="button" class="tab-btn rounded-sm py-1.5 text-sm font-medium transition" data-tab="grandchild">หน่วยหลาน</button>
+                <div class="grid w-full grid-cols-3 rounded-md bg-muted p-1 gap-1" role="tablist" aria-label="เลือกประเภทหน่วยงาน">
+                  <button type="button" role="tab" aria-selected="true" aria-controls="pane-direct" class="tab-btn rounded-sm py-1.5 text-sm font-medium transition" data-tab="direct" data-active="true">หน่วยตรง</button>
+                  <button type="button" role="tab" aria-selected="false" aria-controls="pane-child" class="tab-btn rounded-sm py-1.5 text-sm font-medium transition" data-tab="child">หน่วยลูก</button>
+                  <button type="button" role="tab" aria-selected="false" aria-controls="pane-grandchild" class="tab-btn rounded-sm py-1.5 text-sm font-medium transition" data-tab="grandchild">หน่วยหลาน</button>
                 </div>
 
                 <!-- Direct -->
-                <div class="tab-pane mt-6 space-y-6" data-pane="direct">
+                <div class="tab-pane mt-6 space-y-6" data-pane="direct" id="pane-direct" role="tabpanel">
                   <div>
                     <label class="text-sm font-medium">คอมมิชชั่นของธุรกิจใหม่ (NBC)</label>
                     <input id="direct-nbc" type="text" inputmode="numeric" placeholder="เช่น 50,000"
@@ -125,7 +135,7 @@
                 </div>
 
                 <!-- Child -->
-                <div class="tab-pane mt-6 space-y-4 hidden" data-pane="child">
+                <div class="tab-pane mt-6 space-y-4 hidden" data-pane="child" id="pane-child" role="tabpanel">
                   <div id="child-list" class="space-y-4"></div>
                   <button type="button" id="add-child" class="w-full inline-flex items-center justify-center rounded-md border px-4 py-2 text-sm font-medium hover:bg-secondary/20 transition-colors">
                     <svg class="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/></svg>
@@ -134,7 +144,7 @@
                 </div>
 
                 <!-- Grandchild -->
-                <div class="tab-pane mt-6 space-y-4 hidden" data-pane="grandchild">
+                <div class="tab-pane mt-6 space-y-4 hidden" data-pane="grandchild" id="pane-grandchild" role="tabpanel">
                   <div id="grandchild-list" class="space-y-4"></div>
                   <button type="button" id="add-grandchild" class="w-full inline-flex items-center justify-center rounded-md border px-4 py-2 text-sm font-medium hover:bg-secondary/20 transition-colors">
                     <svg class="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/></svg>
@@ -152,6 +162,7 @@
                   คำนวณค่าบริหารทั้งหมด
                 </button>
               </div>
+              <p id="calc-warning" role="alert" class="hidden text-sm font-medium" style="color:hsl(var(--destructive))">กรุณากรอกคอมมิชชั่น (NBC) อย่างน้อยหนึ่งช่องให้มากกว่า 0 ก่อนคำนวณ</p>
             </form>
           </div>
         </div>
@@ -178,6 +189,23 @@
 
   <script src="agency.js"></script>
   <script>
+    /* ---- inline toast (replaces raw alert) ---- */
+    function showToast(message) {
+      let el = document.getElementById('az-toast');
+      if (!el) {
+        el = document.createElement('div');
+        el.id = 'az-toast';
+        el.setAttribute('role', 'status');
+        el.setAttribute('aria-live', 'polite');
+        el.style.cssText = 'position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:9999;max-width:90vw;padding:10px 18px;border-radius:10px;background:hsl(var(--foreground));color:hsl(var(--card));font-size:14px;font-weight:500;box-shadow:0 6px 20px rgba(0,0,0,.25);opacity:0;transition:opacity .2s;';
+        document.body.appendChild(el);
+      }
+      el.textContent = message;
+      requestAnimationFrame(() => { el.style.opacity = '1'; });
+      clearTimeout(el._t);
+      el._t = setTimeout(() => { el.style.opacity = '0'; }, 2600);
+    }
+
     /* ---- helpers ---- */
     function parseNbc(str) {
       const raw = String(str).replace(/,/g, '');
@@ -193,8 +221,9 @@
     /* ---- tabs ---- */
     document.querySelectorAll('.tab-btn').forEach(btn => {
       btn.addEventListener('click', () => {
-        document.querySelectorAll('.tab-btn').forEach(b => b.dataset.active = 'false');
+        document.querySelectorAll('.tab-btn').forEach(b => { b.dataset.active = 'false'; b.setAttribute('aria-selected', 'false'); });
         btn.dataset.active = 'true';
+        btn.setAttribute('aria-selected', 'true');
         const t = btn.dataset.tab;
         document.querySelectorAll('.tab-pane').forEach(p => p.classList.toggle('hidden', p.dataset.pane !== t));
       });
@@ -284,11 +313,23 @@
 
     document.getElementById('calc-form').addEventListener('submit', e => {
       e.preventDefault();
-      const results = commissionCalculator(gather());
-      renderResults(results);
+      const data = gather();
+      const totalNbc = data.direct.nbc +
+        data.child.reduce((s, c) => s + (c.nbc || 0), 0) +
+        data.grandchild.reduce((s, g) => s + (g.nbc || 0), 0);
+      const warn = document.getElementById('calc-warning');
+      if (totalNbc <= 0) {
+        if (warn) warn.classList.remove('hidden');
+        document.getElementById('direct-nbc').focus();
+        return;
+      }
+      if (warn) warn.classList.add('hidden');
+      renderResults(commissionCalculator(data));
     });
 
     document.getElementById('reset-btn').addEventListener('click', () => {
+      const calcWarn = document.getElementById('calc-warning');
+      if (calcWarn) calcWarn.classList.add('hidden');
       document.getElementById('direct-nbc').value = '';
       document.getElementById('direct-tenure').value = '1';
       persist.value = 80; document.getElementById('persist-label').textContent = '80%';
@@ -494,8 +535,16 @@
       const shareText = generateShareText(r);
       const copyBtn = document.getElementById('copy-btn');
       if (copyBtn) copyBtn.addEventListener('click', async () => {
-        try { await navigator.clipboard.writeText(shareText); copyBtn.innerHTML = IC.copy + 'คัดลอกแล้ว'; }
-        catch (e) { alert('ไม่สามารถคัดลอกได้'); }
+        try {
+          await navigator.clipboard.writeText(shareText);
+          copyBtn.innerHTML = IC.copy + 'คัดลอกแล้ว';
+          setTimeout(() => { copyBtn.innerHTML = IC.copy + 'คัดลอกข้อความ'; }, 2000);
+        }
+        catch (e) {
+          showToast('ไม่สามารถคัดลอกได้ กรุณาคัดลอกด้วยตนเอง');
+          copyBtn.innerHTML = IC.copy + 'คัดลอกไม่สำเร็จ';
+          setTimeout(() => { copyBtn.innerHTML = IC.copy + 'คัดลอกข้อความ'; }, 2000);
+        }
       });
       const lineBtn = document.getElementById('line-btn');
       if (lineBtn) lineBtn.addEventListener('click', () =>

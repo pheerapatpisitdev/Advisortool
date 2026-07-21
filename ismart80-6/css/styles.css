@@ -34,6 +34,11 @@ input:focus, select:focus { outline: 2px solid var(--is-accent); border-color: v
 .rider__ctl input, .rider__ctl select { width: auto; flex: 1; min-width: 0; }
 .rider input[type=checkbox] { width: 20px; height: 20px; accent-color: var(--is-accent); }
 .rider__note { grid-column: 1 / -1; font-size: .76rem; color: var(--az-bad, #b00020); margin: 2px 0 0 38px; }
+@media (max-width: 640px) {
+  .rider { grid-template-columns: 1fr; gap: 8px; }
+  .rider__ck { display: none; }
+  .rider__ctl input, .rider__ctl select { flex: 1 1 auto; }
+}
 
 .actions { display: flex; gap: 12px; align-items: center; margin: 20px 0; flex-wrap: wrap; }
 .actions--top { justify-content: space-between; margin: 8px 0 16px; }
@@ -58,10 +63,21 @@ input:focus, select:focus { outline: 2px solid var(--is-accent); border-color: v
 
 /* print */
 @media print {
-  @page { margin: 0; }
-  body { background: #fff; }
+  /* @page margin:0 kills the browser URL/date/page-number header; paper margins are simulated
+     with padding on the wrap + padding-top on each new-page section (same approach as ci123). */
+  @page { size: A4 portrait; margin: 0; }
+  /* force white-on-navy table headers to render even when Chrome's "Background graphics" is off */
+  html, body { background: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .az-wrap { padding: 9mm 8mm 0; }
   .no-print, .az-steps, .az-gh, .actions--top { display: none !important; }
   .card, .bentbl, .sumtbl { box-shadow: none; }
-  .res-section { page-break-inside: avoid; }
+  /* summary/benefit sections each start on a new page; rows break individually (no cut rows) */
+  .res-section { break-before: page; page-break-before: always; padding-top: 9mm; }
+  .res-section:first-child { break-before: auto; page-break-before: auto; padding-top: 0; }
+  .bentbl tr, .sumtbl tr { break-inside: avoid; page-break-inside: avoid; }
   .bentbl { font-size: .72rem; }
+  /* print-safety: if the user prints without calculating, hide the form and show a hint */
+  body.print-noquote #page-input { display: none !important; }
+  body.print-noquote::after { content: 'กรุณากดปุ่ม "คำนวณเบี้ยประกันภัย" ก่อนพิมพ์ / บันทึก PDF';
+    display: block; padding: 40mm 8mm; text-align: center; font-size: 14pt; font-weight: 700; color: #1a1a1a; }
 }
