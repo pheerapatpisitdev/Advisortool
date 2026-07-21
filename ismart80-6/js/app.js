@@ -158,7 +158,7 @@
   function renderBenefit(res, inp) {
     var b = res.benefit;
     var ihActive = !!(inp.mhp && inp.mhp.plan);
-    var ihTotal = 0, shortfall = 0; // shortfall = ผลรวมเฉพาะปีที่ต้องจ่ายเพิ่ม (เหมือน 12PL)
+    var ihTotal = 0, saved = 0, outOfPocket = 0;
     var rows = b.map(function (r) {
       var cls = r.age === 79 ? ' class="mat"' : '';
       var tr = '<tr' + cls + '><td>' + r.age + '</td><td>' + r.year + '</td><td>' + fmt0(r.premium) + '</td>' +
@@ -167,25 +167,27 @@
         '<td>' + fmt0(r.death) + '</td><td>' + fmt0(r.deathInclCoupons) + '</td><td>' + fmt0(r.surrender) + '</td>';
       if (ihActive) {
         var ih = ihYearlyPremium(inp, r.age);
-        // หักเฉพาะเงินคืนรายปี — ไม่รวมเงินครบกำหนด 200% ที่อายุ 79 (r.cashback ปีนั้นคือเงินครบกำหนด)
+        // เงินคืนรายปี (ไม่รวมเงินครบกำหนด 200% ที่อายุ 79) เอามาช่วยจ่ายเบี้ยสุขภาพ
         var annualCB = r.age <= 78 ? r.cashback : 0;
-        var net = annualCB - (ih || 0);
-        if (ih) ihTotal += ih;
-        if (net < 0) shortfall += net;
+        var after = ih == null ? null : Math.max(0, ih - annualCB); // เบี้ยสุขภาพที่ยังต้องจ่ายเอง
+        if (ih) { ihTotal += ih; saved += Math.min(ih, annualCB); outOfPocket += after; }
         tr += '<td>' + (ih ? fmt0(ih) : '–') + '</td>' +
-          '<td' + (net > 0 ? ' class="net-pos"' : '') + '>' + (net === 0 ? '–' : fmt0(Math.abs(net))) + '</td>';
+          '<td' + (after === 0 ? ' class="net-pos"' : '') + '>' + (ih == null ? '–' : (after === 0 ? '0' : fmt0(after))) + '</td>';
       }
       return tr + '</tr>';
     }).join('');
     var ihHead = ihActive
-      ? '<th scope="col">เบี้ย iHealthy Ultra<br>(ต่อปี)</th><th scope="col">กรณีรับเงินจ่ายคืน<br>หลังหักเบี้ย iHealthy Ultra</th>'
+      ? '<th scope="col">เบี้ย iHealthy Ultra<br>(ต่อปี)</th><th scope="col">เบี้ยสุขภาพ<br>หลังหักเงินคืน</th>'
       : '';
     var ihFoot = ihActive
       ? '<tfoot><tr class="tot"><td colspan="8" style="text-align:right">รวม</td><td>' + fmt0(ihTotal) + '</td>' +
-        '<td>' + (shortfall < 0 ? 'ต้องจ่ายเพิ่ม ' + fmt0(Math.abs(shortfall)) : '–') + '</td></tr></tfoot>'
+        '<td>' + fmt0(outOfPocket) + '</td></tr></tfoot>'
+      : '';
+    var ihSummary = ihActive
+      ? '<div class="ih-summary">เงินคืนจาก ไอสมาร์ท 80/6 ช่วยลดค่าเบี้ยสุขภาพ iHealthy Ultra ไป <b>' + fmt0(saved) + ' บาท</b> ตลอดสัญญา · คงเหลือจ่ายเอง <b>' + fmt0(outOfPocket) + ' บาท</b></div>'
       : '';
     var ihNote = ihActive
-      ? ' · <span style="color:#2563eb">คอลัมน์ท้าย: เบี้ย iHealthy Ultra รายปี และเงินจ่ายคืนรายปีหลังหักเบี้ย (สีน้ำเงิน = เงินคืนพอจ่ายเบี้ย)</span>'
+      ? ' · <span style="color:#2563eb">คอลัมน์ท้าย “เบี้ยสุขภาพหลังหักเงินคืน” = เบี้ย iHealthy ส่วนที่เงินคืนจ่ายไม่พอ (0 = เงินคืนจ่ายครบทั้งปี)</span>'
       : '';
     return '<div class="res-section"><div class="res-h">ตารางแสดงผลประโยชน์ (ทุนประกัน ' + fmt0(inp.mainSA) + ' บาท)</div>' +
       '<div class="res-meta">เงินจ่ายคืนรายปี 1% (ปี 1–5) / 2% (ปี 6 เป็นต้นไป) · ครบกำหนดสัญญาอายุ 80 ปี รับ 200% ของทุนประกัน · ' +
@@ -193,7 +195,7 @@
       '<div class="tbl-scroll"><table class="bentbl"><thead><tr>' +
       '<th scope="col">อายุ</th><th scope="col">ปีที่</th><th scope="col">เบี้ยประกันภัย<br>สัญญาหลัก (ต่อปี)</th><th scope="col">เบี้ยประกันภัย<br>สะสม</th><th scope="col">เงินจ่ายคืน<br>(ต่อปี)</th>' +
       '<th scope="col">ความคุ้มครอง<br>เสียชีวิต</th><th scope="col">ผลประโยชน์เสียชีวิต<br>รวมเงินคืนที่จ่ายแล้ว</th><th scope="col">มูลค่าเวนคืน<br>กรมธรรม์</th>' + ihHead +
-      '</tr></thead><tbody>' + rows + '</tbody>' + ihFoot + '</table></div>' +
+      '</tr></thead><tbody>' + rows + '</tbody>' + ihFoot + '</table></div>' + ihSummary +
       '<p class="res-meta">หมายเหตุ: ตัวเลขเป็นเพียงตัวอย่างประกอบการเสนอขาย ผลประโยชน์และเงื่อนไขเป็นไปตามที่กำหนดในกรมธรรม์</p></div>';
   }
 
