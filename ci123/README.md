@@ -8,16 +8,15 @@
 - `data.js` — ข้อมูลเบี้ย (`window.CI123_PREMIUMS`, 7 ทุน × อายุ 0–70) + รายชื่อโรค (`window.CI123_DISEASES`) สร้างจาก `premiums.json` + `diseases.ts` ต้นฉบับ
 - `cause-stats.png`, `Ex/EX1–3.png` — รูปประกอบ
 
-ใช้ Tailwind ผ่าน Play CDN (จัดสไตล์), ไม่มีการบันทึกข้อมูล/Supabase — เป็นหน้าข้อมูล + เครื่องคำนวณล้วน
+ใช้ Tailwind ที่ compile ไว้ใน `styles.css`; ไม่มีการบันทึกข้อมูล/Supabase — เป็นหน้าข้อมูล + เครื่องคำนวณล้วน
 
 ## รัน / Deploy
 
 ```bash
-cd vanilla/ci123
-python3 -m http.server 8000   # เปิด http://localhost:8000
+python3 -m http.server 8080   # เปิด http://localhost:8080/ci123/
 ```
 
-อัปโหลดทั้งโฟลเดอร์ (index.html, data.js, รูป) ขึ้น host static ที่ไหนก็ได้
+เวลา deploy ให้อัปโหลดทั้ง repo หรืออย่างน้อยโฟลเดอร์นี้พร้อม shared `assets/`
 
 ## หมายเหตุการแปลง
 

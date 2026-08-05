@@ -1,7 +1,7 @@
-/* Advisortool — PIN gate. ตรวจ PIN ปกติผ่าน Supabase RPC (az_gate_verify) ด้วย fetch โดยตรง
+/* Advisortool — PIN gate. ตรวจ PIN ผ่าน Supabase RPC (az_gate_verify) ด้วย fetch โดยตรง
    (ไม่ต้องโหลด supabase-js). include ใน <head> ของทุกหน้า หลัง pin-gate.config.js.
    รันแบบ synchronous เพื่อไม่ให้หน้าจริงแว้บก่อนฉากล็อก
-   (การตรวจ PIN เองเป็น async แต่การซ่อน/แสดงหน้ายังคง synchronous เหมือนเดิม). */
+   การตรวจสอบล้มเหลวหรือ timeout จะ fail closed และคงหน้าจอล็อกไว้เสมอ. */
 (function () {
   var pinGateScript = document.currentScript;
   var BRAND_ASSET_VERSION = '20260719-2';
@@ -13,10 +13,8 @@
   var TITLE = CFG.title || 'กรุณาใส่รหัสผ่าน';
   var SUBTITLE = CFG.subtitle || 'Advisortool';
   var SUPABASE_OK = !!(CFG.supabaseUrl && CFG.supabaseAnonKey);
-  var FRONTEND_PIN = String(CFG.frontendPin || '');
   var SUPABASE_TIMEOUT = Number(CFG.supabaseTimeoutMs) || 8000;
-  var FRONTEND_OK = /^\d{6}$/.test(FRONTEND_PIN);
-  var CONFIG_OK = SUPABASE_OK || FRONTEND_OK;
+  var CONFIG_OK = SUPABASE_OK;
 
   function brandAssetUrl(fileName) {
     if (fileName === 'advisortool-logo.png' && window.AZ_BRAND_LOGO_URL) {
@@ -109,7 +107,7 @@
     overlay.innerHTML =
       '<div class="az-pin__card">' +
         '<div class="az-pin__title">ตั้งค่าระบบตรวจสอบไม่ถูกต้อง</div>' +
-        '<div class="az-pin__msg az-pin__msg--show">กรุณาตั้งค่า Supabase หรือ frontendPin ใน assets/pin-gate.config.js</div>' +
+        '<div class="az-pin__msg az-pin__msg--show">กรุณาตั้งค่า Supabase ใน assets/pin-gate.config.js</div>' +
       '</div>';
     root.appendChild(overlay);
     return;
@@ -167,20 +165,13 @@
       try { window.dispatchEvent(new Event('resize')); } catch (e) {}
     }, 260);
   }
-  // Supabase ตอบไม่ได้ (offline/timeout/error): รับเฉพาะรหัสฉุกเฉิน frontendPin เท่านั้น
-  // รหัสปกติต้องผ่าน Supabase เสมอเพื่อให้ถูกบันทึกใน az_gate_access_log
-  function handleConnectionFailure(pin) {
-    if (FRONTEND_OK && pin === FRONTEND_PIN) {
-      completeUnlock();
-      return;
-    }
+  // Fail closed: ถ้า server ตอบไม่ได้ ห้ามปลดล็อกจากข้อมูลใด ๆ ฝั่ง browser
+  function handleConnectionFailure() {
     checking = false;
     setDisabled(false);
     reset();
     shake();
-    setMsg(FRONTEND_OK
-      ? 'เชื่อมต่อไม่ได้ กรุณาลองใหม่ หรือใช้รหัสฉุกเฉิน'
-      : 'เชื่อมต่อไม่ได้ กรุณาลองใหม่อีกครั้ง');
+    setMsg('เชื่อมต่อระบบตรวจสอบไม่ได้ กรุณาลองใหม่อีกครั้ง');
   }
   // เรียก az_gate_verify ผ่าน REST โดยตรง (ไม่ต้องโหลด supabase-js 204KB)
   function verifyWithSupabase(pin) {
@@ -219,10 +210,11 @@
       return;
     }
 
-    // ไม่มี Supabase config → frontendPin เป็นทางเดียว
+    // ไม่มี server config ต้องคงสถานะล็อกไว้เสมอ
     if (!SUPABASE_OK) {
-      if (FRONTEND_OK && pin === FRONTEND_PIN) completeUnlock();
-      else { reset(); shake(); setMsg('รหัสไม่ถูกต้อง ลองใหม่'); }
+      reset();
+      shake();
+      setMsg('ระบบตรวจสอบยังไม่พร้อมใช้งาน');
       return;
     }
 
@@ -231,8 +223,7 @@
     setMsg('กำลังตรวจสอบ...');
     verifyWithSupabase(pin).then(function (res) {
       if (res.error) {
-        // Supabase ล่มจริง → ให้ handleConnectionFailure ลองรหัสฉุกเฉิน
-        handleConnectionFailure(pin);
+        handleConnectionFailure();
         return;
       }
       checking = false;
@@ -252,7 +243,7 @@
       if (attempts >= MAX) startLockout();
       else setMsg('รหัสไม่ถูกต้อง ลองใหม่');
     }).catch(function () {
-      handleConnectionFailure(pin);
+      handleConnectionFailure();
     });
   }
   function startLockout() {

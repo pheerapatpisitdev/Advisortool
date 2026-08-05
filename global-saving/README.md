@@ -9,7 +9,6 @@ framework, no server-side code. Open `index.html` in any browser (or serve the f
 - `data.js` — the financial engine ported **verbatim** from `_src/engine.ts` and `_src/surr158.ts`
   (products, surrender-value table, `calc`, `bankCompare`, IRR bisection, `SCEN`, `fmt`), plus the
   factsheet dataset extracted from `_src/components/Documents.tsx`.
-- `logo.png` — copied from `public/global-saving/logo.png`.
 
 ## Views (hash routing, matches App.tsx)
 - `#calc` (default) — **เครื่องคำนวณ**: premium↔sum-assured calculator, 5 index scenarios
@@ -18,10 +17,9 @@ framework, no server-side code. Open `index.html` in any browser (or serve the f
 - `#docs` — **เอกสารการลงทุน**: Citi Grandmaster RC 5 Index factsheet (donut allocation chart,
   index line chart with event bands, annual-returns bar chart + table). Built with Chart.js.
 
-## Dependencies (CDN)
-- Chart.js 4.4.1 (factsheet charts) — `cdn.jsdelivr.net`.
-- Google Fonts: IBM Plex Sans Thai + Sarabun. (The React app loaded local Sarabun .ttf files;
-  here we use the Google CDN equivalent — IBM Plex Sans Thai is the primary UI font as in source.)
+## Dependencies
+- Chart.js is stored locally as `chart.umd.js`.
+- Google Fonts supplies IBM Plex Sans Thai + Sarabun; system-font fallbacks remain usable if fonts cannot load.
 
 ## Notes / parity
 - Engine ported character-for-character (TS → plain ES5-style JS). Verified numerically: default

@@ -56,7 +56,7 @@ RLS enabled on both tables with **no policies granted to `anon` or `authenticate
 4. Inserts one row into `az_gate_access_log` regardless of outcome.
 5. Returns `{ok:true}` or `{ok:false, locked:false}` — never the PIN list itself.
 
-`grant execute` to `anon`; `revoke all` direct table privileges from `anon`/`authenticated` on both tables.
+Revoke the function's default `PUBLIC` execute grant and any `authenticated` grant, then grant execute only to `anon`. Revoke direct table privileges from `PUBLIC`/`anon`/`authenticated` on both tables.
 
 ## Client changes (`assets/pin-gate.js`, shared by all 14 pages)
 
@@ -66,16 +66,17 @@ RLS enabled on both tables with **no policies granted to `anon` or `authenticate
 - The existing 5-attempts/30s client-side lockout UI stays as-is for instant UX feedback — it's now a courtesy layer, not the real security boundary (the RPC enforces the real one).
 - Everything after a successful unlock (localStorage `az_gate`, 12h sliding idle timeout, floating lock button) is unchanged.
 
-## Migration (one-time, run via Supabase MCP, not committed to git)
+## Migration (one-time, run through an authorized Supabase administration channel)
 
-1. Take the 8 existing PINs currently in `assets/pin-gate.config.js` (`015495, 086678, 118880, 085271, 121095, 142406, 142124, 142394`).
-2. Insert each into `az_gate_pins` with `pin_hash = crypt(<pin>, gen_salt('bf'))` and a placeholder `label` (`"PIN 1"`..`"PIN 8"`).
-3. User renames each `label` to the real person's name later via the Supabase Table Editor, at their own pace — no plaintext PIN needs to be re-distributed since the codes themselves don't change.
-4. Remove `pins: [...]` from `assets/pin-gate.config.js` once the migration is confirmed working.
+1. Generate PINs outside the repository and insert only bcrypt hashes into `az_gate_pins` using `crypt(<pin>, gen_salt('bf'))`.
+2. Never place plaintext PINs in source, documentation, commit messages, CI logs, or browser configuration.
+3. Assign a human-readable `label` in Supabase so access logs remain useful without revealing the PIN.
+4. Rotate any PIN that has ever appeared in repository history; deleting it from the current tree does not remove it from prior commits.
 
 ## Trade-offs / limitations accepted
 
 - Unlocking now requires network connectivity (previously worked fully offline once the page loaded).
+- Verification errors and timeouts fail closed; there is no browser-side emergency PIN.
 - Slight latency on submit (one network round trip to Supabase).
 - Adding a 9th person later means manually inserting a new row into `az_gate_pins` (hashed) — no automatic sync from any other roster/table.
 

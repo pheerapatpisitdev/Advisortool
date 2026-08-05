@@ -2,8 +2,8 @@
 
 Standalone static port of the `app/agency` Next.js toolkit. No build step, no
 framework, no server, **no `/api` calls** — all calculations run client-side in
-the browser. Tailwind is loaded via the Play CDN; the custom Agency Blueprint
-theme tokens (from `agency.css` / `tailwind.config.js`) are re-declared inline.
+the browser. Tailwind is precompiled in `styles.css`; custom Agency Blueprint
+theme tokens are declared inline.
 
 ## Files
 
@@ -49,7 +49,6 @@ theme tokens (from `agency.css` / `tailwind.config.js`) are re-declared inline.
 ## Run locally
 
 ```sh
-cd vanilla/agency
-python3 -m http.server 8853
-# open http://localhost:8853/index.html
+python3 -m http.server 8080
+# open http://localhost:8080/agency/
 ```

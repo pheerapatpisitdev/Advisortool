@@ -8,15 +8,14 @@ No build step, no framework, no server-side code.
 Open over HTTP (needed so the images load with correct paths and html2canvas can read them):
 
 ```
-cd vanilla/group-insurance
-python3 -m http.server 8852
-# open http://localhost:8852/index.html
+python3 -m http.server 8080
+# open http://localhost:8080/group-insurance/
 ```
 
 ## Files
 
-- `index.html` — shell: Tailwind Play CDN (with custom teal theme tokens), ported `index.css`,
-  loads jsPDF + html2canvas from CDN, then `data.js`, `translations.js`, `app.js`.
+- `index.html` — shell ที่โหลด Tailwind CSS ซึ่ง compile ไว้แล้วใน `styles.css`,
+  jsPDF/html2canvas ที่เก็บในโฟลเดอร์เดียวกัน แล้วตามด้วย `data.js`, `translations.js`, `app.js`.
 - `app.js` — full app: state object + `render()` pattern (mirrors the React tree). Sidebar,
   3 pages (Group Health, Group PA, Business Type), the multi-group premium calculator,
   TH/EN language toggle (persisted to `localStorage` under `group-insurance-lang`),
