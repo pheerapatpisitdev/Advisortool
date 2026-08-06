@@ -36,7 +36,14 @@ npm run dev:ai
 
 ## Deploy
 
-ต้อง deploy บน runtime ที่รัน Node server ได้ หรือแปลง handler `/api/advisor` เป็น serverless function ที่คง validation, rate limit และ same-origin policy เดิม Static hosting อย่างเดียวไม่สามารถเก็บ API key หรือให้ AI Advisor ทำงานได้
+โปรเจกต์รองรับ Vercel โดยตรงผ่าน `api/advisor.mjs` และ `vercel.json` หน้า static เดิมยังถูก deploy จาก root และ Function ใช้ same-origin path `/api/advisor`
+
+1. สร้าง/ลิงก์ Vercel project จาก root ของ repo
+2. ตั้ง `OPENAI_API_KEY` ใน Vercel Project Settings → Environment Variables โดยเลือกอย่างน้อย Production ห้ามใส่ prefix ที่เปิดเผยฝั่ง client
+3. ตั้ง `OPENAI_MODEL=gpt-5.6-terra` ใน Production หากต้องการระบุชัดเจน (ไม่ตั้งก็ใช้ค่าเริ่มต้นเดียวกัน)
+4. deploy ด้วย `vercel --prod` แล้วทดสอบ `/advisor/` และ `POST /api/advisor`
+
+`.vercelignore` กัน `.env.local`, root `data/` ที่อาจมีข้อมูลส่วนบุคคล และไฟล์ local server ออกจาก deployment ส่วน calculator data ที่ Function ต้องใช้ถูกระบุใน `includeFiles`
 
 ใน production ควรใช้ rate limit แบบ shared store ที่ข้ามหลาย instance, ตั้ง secret ผ่านระบบ environment ของผู้ให้บริการ, จำกัด access ที่ CDN/identity layer และเก็บ application logs โดยไม่บันทึก prompt หรือ API key
 

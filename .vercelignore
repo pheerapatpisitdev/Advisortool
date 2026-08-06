@@ -1,0 +1,9 @@
+.git
+.claude
+.DS_Store
+node_modules
+.env.local
+.env.*.local
+/data/
+/LifeTreasure/
+/server.mjs

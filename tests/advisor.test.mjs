@@ -3,6 +3,7 @@ import test from 'node:test';
 import { calculateCI123, calculateIHealthy, calculatePension } from '../advisor/lib/calculators.mjs';
 import { searchProducts } from '../advisor/lib/catalog.mjs';
 import { runAdvisor } from '../advisor/lib/openai-advisor.mjs';
+import { _testing as httpTesting } from '../advisor/lib/http-handler.mjs';
 import { validateAdvisorRequest } from '../advisor/lib/validation.mjs';
 
 test('request validation accepts a minimal Thai conversation and normalizes profile', () => {
@@ -55,4 +56,9 @@ test('Responses tool loop executes only registered deterministic tools', async (
   assert.match(result.answer, /iHealthy/);
   assert.equal(result.evidence[0].tool, 'search_products');
   assert.ok(seen[1].input.some((item) => item.type === 'function_call_output'));
+});
+
+test('same-origin validation honors Vercel forwarded HTTPS headers', () => {
+  const req = { headers: { host: 'internal.vercel', 'x-forwarded-host': 'advisor.example.com', 'x-forwarded-proto': 'https' }, socket: {} };
+  assert.equal(httpTesting.expectedOrigin(req), 'https://advisor.example.com');
 });

@@ -6,3 +6,5 @@ node_modules/
 # หมายเหตุ: ผูกไว้เฉพาะ /data/ ที่รากเท่านั้น เพื่อไม่ให้ไปบัง data/ ของเครื่องมือย่อย
 # (เช่น pension-smart95/data/db.js ที่ต้องใช้ตอน runtime)
 /data/
+.vercel
+.env*.local

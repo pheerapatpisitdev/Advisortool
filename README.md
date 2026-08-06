@@ -26,6 +26,8 @@ npm run dev:ai
 
 ห้ามเสิร์ฟ `.env.local` หรือย้าย API key ไปไว้ใน JavaScript ฝั่ง browser ดูรายละเอียดที่ [`advisor/README.md`](advisor/README.md)
 
+สำหรับ Vercel ให้ตั้ง `OPENAI_API_KEY` ใน Project Settings → Environment Variables แล้ว deploy จาก root; Function ที่ `api/advisor.mjs` จะรับ same-origin `/api/advisor` โดยหน้า static เดิมไม่ต้องเปลี่ยน path
+
 > ควรเปิดผ่าน HTTP (ไม่ใช่ `file://`) เพื่อให้ path ของ asset, การสร้าง PDF/ภาพ และ PIN gate ทำงานสม่ำเสมอ
 
 ## สถานะการแปลง — ครบทั้ง 14 เครื่องมือแล้ว ✅

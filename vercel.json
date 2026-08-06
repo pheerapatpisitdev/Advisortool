@@ -1,0 +1,18 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "functions": {
+    "api/advisor.mjs": {
+      "maxDuration": 60,
+      "includeFiles": "{ci123/data.js,ihealthy/data.js,pension-smart95/data/db.json,pension-smart95/src/engine.js}"
+    }
+  },
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-store" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" }
+      ]
+    }
+  ]
+}
