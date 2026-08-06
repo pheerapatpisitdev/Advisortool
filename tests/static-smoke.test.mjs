@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const entries = [
+  ['advisor', 'advisor/index.html'],
   ['life-treasure', 'life-treasure/index.html'],
   ['12pl', '12pl/index.html'],
   ['easy-protect6', 'easy-protect6/index.html'],
@@ -47,8 +48,8 @@ function pageBundle(relativePath) {
   return [html, ...scripts].join('\n');
 }
 
-test('all 14 primary tool entries exist and load shared gate/header versions', () => {
-  assert.equal(entries.length, 14);
+test('all 15 primary tool entries exist and load shared gate/header versions', () => {
+  assert.equal(entries.length, 15);
   for (const [tool, relativePath] of entries) {
     assert.equal(existsSync(path.join(root, relativePath)), true, `${tool}: missing entry`);
     const html = read(relativePath);
@@ -60,7 +61,7 @@ test('all 14 primary tool entries exist and load shared gate/header versions', (
   }
 });
 
-test('all static src/href references in the 14 entries resolve locally', () => {
+test('all static src/href references in the 15 entries resolve locally', () => {
   for (const [tool, relativePath] of entries) {
     const absoluteEntry = path.join(root, relativePath);
     const baseDir = path.dirname(absoluteEntry);

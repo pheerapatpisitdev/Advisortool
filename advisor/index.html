@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <link rel="stylesheet" href="../assets/pin-gate.css" />
+  <script src="../assets/pin-gate.config.js"></script>
+  <script src="../assets/pin-gate.js?v=20260719-2"></script>
+  <script src="../assets/click-sound.js"></script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="AI Advisor ผู้ช่วยสำรวจผลิตภัณฑ์ คำนวณด้วยเครื่องมือ และจัดทำร่างสรุปประกอบการสนทนา" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <link rel="icon" type="image/png" href="../assets/favicon.png?v=20260719" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/global-header.css?v=6" />
+  <link rel="stylesheet" href="styles.css?v=1" />
+  <title>AI Advisor · Advisortool</title>
+</head>
+<body>
+  <script src="../assets/global-header.js?v=7"></script>
+  <main class="advisor-shell">
+    <section class="masthead">
+      <div class="masthead__copy">
+        <span class="eyebrow"><i></i> ADVISOR DESK · BETA</span>
+        <h1>คุยให้ชัด<br><em>คำนวณให้จริง</em></h1>
+        <p>ผู้ช่วยสำหรับสำรวจแผน ถามข้อมูลผลิตภัณฑ์ และเรียกเครื่องคำนวณที่ตรวจสอบย้อนกลับได้—ก่อนนำไปคุยกับลูกค้า</p>
+      </div>
+      <div class="trust-card" aria-label="หลักการทำงานของ AI Advisor">
+        <span class="trust-card__number">01</span><b>ไม่เดาตัวเลข</b><small>ตัวเลขต้องมาจาก engine หรือตารางใน Advisortool</small>
+        <span class="trust-card__number">02</span><b>ไม่รับรองผล</b><small>คำแนะนำเป็นการคัดกรอง ไม่ใช่ผลพิจารณารับประกัน</small>
+        <span class="trust-card__number">03</span><b>คีย์อยู่ฝั่ง server</b><small>เบราว์เซอร์ไม่รับหรือจัดเก็บ OpenAI API key</small>
+      </div>
+    </section>
+
+    <div class="workspace">
+      <aside class="brief-panel">
+        <div class="panel-heading"><span>CLIENT BRIEF</span><small>ใส่เท่าที่จำเป็น</small></div>
+        <label>อายุ <input id="age" type="number" min="0" max="100" inputmode="numeric" placeholder="เช่น 35" /></label>
+        <label>เพศ
+          <select id="gender"><option value="unspecified">ไม่ระบุ</option><option value="male">ชาย</option><option value="female">หญิง</option></select>
+        </label>
+        <label>งบประมาณต่อเดือน <span class="input-unit"><input id="budget" type="number" min="0" max="10000000" inputmode="numeric" placeholder="เช่น 5,000" /><small>บาท</small></span></label>
+        <fieldset><legend>เป้าหมายหลัก</legend>
+          <div class="goal-grid">
+            <label><input type="checkbox" value="life" /> <span>คุ้มครองชีวิต</span></label>
+            <label><input type="checkbox" value="health" /> <span>สุขภาพ</span></label>
+            <label><input type="checkbox" value="critical_illness" /> <span>โรคร้ายแรง</span></label>
+            <label><input type="checkbox" value="retirement" /> <span>เกษียณ</span></label>
+            <label><input type="checkbox" value="saving" /> <span>ออมเงิน</span></label>
+            <label><input type="checkbox" value="tax" /> <span>ภาษี</span></label>
+          </div>
+        </fieldset>
+        <div class="privacy-note"><b>อย่าใส่ข้อมูลอ่อนไหว</b><span>ไม่ต้องระบุเลขบัตรประชาชน เวชระเบียน เลขกรมธรรม์ หรือข้อมูลสุขภาพเฉพาะบุคคล</span></div>
+      </aside>
+
+      <section class="conversation-panel" aria-label="สนทนากับ AI Advisor">
+        <div class="conversation-top">
+          <div><span class="status-dot"></span><b>AI Advisor</b><small>พร้อมช่วยสำรวจ</small></div>
+          <button id="reset" class="text-button" type="button">เริ่มบทสนทนาใหม่</button>
+        </div>
+        <div id="messages" class="messages" aria-live="polite">
+          <article class="message message--assistant"><div class="message__mark">AI</div><div><b>เริ่มจากเป้าหมายของลูกค้าได้เลย</b><p>ผมช่วยเทียบแนวทาง อธิบายผลิตภัณฑ์ และคำนวณ CI 123, iHealthy Ultra หรือบำนาญ สมาร์ท 95 ด้วยตารางจริงได้</p></div></article>
+        </div>
+        <div class="prompts" aria-label="คำถามตัวอย่าง">
+          <button type="button" data-prompt="ช่วยแนะนำแนวทางจากเป้าหมายและงบประมาณที่กรอก โดยเปรียบเทียบข้อดีและข้อจำกัด">ช่วยเลือกแนวทาง</button>
+          <button type="button" data-prompt="คำนวณเบี้ย CI 123 ให้หน่อย ถ้าข้อมูลยังไม่ครบให้ถามเฉพาะที่จำเป็น">คำนวณ CI 123</button>
+          <button type="button" data-prompt="ช่วยคำนวณและอธิบาย iHealthy Ultra ถ้าข้อมูลยังไม่ครบให้ถามก่อน">คำนวณ iHealthy</button>
+          <button type="button" data-prompt="ช่วยวางตัวอย่างแผนบำนาญ สมาร์ท 95 และคำนวณด้วย engine ถ้าข้อมูลยังไม่ครบให้ถามก่อน">วางแผนบำนาญ</button>
+        </div>
+        <form id="composer" class="composer">
+          <label for="question" class="sr-only">คำถาม</label>
+          <textarea id="question" rows="2" maxlength="2400" placeholder="ถามเรื่องแผน ความคุ้มครอง หรือขอคำนวณ..."></textarea>
+          <button id="send" type="submit"><span>ส่งให้ Advisor</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 14-7-4 14-3-6-7-1Z"/><path d="m12 13 7-8"/></svg></button>
+        </form>
+        <p class="composer-note">AI อาจตอบผิดได้ · โปรดตรวจเอกสารบริษัทและเงื่อนไขกรมธรรม์ทุกครั้ง</p>
+      </section>
+
+      <aside class="evidence-panel">
+        <div class="panel-heading"><span>VERIFIED EVIDENCE</span><small id="evidence-count">ยังไม่มีการคำนวณ</small></div>
+        <div id="evidence" class="evidence-empty">
+          <div class="seal">✓</div><b>ตัวเลขที่ตรวจสอบได้<br>จะแสดงที่นี่</b><p>ทุกครั้งที่ Advisor เรียก engine หรือตาราง ระบบจะแสดงแหล่งข้อมูล อินพุต และผลลัพธ์</p>
+        </div>
+        <button id="draft" class="draft-button" type="button" disabled><span>สร้างร่างสรุป</span><small>สำหรับพิมพ์ / บันทึก PDF</small></button>
+      </aside>
+    </div>
+  </main>
+
+  <section id="quote" class="quote-sheet" hidden aria-label="ร่างสรุปประกอบการสนทนา">
+    <header><img src="../assets/advisortool-wordmark.png" alt="Advisortool" /><div><b>ร่างสรุปประกอบการสนทนา</b><span id="quote-date"></span></div></header>
+    <h1>สรุปแนวทางและตัวเลขจากเครื่องมือ</h1>
+    <div id="quote-profile" class="quote-profile"></div>
+    <div id="quote-answer" class="quote-answer"></div>
+    <div id="quote-evidence" class="quote-evidence"></div>
+    <footer><b>เอกสารฉบับร่าง — ไม่ใช่ใบเสนอราคา</b><p>ไม่ใช่สัญญา เงื่อนไขกรมธรรม์ หรือการรับรองผลพิจารณารับประกัน ตัวเลขต้องตรวจเทียบกับเอกสารและระบบของบริษัท ณ วันที่เสนอขาย</p></footer>
+  </section>
+  <script src="app.js?v=1"></script>
+</body>
+</html>

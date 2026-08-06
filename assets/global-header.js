@@ -56,6 +56,7 @@
   var ADVISORY_NOTE = 'ผลลัพธ์เป็นการคำนวณหรือแบบประเมินเบื้องต้นจากข้อมูลที่กรอก ไม่ใช่คำแนะนำทางการเงิน ภาษี กฎหมาย หรือการรับรองคุณสมบัติ ผู้ใช้ควรตรวจสอบสมมติฐานและใช้วิจารณญาณก่อนนำผลไปใช้';
   var META_REVIEWED = 'ตรวจสถานะโปรแกรม 4 ส.ค. 2569 (ไม่ใช่วันที่รับรองอัตราผลิตภัณฑ์)';
   var TOOL_METADATA = {
+    'advisor': { title: 'AI Advisor', version: 'Beta · ใช้ model ตามค่า OPENAI_MODEL ฝั่ง server', source: 'แค็ตตาล็อกใน advisor/lib/catalog.mjs และ deterministic adapters ที่เรียกตาราง/engine เดิม; คำตอบภาษาธรรมชาติสร้างผ่าน OpenAI Responses API', note: 'AI Advisor เป็นผู้ช่วยคัดกรองและร่างสรุป ไม่ใช่ใบเสนอราคา ไม่ใช่คำแนะนำทางการเงิน ภาษี กฎหมาย หรือผลพิจารณารับประกัน ตัวเลขต้องมีหลักฐานจากเครื่องมือและต้องตรวจเอกสารบริษัทฉบับล่าสุดทุกครั้ง' },
     'life-treasure': { title: 'LifeTreasure', version: 'A2026-1 (ตามข้อความในหน้า)', source: 'ตารางอัตราและสูตรที่ฝังใน life-treasure/index.html; ไม่มีเอกสารต้นทางทางการอยู่ใน deploy ปัจจุบัน', note: PRODUCT_NOTE },
     '12pl': { title: '12PL', version: 'A2026-1 (ตาม metadata ในหน้า)', source: 'ตารางอัตราและสูตรที่ฝังใน 12pl/index.html; code ระบุว่าแปลงจาก workbook แต่ไฟล์ต้นทางไม่อยู่ใน deploy ปัจจุบัน', note: PRODUCT_NOTE },
     'easy-protect6': { title: 'Easy Protect 6', version: 'ไม่พบ version ในไฟล์ข้อมูล', source: 'easy-protect6/source/data/easy-protect-rates.json และ rider-rates.json; ต้องยืนยัน version/วันที่มีผลกับเจ้าของผลิตภัณฑ์', note: PRODUCT_NOTE },
