@@ -3,10 +3,10 @@
 <head>
   <link rel="stylesheet" href="../assets/pin-gate.css" />
   <script src="../assets/pin-gate.config.js"></script>
-  <script src="../assets/pin-gate.js?v=20260719-2"></script>
+  <script src="../assets/pin-gate.js?v=20260810-logo-v3"></script>
   <script src="../assets/click-sound.js"></script>
-  <link rel="icon" type="image/png" href="../assets/favicon.png?v=20260719" />
-<link rel="stylesheet" href="../assets/global-header.css?v=6" />
+  <link rel="icon" type="image/png" href="../assets/favicon.png?v=20260810-logo-v3" />
+<link rel="stylesheet" href="../assets/global-header.css?v=10" />
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -39,18 +39,18 @@ h1,h2,h3,h4{letter-spacing:0}
 .masthead h1{font-size:1.45rem;font-weight:700;margin-top:3px;color:#555}
 .masthead .sub{font-size:.86rem;color:var(--ink-3);margin-top:4px}
 .ver-chip{border-left:3px solid var(--blue);color:var(--blue-deep);padding:4px 0 4px 12px;font-size:.82rem;font-weight:600}
-.wrap{max-width:1320px;margin:0 auto;padding:0 30px}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
 
 /* ---------- pages ---------- */
-.page{display:none;padding:30px 0 72px}
+.page{display:none;padding:24px 0 56px}
 .page.on{display:block}
 .panel{background:transparent;border:0}
 .panel+.panel{margin-top:34px}
 .panel-h{padding:0 0 12px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px}
 .panel-h h2{font-size:1.55rem;font-weight:600;color:var(--blue)}
 .badge-n{display:none}
-.panel-b{padding:20px 0 0}
-.form-narrow{max-width:1040px;margin:0 auto}
+.panel-b{padding:16px 0 0}
+.form-narrow{max-width:860px;margin:0 auto}
 .case-summary{padding:0 0 18px;margin-bottom:34px;border-bottom:1px solid var(--line);font-size:1rem;font-weight:600;color:#595959}
 .case-summary strong{color:var(--blue);font-weight:700}
 
@@ -125,7 +125,7 @@ input.locked:focus{outline:none}
 .btn-ghost:hover{border-color:var(--blue);color:var(--blue-deep)}
 
 /* total bar (result page) */
-.totalbar{background:#fff;color:var(--ink);border-top:4px solid var(--blue);border-bottom:1px solid var(--line);padding:18px 20px;margin-bottom:28px;display:flex;flex-wrap:wrap;gap:14px 38px;align-items:center}
+.totalbar{background:#fff;color:var(--ink);border:1px solid var(--line);border-top:4px solid var(--blue);border-radius:10px;padding:18px 20px;margin-bottom:24px;display:flex;flex-wrap:wrap;gap:14px 30px;align-items:center;box-shadow:0 6px 18px rgba(22,34,68,.06)}
 .totalbar .t-label{font-size:.76rem;color:var(--ink-3);letter-spacing:.02em}
 .totalbar .t-big{font-size:2rem;font-weight:700;color:var(--blue)}
 .totalbar .t-big small{font-size:.9rem;font-weight:400;color:var(--ink-3)}
@@ -136,10 +136,10 @@ input.locked:focus{outline:none}
 .totalbar .btn-print{background:#fff;color:var(--blue-deep)}
 
 /* result sections */
-.tabpage{display:block}
+.tabpage{display:block;padding:22px 24px 26px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.72);box-shadow:0 5px 16px rgba(22,34,68,.04)}
 .tabpage::before{content:attr(data-title);display:block;margin-bottom:12px;
   font-size:1.45rem;font-weight:600;color:var(--blue-deep)}
-.tabpage+.tabpage{margin-top:42px;padding-top:30px;border-top:1px solid var(--line)}
+.tabpage+.tabpage{margin-top:24px;padding-top:26px;border-top:1px solid var(--line)}
 .document-title{text-align:center;padding:12px 0 28px}
 .document-title h2{font-size:2rem;line-height:1.3;color:#111;font-weight:700}
 .document-title p{margin-top:8px;color:#555;font-size:1rem}
@@ -157,7 +157,7 @@ tbody tr:hover{background:#f1f3ff}
 tr.hilite td{background:#eef0ff;font-weight:700}
 tfoot td{background:#f0f1f8;font-weight:700;color:#111}
 
-.sum-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:16px 0 24px;border:1px solid #252525;background:#fff}
+.sum-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:16px 0 22px;border:1px solid var(--line-2);border-radius:8px;overflow:hidden;background:#fff}
 .sum-card{border-left:1px solid #252525;padding:16px 18px;background:#fff;min-height:116px}
 .sum-card:first-child{border-left:0}
 .sum-card .sc-label{font-size:.8rem;color:var(--ink-3)}
@@ -174,7 +174,7 @@ tfoot td{background:#f0f1f8;font-weight:700;color:#111}
   .panel+.panel{margin-top:28px}.panel-h h2{font-size:1.3rem}
   .seg button{font-size:.9rem;white-space:normal}.ih-top{align-items:flex-start;flex-wrap:wrap}.ih-top .rider-range{margin-left:29px;width:100%}
   .actions{display:block}.actions .btn{width:100%}.sum-cards{grid-template-columns:1fr 1fr}.sum-card:nth-child(3){border-left:0;border-top:1px solid #252525}.sum-card:nth-child(4){border-top:1px solid #252525}
-  .document-title h2{font-size:1.45rem}.totalbar{gap:14px 24px}.totalbar .spacer{display:none;width:100%}.totalbar .btn{flex:1}
+  .document-title h2{font-size:1.45rem}.tabpage{padding:18px 14px 20px}.totalbar{gap:14px 24px}.totalbar .spacer{display:none;width:100%}.totalbar .btn{flex:1}
 }
 @media(max-width:520px){
   .wrap{padding:0 14px}.brand-kicker{font-size:.62rem}.masthead .sub{font-size:.75rem}.ver-chip{display:none}
@@ -222,7 +222,7 @@ tfoot td{background:#f0f1f8;font-weight:700;color:#111}
 </style>
 </head>
 <body>
-<script src="../assets/global-header.js?v=7"></script>
+<script src="../assets/global-header.js?v=10"></script>
 
 <header class="masthead">
   <div class="wrap">

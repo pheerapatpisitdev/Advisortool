@@ -56,9 +56,20 @@ test('all 15 primary tool entries exist and load shared gate/header versions', (
     const configAt = html.indexOf('pin-gate.config.js');
     const gateAt = html.indexOf('pin-gate.js');
     assert.ok(configAt >= 0 && gateAt > configAt, `${tool}: PIN config must load before gate`);
-    assert.match(html, /global-header\.css\?v=6/, `${tool}: shared header CSS version`);
-    assert.match(html, /global-header\.js\?v=7/, `${tool}: shared header JS version`);
+    assert.match(html, /global-header\.css\?v=10/, `${tool}: shared header CSS version`);
+    assert.match(html, /global-header\.js\?v=10/, `${tool}: shared header JS version`);
   }
+});
+
+test('shared visual system applies to every registered tool except iHealthy', () => {
+  const js = read('assets/global-header.js');
+  const css = read('assets/global-header.css');
+  const design = read('assets/design-system.css');
+  assert.match(css, /design-system\.css\?v=3/);
+  assert.match(js, /metadata\.title !== 'iHealthy Ultra'/);
+  assert.match(js, /classList\.add\('az-unified'\)/);
+  assert.match(design, /body\.az-unified/);
+  assert.match(design, /\.az-system-footer/);
 });
 
 test('all static src/href references in the 15 entries resolve locally', () => {

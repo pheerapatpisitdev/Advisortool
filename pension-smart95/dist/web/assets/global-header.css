@@ -2,6 +2,7 @@
    Light Minimal topbar: white bar, official logo, hairline bottom border.
    Self-contained (opaque white) so it looks right on any page background. */
 @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@500;600;700&display=swap');
+@import url('./design-system.css?v=3');
 
 :root { --az-header-h: 64px; }
 
@@ -53,8 +54,43 @@
   border: 2px solid #fff;
 }
 
-.az-gh__home:focus-visible, .az-gh__brand:focus-visible, .az-gh__badge:focus-visible,
+.az-gh__home:focus-visible, .az-gh__brand:focus-visible, .az-gh__badge:focus-visible, .az-gh__info:focus-visible,
 .az-gh__btn:focus-visible, .az-gh__panel a:focus-visible { outline: 3px solid #2563eb; outline-offset: 2px; }
+
+.az-gh__info {
+  width: 36px; height: 36px; border-radius: 50%; padding: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  border: 1px solid #d6d9df; background: #fff; color: #4b5563; cursor: pointer;
+}
+.az-gh__info:hover { color: #1d4ed8; border-color: #b8c9ec; background: #eef4ff; }
+
+html.az-meta-open { overflow: hidden; }
+.az-meta[hidden] { display: none !important; }
+.az-meta { position: fixed; inset: 0; z-index: 1000; font-family: 'IBM Plex Sans Thai', 'Sarabun', system-ui, sans-serif; }
+.az-meta__backdrop { position: absolute; inset: 0; background: rgba(17,24,39,.48); backdrop-filter: blur(2px); }
+.az-meta__card {
+  position: relative; width: min(620px, calc(100% - 28px)); max-height: calc(100vh - 40px); overflow: auto;
+  margin: 20px auto; padding: 24px; border-radius: 16px; background: #fff; color: #111827;
+  border: 1px solid #e6e8ec; box-shadow: 0 24px 70px rgba(17,24,39,.28); box-sizing: border-box;
+}
+.az-meta__close {
+  position: absolute; top: 12px; right: 12px; width: 36px; height: 36px; border-radius: 50%;
+  border: 1px solid #e6e8ec; background: #fff; color: #4b5563; font-size: 24px; line-height: 1; cursor: pointer;
+}
+.az-meta__close:hover { background: #f1f3f6; color: #111827; }
+.az-meta__close:focus-visible { outline: 3px solid #2563eb; outline-offset: 2px; }
+.az-meta__eyebrow { margin: 0 0 4px; color: #2563eb; font-size: 12px; font-weight: 700; letter-spacing: .08em; }
+.az-meta h2 { margin: 0 42px 18px 0; font-family: 'Kanit', inherit; font-size: 24px; line-height: 1.25; }
+.az-meta dl { display: grid; gap: 10px; margin: 0; }
+.az-meta dl > div { display: grid; grid-template-columns: 128px 1fr; gap: 12px; padding: 10px 0; border-top: 1px solid #e6e8ec; }
+.az-meta dt { color: #6b7280; font-size: 13px; font-weight: 600; }
+.az-meta dd { margin: 0; color: #1f2937; font-size: 13.5px; line-height: 1.6; overflow-wrap: anywhere; }
+.az-meta__note { margin: 16px 0 0; padding: 13px 14px; border-radius: 10px; background: #fff8e7; border: 1px solid #f0dca5; color: #5d4816; font-size: 13px; line-height: 1.65; }
+
+@media (max-width: 520px) {
+  .az-meta__card { margin: 10px auto; max-height: calc(100vh - 20px); padding: 20px 17px; }
+  .az-meta dl > div { grid-template-columns: 1fr; gap: 3px; }
+}
 
 /* dropdown "เครื่องมือ" menu (used by agency pages) */
 .az-gh__menu { position: relative; }
@@ -85,4 +121,4 @@
   .az-gh__left { gap: 9px; }
   .az-gh__brand img { height: 26px; }
 }
-@media print { .az-gh { display: none !important; } }
+@media print { .az-gh, .az-meta { display: none !important; } }

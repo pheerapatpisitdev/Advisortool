@@ -18,9 +18,9 @@ copyFileSync(join(root, 'src/app.js'), join(assets, 'app.js'));
 copyFileSync(join(root, 'data/db.js'), join(assets, 'db.js'));
 copyFileSync(join(root, '../assets/theme.css'), join(assets, 'theme.css'));
 copyFileSync(join(root, '../assets/global-header.css'), join(assets, 'global-header.css'));
+copyFileSync(join(root, '../assets/design-system.css'), join(assets, 'design-system.css'));
 copyFileSync(join(root, '../assets/global-header.js'), join(assets, 'global-header.js'));
-copyFileSync(join(root, '../assets/advisortool-mark.png'), join(assets, 'advisortool-mark.png'));
-copyFileSync(join(root, '../assets/advisortool-wordmark.png'), join(assets, 'advisortool-wordmark.png'));
+copyFileSync(join(root, '../assets/advisortool-wordmark-v3.svg'), join(assets, 'advisortool-wordmark-v3.svg'));
 copyFileSync(join(root, '../assets/favicon.png'), join(assets, 'favicon.png'));
 
 // rewrite index.html asset paths -> assets/
@@ -32,9 +32,9 @@ let html = readFileSync(join(root, 'index.html'), 'utf8')
   .replace(ref('href', 'src/styles.css'), 'href="assets/styles.css"')
   .replace(ref('href', '../assets/theme.css'), 'href="assets/theme.css"')
   .replace(ref('href', '../assets/global-header.css'), 'href="assets/global-header.css"')
-  .replace(ref('href', '../assets/favicon.png'), 'href="assets/favicon.png?v=20260719"')
-  .replace(ref('src', '../assets/global-header.js'), 'src="assets/global-header.js?v=6"')
-  .replace(ref('src', '../assets/advisortool-mark.png'), 'src="assets/advisortool-mark.png?v=20260719-2"')
+  .replace(ref('href', '../assets/favicon.png'), 'href="assets/favicon.png?v=20260810-logo-v3"')
+  .replace(ref('src', '../assets/global-header.js'), 'src="assets/global-header.js?v=10"')
+  .replace(ref('src', '../assets/advisortool-wordmark-v3.svg'), 'src="assets/advisortool-wordmark-v3.svg?v=20260810-logo-v3"')
   .replace(ref('src', 'data/db.js'), 'src="assets/db.js"')
   .replace(ref('src', 'src/engine.js'), 'src="assets/engine.js"')
   .replace(ref('src', 'src/app.js'), 'src="assets/app.js"');

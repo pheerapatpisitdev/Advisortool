@@ -239,7 +239,7 @@
       '<div class="h-full flex flex-col bg-teal-800 text-white shadow-xl">' +
       '<div class="relative p-6 border-b" style="border-bottom-color: rgba(95, 127, 116, 0.8); background-color: rgba(42, 71, 61, 1);">' +
       '<div class="flex items-center gap-3 pr-10">' +
-      '<img src="../assets/advisortool-mark.png?v=20260719-2" alt="Advisortool" class="w-12 h-12 rounded-lg object-cover shadow-sm flex-shrink-0" />' +
+      '<img src="../assets/advisortool-wordmark-v3.svg?v=20260810-logo-v3" alt="Advisortool" class="w-12 h-12 rounded-lg object-cover shadow-sm flex-shrink-0" />' +
       '<div class="min-w-0"><h1 class="text-lg font-bold text-white">' + esc(t('groupInsurance')) + '</h1>' +
       '<p class="text-xs text-teal-200">' + esc(t('groupInsuranceSystem')) + '</p></div></div>' +
       '<button type="button" data-closesidebar="1" class="lg:hidden absolute top-1/2 right-4 -translate-y-1/2 w-9 h-9 rounded-lg flex items-center justify-center text-white/80 hover:bg-white/10" aria-label="' + esc(t('close')) + '">' + icon('X', 'w-5 h-5') + '</button>' +
@@ -586,7 +586,7 @@
 
     return '<div style="width:794px;box-sizing:border-box;background:#ffffff;color:#0f172a;font-family:\'Sarabun\',\'Noto Sans Thai\',system-ui,-apple-system,sans-serif;padding:40px 44px;">' +
       '<div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid ' + NAVY + ';padding-bottom:18px;">' +
-      '<div style="display:flex;align-items:center;gap:14px;"><img src="../assets/advisortool-mark.png?v=20260719-2" alt="Advisortool" crossorigin="anonymous" style="width:54px;height:54px;border-radius:10px;object-fit:cover;" />' +
+      '<div style="display:flex;align-items:center;gap:14px;"><img src="../assets/advisortool-wordmark-v3.svg?v=20260810-logo-v3" alt="Advisortool" crossorigin="anonymous" style="width:54px;height:54px;border-radius:10px;object-fit:cover;" />' +
       '<div><div style="font-size:20px;font-weight:800;color:' + NAVY + ';line-height:1.2;">' + esc(t('groupInsurance')) + '</div>' +
       '<div style="font-size:12px;color:' + TEAL + ';margin-top:2px;">' + esc(t('groupInsuranceSystem')) + '</div></div></div>' +
       '<div style="text-align:right;font-size:12px;color:#475569;"><div style="font-weight:700;">' + esc(t('quoteNoLabel')) + ': ' + esc(q.quoteNo) + '</div>' +

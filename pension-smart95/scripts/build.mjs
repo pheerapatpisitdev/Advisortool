@@ -16,15 +16,15 @@ const db = read('data/db.js');
 const engine = read('src/engine.js');
 const app = read('src/app.js');
 const theme = read('../assets/theme.css');
-const ghCss = read('../assets/global-header.css');
+const designSystem = read('../assets/design-system.css');
+const ghCss = read('../assets/global-header.css')
+  .replace(/@import url\('\.\/design-system\.css\?v=3'\);?/, designSystem);
 // Strip global-header.js's leading doc comment: it documents how *other*, non-inlined
 // pages should include this file (`<link ... href="../assets/...">`), so left in place
 // it would leave stray "../assets/" text sitting inertly inside the single-file build.
 const ghJs  = read('../assets/global-header.js').replace(/^\/\*[\s\S]*?\*\/\s*/, '');
-const brandMarkUrl = dataUrl('../assets/advisortool-mark.png');
-const brandPrelude =
-  `window.AZ_BRAND_MARK_URL=${JSON.stringify(brandMarkUrl)};` +
-  `window.AZ_BRAND_WORDMARK_URL=${JSON.stringify(dataUrl('../assets/advisortool-wordmark.png'))};`;
+const brandMarkUrl = dataUrl('../assets/advisortool-wordmark-v3.svg', 'image/svg+xml');
+const brandPrelude = `window.AZ_BRAND_WORDMARK_URL=${JSON.stringify(brandMarkUrl)};`;
 const faviconUrl = dataUrl('../assets/favicon.png');
 
 // The inlined global-header.js/theme.css/global-header.css bodies legitimately contain
@@ -46,14 +46,19 @@ html = mustReplace(html, linkTag('../assets/theme.css'), `<style>\n${theme}\n</s
 if (!/<script src="\.\.\/assets\/global-header.js[^"]*"><\/script>/.test(html)) { console.error('✗ build failed: unresolved ref', '../assets/global-header.js'); process.exit(1); }
 html = html.replace(/<script src="..\/assets\/global-header.js[^"]*"><\/script>/, `<script>${brandPrelude}\n${ghJs}</script>`);
 html = html.replace(/<link rel="icon"[^>]*href="..\/assets\/favicon\.png(?:\?[^\"]*)?"\s*\/>/, `<link rel="icon" type="image/png" href="${faviconUrl}" />`);
-html = html.replace(/src="..\/assets\/advisortool-mark\.png(?:\?[^\"]*)?"/g, `src="${brandMarkUrl}"`);
+html = html.replace(/src="..\/assets\/advisortool-wordmark-v3\.svg(?:\?[^\"]*)?"/g, `src="${brandMarkUrl}"`);
 html = mustReplace(html, linkTag('src/styles.css'), `<style>\n${css}\n</style>`, 'src/styles.css');
-html = html.replace('<script src="data/db.js"></script>', `<script>${db}</script>`);
-html = html.replace('<script src="src/engine.js"></script>', `<script>${engine}</script>`);
-html = html.replace('<script src="src/app.js"></script>', `<script>${app}</script>`);
+html = html.replace(/<script src="data\/db\.js(?:\?[^\"]*)?"><\/script>/, `<script>${db}</script>`);
+html = html.replace(/<script src="src\/engine\.js(?:\?[^\"]*)?"><\/script>/, `<script>${engine}</script>`);
+html = html.replace(/<script src="src\/app\.js(?:\?[^\"]*)?"><\/script>/, `<script>${app}</script>`);
 
-for (const ref of ['src/styles.css', 'data/db.js', 'src="src/engine.js"', 'src="src/app.js"']) {
-  if (html.includes(ref)) { console.error('✗ build failed: unresolved ref', ref); process.exit(1); }
+for (const [label, pattern] of [
+  ['src/styles.css', /href="src\/styles\.css(?:\?[^\"]*)?"/],
+  ['data/db.js', /src="data\/db\.js(?:\?[^\"]*)?"/],
+  ['src/engine.js', /src="src\/engine\.js(?:\?[^\"]*)?"/],
+  ['src/app.js', /src="src\/app\.js(?:\?[^\"]*)?"/],
+]) {
+  if (pattern.test(html)) { console.error('✗ build failed: unresolved ref', label); process.exit(1); }
 }
 
 mkdirSync(join(root, 'dist'), { recursive: true });

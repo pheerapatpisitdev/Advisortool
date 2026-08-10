@@ -6,6 +6,9 @@
   const fmt = (n, d) => (n == null || isNaN(n)) ? '—' : Number(n).toLocaleString('th-TH', { minimumFractionDigits: d || 0, maximumFractionDigits: d || 0 });
   const fmt2 = n => fmt(n, 2);
   const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  // money inputs: live thousands-separator + comma-stripping parse
+  const groupCommas = el => { if (!el) return; const raw = String(el.value).replace(/[^0-9]/g, ''); el.value = raw === '' ? '' : Number(raw).toLocaleString('en-US'); };
+  const numv = id => { const el = $(id); return el ? (parseFloat(String(el.value).replace(/,/g, '')) || 0) : 0; };
 
   const S = { gender: 'ชาย', payOption: 'ชำระเบี้ย จนรับเงินบำนาญ', annuityAge: 70, inputType: 'จำนวนเงินเอาประกันภัย' };
   let lastResult = null;
@@ -39,10 +42,12 @@
   function seg(el, val, cb) {
     const btns = el.querySelectorAll('button');
     btns.forEach(b => {
-      b.classList.toggle('on', b.dataset.v === val);
+      const sel = b.dataset.v === val;
+      b.classList.toggle('on', sel);
+      b.setAttribute('aria-checked', String(sel));
       b.onclick = () => {
         if (b.disabled) return;
-        btns.forEach(x => x.classList.toggle('on', x === b));
+        btns.forEach(x => { const on = x === b; x.classList.toggle('on', on); x.setAttribute('aria-checked', String(on)); });
         cb(b.dataset.v);
       };
     });
@@ -67,12 +72,14 @@
   function renderAnnuityOptions(age) {
     const avail = eng.availablePlans(age, S.payOption).map(p => p.annuityAge);
     const el = $('annuitySeg');
-    el.innerHTML = [55, 60, 65, 70].map(a => `<button data-v="${a}">${a} ปี</button>`).join('');
+    el.innerHTML = [55, 60, 65, 70].map(a => `<button type="button" role="radio" aria-checked="false" data-v="${a}">${a} ปี</button>`).join('');
     if (!avail.includes(S.annuityAge) && avail.length) S.annuityAge = avail[avail.length - 1];
     el.querySelectorAll('button').forEach(b => {
       const a = +b.dataset.v;
       b.disabled = !avail.includes(a);
-      b.classList.toggle('on', a === S.annuityAge);
+      const on = a === S.annuityAge;
+      b.classList.toggle('on', on);
+      b.setAttribute('aria-checked', String(on));
       b.onclick = () => { if (!b.disabled) { S.annuityAge = a; renderInputUI(); } };
     });
     $('annuityErr').textContent = avail.length ? '' : 'อายุนี้ไม่สามารถสมัครแบบประกันได้ (รับประกันอายุ 20–65 ปี ขึ้นกับแผน)';
@@ -100,7 +107,7 @@
     if (f.t === 'num') return `<div class="az-field"><label for="${id}">${f.label}</label><input type="number" id="${id}" value="${v}" step="${f.step || 1}"></div>`;
     if (f.t === 'select') return `<div class="az-field"><label for="${id}">${f.label}</label><select id="${id}">${f.opts.map(o => `<option value="${o[0]}" ${o[0] == v ? 'selected' : ''}>${o[1]}</option>`).join('')}</select></div>`;
     if (f.t === 'selectDyn') return `<div class="az-field"><label for="${id}">${f.label}</label><select id="${id}"></select></div>`;
-    if (f.t === 'seg') return `<div class="az-field"><label id="${id}_lbl">${f.label}</label><div class="az-seg" id="${id}" role="group" aria-labelledby="${id}_lbl">${f.opts.map(o => `<button data-v="${o[0]}" class="${o[0] == v ? 'on' : ''}">${o[1]}</button>`).join('')}</div></div>`;
+    if (f.t === 'seg') return `<div class="az-field"><label id="${id}_lbl">${f.label}</label><div class="az-seg" id="${id}" role="radiogroup" aria-labelledby="${id}_lbl">${f.opts.map(o => `<button type="button" role="radio" aria-checked="${o[0] == v ? 'true' : 'false'}" data-v="${o[0]}" class="${o[0] == v ? 'on' : ''}">${o[1]}</button>`).join('')}</div></div>`;
     return '';
   }
   function bindRiderFields() {
@@ -111,7 +118,6 @@
     }));
   }
   function refreshDynSelects(age) {
-    setDyn('f_mex_plan', eng.mexPlans(age).map(p => [p, `${fmt(p)} (ค่าห้อง/วัน)`]), RD.mex, 'plan');
     setDyn('f_meb_plan', eng.mebPlans(age).map(p => [p, `${fmt(p)} บาท/วัน`]), RD.meb, 'plan');
     setDyn('f_mhp_plan', eng.mhpPlans(age).map(p => [p, p]), RD.mhp, 'plan');
     setDyn('f_mhp_area', eng.mhpAreas(RD.mhp.plan).map(a => [a, a]), RD.mhp, 'area');
@@ -131,14 +137,10 @@
       else if (r.code === 'wp') out.wp = { buy: true, variant: st.variant };
       else if (r.code === 'ap') out.ap = { sa: +st.sa, occ };
       else if (r.code === 'ecare') out.ecare = { sa: +st.sa, occ };
-      else if (r.code === 'mex') out.mex = { plan: +st.plan, occ };
       else if (r.code === 'meb') out.meb = { plan: +st.plan, occ };
       else if (r.code === 'dci') out.dci = { sa: +st.sa, occ };
       else if (r.code === 'pls') out.pls = { code: st.code, sa: +st.sa, occ };
-      else if (r.code === 'cpr') out.cpr = { sa: +st.sa, occ };
-      else if (r.code === 'hic') out.hic = { sa: +st.sa, occ };
       else if (r.code === 'mhp') out.mhp = { plan: st.plan, area: st.area, coverage: st.coverage, occ };
-      else if (r.code === 'mci') out.mci = { plan: st.plan, occ };
     });
     return out;
   }
@@ -150,7 +152,7 @@
     if (age < 20 || age > 65) { return showErr('กรุณากรอกอายุระหว่าง 20–65 ปี'); }
     const avail = eng.availablePlans(age, S.payOption).map(p => p.annuityAge);
     if (!avail.includes(S.annuityAge)) { return showErr('อายุ ' + age + ' ปี ไม่สามารถเลือกแบบรับบำนาญอายุ ' + S.annuityAge + ' ปีได้'); }
-    const amount = +$('amount').value || 0;
+    const amount = numv('amount');
     if (amount <= 0) { return showErr('กรุณากรอกจำนวนเงิน'); }
     const input = { age, gender: S.gender, annuityAge: S.annuityAge, payOption: S.payOption, mode: $('mode').value, inputType: S.inputType, amount, riders: gatherRiders(occ) };
     const res = eng.compute(input);
@@ -212,8 +214,8 @@
     $('illusBody').innerHTML = html;
   }
   function renderTax() {
-    const t = eng.tax({ income: +$('txIncome').value || 0, pvd: +$('txRetire').value || 0, gpf: 0, teacher: 0, rmf: 0,
-      existingOrdinaryLife: +$('txOrdinary').value || 0, existingAnnuity: +$('txAnnuity').value || 0, marginalRate: (+$('txRate').value || 0) / 100 });
+    const t = eng.tax({ income: numv('txIncome'), pvd: numv('txRetire'), gpf: 0, teacher: 0, rmf: 0,
+      existingOrdinaryLife: numv('txOrdinary'), existingAnnuity: numv('txAnnuity'), marginalRate: (+$('txRate').value || 0) / 100 });
     $('txMax').textContent = fmt(t.maxAnnuityPremium) + ' บาท';
     $('txBenefit').textContent = fmt2(t.taxBenefit) + ' บาท';
     $('txNote').textContent = t.note;
@@ -223,7 +225,9 @@
   function bind() {
     seg($('genderSeg'), S.gender, v => { S.gender = v; renderInputUI(); });
     seg($('payOptSeg'), S.payOption, v => { S.payOption = v; renderInputUI(); });
-    seg($('inputTypeSeg'), S.inputType, v => { S.inputType = v; const def = { 'จำนวนเงินเอาประกันภัย': 100000, 'เบี้ยประกันภัย': 100000, 'เงินบำนาญรายเดือน': 10000 }; $('amount').value = def[v]; renderInputUI(); });
+    seg($('inputTypeSeg'), S.inputType, v => { S.inputType = v; const def = { 'จำนวนเงินเอาประกันภัย': 100000, 'เบี้ยประกันภัย': 100000, 'เงินบำนาญรายเดือน': 10000 }; $('amount').value = Number(def[v]).toLocaleString('en-US'); renderInputUI(); });
+    // live comma grouping (money fields only — attach first so parse reads a clean value)
+    ['amount', 'txIncome', 'txRetire', 'txOrdinary', 'txAnnuity'].forEach(id => { const el = $(id); if (el) el.addEventListener('input', () => groupCommas(el)); });
     ['age', 'occ', 'amount'].forEach(id => $(id).addEventListener('input', renderInputUI));
     ['txIncome', 'txRate', 'txRetire', 'txOrdinary', 'txAnnuity'].forEach(id => $(id).addEventListener('input', renderTax));
     $('btnCalc').onclick = calculate;

@@ -4,7 +4,7 @@
    การตรวจสอบล้มเหลวหรือ timeout จะ fail closed และคงหน้าจอล็อกไว้เสมอ. */
 (function () {
   var pinGateScript = document.currentScript;
-  var BRAND_ASSET_VERSION = '20260719-2';
+  var BRAND_ASSET_VERSION = '20260810-logo-v3';
   var CFG = window.PIN_GATE_CONFIG || {};
   var KEY = CFG.storageKey || 'az_gate';
   var IDLE = CFG.idleTimeoutMs || 12 * 60 * 60 * 1000;
@@ -17,7 +17,7 @@
   var CONFIG_OK = SUPABASE_OK;
 
   function brandAssetUrl(fileName) {
-    if (fileName === 'advisortool-logo.png' && window.AZ_BRAND_LOGO_URL) {
+    if (fileName === 'advisortool-wordmark-v3.svg' && window.AZ_BRAND_LOGO_URL) {
       return window.AZ_BRAND_LOGO_URL;
     }
     if (pinGateScript && pinGateScript.src) {
@@ -115,7 +115,7 @@
 
   overlay.innerHTML =
     '<div class="az-pin__card">' +
-      '<img class="az-pin__logo" src="' + esc(brandAssetUrl('advisortool-logo.png')) + '" alt="' + esc(SUBTITLE) + '" width="190" height="164">' +
+      '<img class="az-pin__logo" src="' + esc(brandAssetUrl('advisortool-wordmark-v3.svg')) + '" alt="' + esc(SUBTITLE) + '" width="190" height="164">' +
       '<div class="az-pin__title">' + esc(TITLE) + '</div>' +
       '<form class="az-pin__form" novalidate>' +
         '<input class="az-pin__input" type="password" inputmode="numeric" autocomplete="one-time-code" ' +

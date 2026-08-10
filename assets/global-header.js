@@ -6,13 +6,10 @@
 */
 (function () {
   var headerScript = document.currentScript;
-  var BRAND_ASSET_VERSION = '20260719-2';
+  var BRAND_ASSET_VERSION = '20260810-logo-v3';
 
   function brandAssetUrl(fileName) {
-    if (fileName === 'advisortool-mark.png' && window.AZ_BRAND_MARK_URL) {
-      return window.AZ_BRAND_MARK_URL;
-    }
-    if (fileName === 'advisortool-wordmark.png' && window.AZ_BRAND_WORDMARK_URL) {
+    if (fileName === 'advisortool-wordmark-v3.svg' && window.AZ_BRAND_WORDMARK_URL) {
       return window.AZ_BRAND_WORDMARK_URL;
     }
     if (headerScript && headerScript.src) {
@@ -92,11 +89,8 @@
   header.setAttribute('data-az-global-header', '');
   header.innerHTML =
     '<div class="az-gh__left">' +
-      '<a href="' + homeUrl() + '" class="az-gh__home" aria-label="หน้าแรก Advisortool">' +
-        '<img src="' + brandAssetUrl('advisortool-mark.png') + '" alt="" width="44" height="44">' +
-      '</a>' +
       '<a href="' + homeUrl() + '" class="az-gh__brand" aria-label="Advisortool">' +
-        '<img src="' + brandAssetUrl('advisortool-wordmark.png') + '" alt="Advisortool" width="188" height="36">' +
+        '<img src="' + brandAssetUrl('advisortool-wordmark-v3.svg') + '" alt="Advisortool" width="44" height="44">' +
       '</a>' +
     '</div>' +
     '<div class="az-gh__right">' +
@@ -106,10 +100,13 @@
 
   // Insert as the first element of <body> so it stays pinned at the top.
   var body = document.body;
+  var metadata = currentMetadata();
+  if (metadata && metadata.title !== 'iHealthy Ultra') {
+    body.classList.add('az-unified');
+  }
   if (body.firstChild) { body.insertBefore(header, body.firstChild); }
   else { body.appendChild(header); }
 
-  var metadata = currentMetadata();
   var infoButton = header.querySelector('.az-gh__info');
   if (!metadata) {
     infoButton.hidden = true;
@@ -135,6 +132,18 @@
       '</dl>' +
       '<p class="az-meta__note">' + esc(metadata.note) + '</p>' +
     '</section>';
+  var systemFooter = document.createElement('footer');
+  systemFooter.className = 'az-system-footer';
+  systemFooter.innerHTML =
+    '<span>ADVISORTOOL</span>' +
+    '<p>เครื่องมือประกอบการนำเสนอเบื้องต้น · โปรดตรวจสอบข้อมูลผลิตภัณฑ์ฉบับล่าสุดก่อนใช้งาน</p>' +
+    '<a href="' + homeUrl() + '">กลับหน้ารวมเครื่องมือ</a>';
+  body.appendChild(systemFooter);
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function () {
+      body.appendChild(systemFooter);
+    }, { once: true });
+  }
   body.appendChild(modal);
 
   function closeMetadata() {
