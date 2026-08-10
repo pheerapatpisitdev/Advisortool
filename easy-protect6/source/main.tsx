@@ -20,7 +20,7 @@ import {
   type RiderInput,
 } from "./calculator";
 
-const modes: PaymentMode[] = ["monthly", "quarterly", "semiannual", "annual"];
+const modes: PaymentMode[] = ["monthly", "semiannual", "annual"];
 const healthPlans: Exclude<HealthPlan, "">[] = ["SMART", "BRONZE", "SILVER", "GOLD", "DIAMOND", "PLATINUM"];
 const quickAmounts = [500_000, 1_000_000, 2_000_000, 5_000_000];
 
@@ -193,30 +193,6 @@ export function App() {
           <div className="rider-table" role="table" aria-label="สัญญาเพิ่มเติม">
             <div className="rider-head" role="row"><span>เลือก</span><span>สัญญาเพิ่มเติม</span><span>จำนวนเงิน / แผน</span></div>
 
-            <RiderRow checked={riders.pb} onToggle={(checked) => setRider("pb", checked)} title="PB Fit" description="ยกเว้นเบี้ยกรณีผู้ชำระเบี้ยเสียชีวิตหรือทุพพลภาพ" eligibility="อายุผู้ชำระเบี้ย 20–70 ปี">
-              <div className="triple-control">
-                <select aria-label="จำนวนเท่าความคุ้มครอง PB Fit" value={riders.pbMultiplier} onChange={(event) => setRider("pbMultiplier", Number(event.target.value))}><option value="1">1 เท่า</option><option value="1.5">1.5 เท่า</option><option value="2">2 เท่า</option></select>
-                <input aria-label="อายุผู้ชำระเบี้ย" type="number" min="20" max="70" value={riders.payorAge} onChange={(event) => setRider("payorAge", Number(event.target.value))} />
-                <select aria-label="เพศผู้ชำระเบี้ย" value={riders.payorGender} onChange={(event) => setRider("payorGender", event.target.value as Gender)}><option value="M">ชาย</option><option value="F">หญิง</option></select>
-              </div>
-            </RiderRow>
-
-            <RiderRow checked={riders.wp} onToggle={(checked) => setRider("wp", checked)} title="WP Fit" description="ยกเว้นเบี้ยเมื่อผู้เอาประกันภัยทุพพลภาพตามเงื่อนไข" eligibility="ผู้เอาประกันภัยอายุ 16–70 ปี">
-              <select value={riders.wpMultiplier} onChange={(event) => setRider("wpMultiplier", Number(event.target.value))}><option value="1">1 เท่า</option><option value="1.5">1.5 เท่า</option><option value="2">2 เท่า</option></select>
-            </RiderRow>
-
-            <RiderRow checked={riders.meb > 0} onToggle={(checked) => setRider("meb", checked ? 1000 : 0)} title="MEB" description="ค่ารักษาพยาบาลจากอุบัติเหตุ" eligibility="อายุ 6–65 ปี">
-              <div className="double-control"><select value={riders.meb || ""} onChange={(event) => setRider("meb", Number(event.target.value))}><option value="">เลือกผลประโยชน์</option>{[500, 1000, 2000, 3000, 4000, 5000].map((value) => <option value={value} key={value}>{formatNumber(value)} บาท</option>)}</select><OccupationSelect value={riders.mebClass} onChange={(value) => setRider("mebClass", value)} /></div>
-            </RiderRow>
-
-            <RiderRow checked={riders.dci > 0} onToggle={(checked) => setRider("dci", checked ? 500_000 : 0)} title="DCI" description="ความคุ้มครองโรคร้ายแรง" eligibility="อายุ 20–65 ปี · ทุนเริ่ม 200,000 บาท">
-              <AmountInput value={riders.dci} onChange={(value) => setRider("dci", value)} />
-            </RiderRow>
-
-            <RiderRow checked={riders.pls10 > 0} onToggle={(checked) => setRider("pls10", checked ? 500_000 : 0)} title="PLS10" description="ความคุ้มครองชีวิตเพิ่มเติม" eligibility="อายุ 20–59 ปี · ทุนเริ่ม 300,000 บาท">
-              <AmountInput value={riders.pls10} onChange={(value) => setRider("pls10", value)} />
-            </RiderRow>
-
             <RiderRow checked={Boolean(riders.ihealthyPlan)} onToggle={(checked) => setRider("ihealthyPlan", checked ? "SMART" : "")} title="iHealthy Ultra" description="ประกันสุขภาพเหมาจ่าย" eligibility="อายุ 6–80 ปี">
               <div className="health-controls">
                 <select value={riders.ihealthyPlan} onChange={(event) => setRider("ihealthyPlan", event.target.value as HealthPlan)}><option value="">เลือกแผน</option>{healthPlans.map((plan) => <option value={plan} key={plan}>{healthPlanLabels[plan]}</option>)}</select>
@@ -226,9 +202,6 @@ export function App() {
               </div>
             </RiderRow>
 
-            <RiderRow checked={riders.ci123 > 0} onToggle={(checked) => setRider("ci123", checked ? 500_000 : 0)} title="CI 123" description="ความคุ้มครองโรคร้ายแรงหลายระยะ" eligibility="อายุไม่เกิน 75 ปี · ทุนเริ่ม 100,000 บาท">
-              <AmountInput value={riders.ci123} onChange={(value) => setRider("ci123", value)} />
-            </RiderRow>
           </div>
         </section>
 
