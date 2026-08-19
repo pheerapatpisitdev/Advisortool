@@ -4,9 +4,15 @@ The browser PIN gate calls `public.az_gate_verify(text, text, text)` with the
 Supabase publishable key configured in `assets/pin-gate.config.js`. The browser
 now fails closed: there is no offline or client-side PIN fallback.
 
+Current project: `cenysylrzbwfrtuqoeqk` (named "UnitClub" in the dashboard).
+Moved there on 2026-08-19 from `yovibeztstpexajpuyyb`, which still holds a copy
+of `az_gate_pins` and `az_gate_access_log` as a rollback target. The gate tables
+share that project with an unrelated application, so scope every future
+migration to the `az_gate_*` objects.
+
 Before deploying the updated static files:
 
-1. Apply `migrations/202608040001_harden_az_gate_authorization.sql` to the same
+1. Apply `migrations/202608190001_create_az_gate_on_unitclub.sql` to the target
    Supabase project through an authorized migration workflow or the SQL editor.
 2. Confirm `az_gate_pins` and `az_gate_access_log` have RLS enabled and no direct
    grants to `PUBLIC`, `anon`, or `authenticated`.
