@@ -50,6 +50,54 @@
     /* keep the page exactly one viewport tall (header is in normal flow) — no double scrollbar */
     #app > div { min-height: calc(100vh - var(--az-header-h, 64px)); }
     #app main { min-height: calc(100vh - var(--az-header-h, 64px)) !important; }
+    /* assets/design-system.css centers every <main> (max-width:1180px; margin-inline:auto)
+       and outranks Tailwind's .lg\:ml-72, so this page's <main> was centred instead of
+       offset — the 288px fixed sidebar then covered its left edge (288px at 1024w,
+       162px at 1440w). This <main> is an app shell, not a reading column: keep it
+       full-width and restore the sidebar gutter. */
+    #app main { max-width: none !important; margin-left: 0 !important; margin-right: 0 !important; }
+    @media (min-width: 1024px) { #app main { margin-left: 18rem !important; } }
+
+    /* --- a11y / touch-target / mobile fixes (see README) --- */
+    /* screen-reader-only text (not in the prebuilt tailwind bundle) */
+    .gi-sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden;
+                  clip:rect(0 0 0 0); clip-path:inset(50%); white-space:nowrap; border:0; }
+
+    /* Apple 44pt / Material 48dp minimum hit area. Declared here rather than as
+       tailwind utilities because styles.css is a prebuilt bundle — classes that
+       aren't already in it silently do nothing. */
+    #app [data-plan], #app [data-rider], #app [data-lang],
+    #app [data-pdf], #app [data-openquote], #app [data-shareline],
+    #app [data-addgroup], #app [data-removegroup] { min-height: 44px; }
+    #app [data-closesidebar], #app [data-quoteclose] { min-width: 44px; min-height: 44px; }
+
+    /* iOS Safari zooms the whole page when a focused field is under 16px */
+    #app input, #app select, #app textarea { font-size: 16px; }
+
+    /* scroll lock while the quote dialog / mobile drawer owns the screen */
+    html.gi-modal-open, html.gi-modal-open body { overflow: hidden; }
+    /* those shared buttons sit at z-index 2147482000, i.e. above the dialog, where they
+       land on its action row. While a dialog owns the screen, get them out of the way. */
+    html.gi-modal-open .az-lock-btn { display: none !important; }
+
+    /* right-edge fade telling the user a table scrolls sideways */
+    .gi-hscroll { position: relative; }
+    .gi-hscroll.is-scrollable::after {
+      content: ''; position: absolute; top: 0; right: 0; bottom: 0; width: 40px;
+      background: linear-gradient(to left, rgba(255,255,255,.96), rgba(255,255,255,0));
+      pointer-events: none;
+    }
+
+    @media (max-width: 1023.98px) {
+      /* the shared lock/sound buttons are fixed at bottom-LEFT, which is exactly
+         where this page's business-code column lives. Park them bottom-right,
+         where the table has already scrolled its content away. */
+      body.az-unified > .az-lock-btn { left: auto !important; right: 14px !important; }
+      body.az-unified > #az-sound-btn { right: 14px !important; left: auto !important; bottom: 66px !important; }
+      /* let the 1,099-row table scroll with the page instead of trapping the finger
+         in a 524px-tall box that holds 100,000px of content */
+      #app [data-biz-scroll] { max-height: none !important; overflow-y: visible !important; }
+    }
 
     /* --- play the slide-up animation only on page mount / nav change --- */
     /* render() rebuilds innerHTML on every keystroke & button press; without this the
@@ -73,7 +121,7 @@
   <div id="app"></div>
 
   <script src="translations.js"></script>
-  <script src="app.js?v=20260719-2"></script>
+  <script src="app.js?v=20260818-a11y"></script>
 
 </body>
 </html>

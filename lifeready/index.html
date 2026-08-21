@@ -15,7 +15,7 @@
 <meta http-equiv="Expires" content="0">
 <link rel="stylesheet" href="../assets/global-header.css?v=10" />
 <link rel="stylesheet" href="../assets/theme.css?v=1" />
-<link rel="stylesheet" href="css/styles.css?v=31">
+<link rel="stylesheet" href="css/styles.css?v=32">
 </head>
 <body class="az-theme">
 <script src="../assets/global-header.js?v=10"></script>
@@ -39,46 +39,42 @@
 <div class="az-wrap az-narrow" id="page-input">
   <div class="lr-case-summary" id="lrCaseSummary">LifeReady / หญิง / 35 ปี / ชำระเบี้ย 18 ปี</div>
 
-  <div class="az-card">
-    <div class="az-card__h"><span class="az-card__n">1</span><h2>งวดการชำระเบี้ยประกันภัย</h2></div>
-    <div class="az-card__b">
-      <div class="az-field lr-mode-field"><label id="modeSegLbl">เลือกความถี่การชำระ</label><div class="az-seg" id="modeSeg" role="radiogroup" aria-labelledby="modeSegLbl"></div></div>
-    </div>
-  </div>
-
-  <div class="az-card">
-    <div class="az-card__h"><span class="az-card__n">2</span><h2>ข้อมูลผู้เอาประกันภัย</h2></div>
-    <div class="az-card__b">
-      <div class="az-grid2">
-        <div class="az-field"><label for="age">อายุ (ปี)</label><select id="age"></select></div>
-        <div class="az-field"><label id="sexSegLbl">เพศ</label><div class="az-seg" id="sexSeg" role="radiogroup" aria-labelledby="sexSegLbl"><button type="button" role="radio" aria-checked="true" data-v="หญิง" class="on">หญิง</button><button type="button" role="radio" aria-checked="false" data-v="ชาย">ชาย</button></div></div>
+  <div class="lr-input-grid">
+    <!-- ซ้าย: ข้อมูล + สัญญาหลัก (ค้างไว้เมื่อเลื่อนดูสัญญาเพิ่มเติม) -->
+    <div class="lr-col-main">
+      <div class="az-card lr-panel lr-form-card">
+        <div class="az-card__h"><h2>ข้อมูล &amp; สัญญาหลัก</h2></div>
+        <div class="az-card__b">
+          <div class="az-field"><label id="modeSegLbl">งวดการชำระเบี้ย</label><div class="az-seg" id="modeSeg" role="radiogroup" aria-labelledby="modeSegLbl"></div></div>
+          <div class="az-grid2">
+            <div class="az-field"><label for="age">อายุ (ปี)</label><select id="age"></select></div>
+            <div class="az-field"><label id="sexSegLbl">เพศ</label><div class="az-seg" id="sexSeg" role="radiogroup" aria-labelledby="sexSegLbl"><button type="button" role="radio" aria-checked="true" data-v="หญิง" class="on">หญิง</button><button type="button" role="radio" aria-checked="false" data-v="ชาย">ชาย</button></div></div>
+          </div>
+          <div class="az-field"><label id="planSegLbl">แผนการชำระเบี้ย</label><div class="az-seg" id="planSeg" role="radiogroup" aria-labelledby="planSegLbl"></div></div>
+          <div class="lr-calc-pair">
+            <div class="az-field"><label for="mainSA">จำนวนเงินเอาประกันภัย (บาท)</label><input id="mainSA" type="text" inputmode="numeric" value="1,000,000"></div>
+            <div class="lr-calc-bridge">⇅ คำนวณให้อัตโนมัติทั้งสองทาง</div>
+            <div class="az-field"><label for="mainPrem">เบี้ยสัญญาหลัก/งวด (บาท)</label><input id="mainPrem" type="text" inputmode="decimal" placeholder="กรอกเพื่อคำนวณทุนย้อนกลับ"></div>
+          </div>
+          <div id="mainNote" class="az-hint"></div>
+        </div>
       </div>
     </div>
-  </div>
 
-  <div class="az-card">
-    <div class="az-card__h"><span class="az-card__n">3</span><h2>สัญญาหลัก</h2></div>
-    <div class="az-card__b">
-      <div class="az-field"><label id="planSegLbl">แผนการชำระเบี้ย</label><div class="az-seg" id="planSeg" role="radiogroup" aria-labelledby="planSegLbl"></div></div>
-      <div class="lr-calc-pair">
-        <div class="az-field"><label for="mainSA">จำนวนเงินเอาประกันภัย (บาท)</label><input id="mainSA" type="text" inputmode="numeric" value="1,000,000"></div>
-        <div class="lr-calc-bridge">คำนวณ<br>อัตโนมัติ</div>
-        <div class="az-field"><label for="mainPrem">เบี้ยสัญญาหลัก/งวด (บาท)</label><input id="mainPrem" type="text" inputmode="decimal" placeholder="กรอกเพื่อคำนวณทุนย้อนกลับ"></div>
+    <!-- ขวา: สัญญาเพิ่มเติม -->
+    <div class="lr-col-riders">
+      <div class="az-card lr-panel lr-riders-card">
+        <div class="az-card__h"><h2>สัญญาเพิ่มเติม</h2></div>
+        <div class="az-card__b">
+          <div id="pbExtra" class="az-grid2" style="display:none">
+            <div class="az-field"><label for="payerAge">อายุผู้ชำระเบี้ย (PB)</label><input id="payerAge" type="number" value="35" min="20" max="70"></div>
+            <div class="az-field"><label id="payerSexSegLbl">เพศผู้ชำระเบี้ย (PB)</label><div class="az-seg" id="payerSexSeg" role="radiogroup" aria-labelledby="payerSexSegLbl"><button type="button" role="radio" aria-checked="true" data-v="ชาย" class="on">ชาย</button><button type="button" role="radio" aria-checked="false" data-v="หญิง">หญิง</button></div></div>
+          </div>
+          <table class="riders"><thead><tr><th style="width:30px"></th><th>สัญญาเพิ่มเติม</th><th>จำนวนเงิน / แผน</th></tr></thead>
+          <tbody id="riderBody"></tbody></table>
+          <div class="muted lr-riders-note">* เลือกสัญญาที่ต้องการ แล้วระบุจำนวนเงินหรือแผน ระบบจะตรวจสอบเกณฑ์ให้อัตโนมัติ</div>
+        </div>
       </div>
-      <div id="mainNote" class="az-hint"></div>
-    </div>
-  </div>
-
-  <div class="az-card lr-riders-card">
-    <div class="az-card__h"><span class="az-card__n">4</span><h2>สัญญาเพิ่มเติม</h2></div>
-    <div class="az-card__b">
-      <div id="pbExtra" class="az-grid2" style="display:none;background:#f6f8fb;padding:10px;border-radius:9px">
-        <div class="az-field"><label for="payerAge">อายุผู้ชำระเบี้ย (PB)</label><input id="payerAge" type="number" value="35" min="20" max="70"></div>
-        <div class="az-field"><label id="payerSexSegLbl">เพศผู้ชำระเบี้ย (PB)</label><div class="az-seg" id="payerSexSeg" role="radiogroup" aria-labelledby="payerSexSegLbl"><button type="button" role="radio" aria-checked="true" data-v="ชาย" class="on">ชาย</button><button type="button" role="radio" aria-checked="false" data-v="หญิง">หญิง</button></div></div>
-      </div>
-      <table class="riders"><thead><tr><th style="width:30px"></th><th>สัญญาเพิ่มเติม</th><th>จำนวนเงิน / แผน</th></tr></thead>
-      <tbody id="riderBody"></tbody></table>
-      <div class="muted lr-riders-note">* เลือกสัญญาที่ต้องการ แล้วระบุจำนวนเงินหรือแผน ระบบจะตรวจสอบเกณฑ์ให้อัตโนมัติ</div>
     </div>
   </div>
 
@@ -150,7 +146,7 @@
 <script src="js/data.js?v=15"></script>
 <script src="js/engine.js?v=16"></script>
 <script src="js/config.js?v=18"></script>
-<script src="js/app.js?v=29"></script>
+<script src="js/app.js?v=30"></script>
 
 </body>
 </html>

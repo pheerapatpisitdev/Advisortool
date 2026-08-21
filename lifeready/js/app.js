@@ -1,6 +1,6 @@
 // LifeReady — UI logic: build form, recalc, render, two-page flow. Uses window.DATA/CV/LR + config.js globals.
 function segBtn(v,label,on){ return '<button type="button" role="radio" data-v="'+v+'" aria-checked="'+(on?'true':'false')+'" class="'+(on?'on':'')+'">'+label+'</button>'; }
-function planShort(th){ return th.replace(/^ชำระเบี้ย\s*/,'').replace(/\s*Package$/,''); }
+function planShort(th){ return th.replace(/^ชำระเบี้ย\s*/,'').replace(/^ครบอายุ\s*/,'ถึง ').replace(/\s*Package$/,''); }
 function buildSelects(){
   var ag=$('age'); if(ag){ var ao=''; for(var a=0;a<=80;a++){ ao+='<option value="'+a+'"'+(a===35?' selected':'')+'>'+a+'</option>'; } ag.innerHTML=ao; }
   var modeOrder=['รายเดือน','ราย 6 เดือน','รายปี'];

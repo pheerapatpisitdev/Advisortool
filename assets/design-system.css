@@ -121,18 +121,16 @@ body.az-unified [role="tablist"] .tab-btn[aria-selected="true"] {
 }
 body.az-unified [role="tablist"] .tab-btn:focus-visible { outline: 3px solid rgba(17,17,17,.24); outline-offset: 1px; }
 
-/* Group Insurance's in-app navigation is a sub-navigation, not the global header. */
-body.az-unified #app aside {
-  background: #fff !important; border-right: 1px solid var(--az-line) !important;
-}
+/* Group Insurance's in-app navigation is a sub-navigation, not the global header.
+   NOTE: a light-theme restyle used to live here (aside{background:#fff} + muted-gray
+   link colour). It only ever reached the <aside> element — the surfaces you actually
+   see are the inner wrapper, header and <nav>, which group-insurance/app.js paints
+   teal via inline styles. The gray text therefore landed on teal at 1.15:1 contrast
+   and the labels were unreadable. The page keeps its own teal palette; only the
+   shared shape/spacing below is enforced. */
 body.az-unified #app aside nav a,
 body.az-unified #app aside nav button {
-  color: var(--az-muted) !important; border-radius: 8px !important; font-family: inherit;
-}
-body.az-unified #app aside nav a:hover,
-body.az-unified #app aside nav button:hover,
-body.az-unified #app aside nav a[aria-current="page"] {
-  color: var(--az-ink-strong) !important; background: var(--az-soft) !important;
+  border-radius: 8px !important; font-family: inherit;
 }
 body.az-unified #app main > header { background: #fff !important; border-bottom: 1px solid var(--az-line) !important; }
 body.az-unified #app [data-opensidebar] { background: var(--az-ink-strong) !important; color: #fff !important; }

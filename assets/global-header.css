@@ -2,7 +2,7 @@
    Light Minimal topbar: white bar, official logo, hairline bottom border.
    Self-contained (opaque white) so it looks right on any page background. */
 @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@500;600;700&display=swap');
-@import url('./design-system.css?v=3');
+@import url('./design-system.css?v=4');
 
 :root { --az-header-h: 64px; }
 

@@ -374,3 +374,57 @@ table{width:100%;border-collapse:collapse;font-size:13.5px}
 
   .az-disclaimer{font-size:9px;margin-top:8px;line-height:1.5}
 }
+
+/* ===== หน้าคำนวณ (input) — เลย์เอาต์ 2 คอลัมน์แบบกระชับ =====
+   ซ้าย: ข้อมูล+สัญญาหลัก (sticky, ไม่ต้องเลื่อนกลับ) · ขวา: ตารางสัญญาเพิ่มเติม
+   ทุกกฎอยู่ใต้ .lr-input-grid เพื่อไม่ให้กระทบหน้าผลการคำนวณ (page-result) */
+.az-steps{margin-top:16px;margin-bottom:14px}
+.az-steps.az-wrap{padding-bottom:0}   /* theme.css ใส่ padding-bottom:80px ให้ทุก .az-wrap */
+#page-input{padding-bottom:26px}
+.lr-case-summary{padding-bottom:12px;margin-bottom:18px;font-size:15px}
+
+.lr-input-grid{display:grid;grid-template-columns:minmax(0,380px) minmax(0,1fr);gap:24px;align-items:start}
+.lr-col-main{position:sticky;top:14px}
+.lr-input-grid .az-card{margin-bottom:0}
+.lr-panel{background:#fff;border:1px solid var(--line);padding:16px 18px 18px}
+.lr-panel .az-card__h{padding-bottom:9px}
+.lr-panel .az-card__h h2{font-size:17px;font-weight:700;color:var(--teal)}
+.lr-panel .az-card__b{padding-top:14px}
+
+/* ฟอร์มซ้าย: ลดความสูงช่องกรอกและระยะห่างลงจากเดิม ~25% */
+.lr-input-grid .az-field{margin-bottom:14px}
+.lr-input-grid .az-field>label{font-size:13px;color:#444;margin-bottom:6px}
+.lr-input-grid .az-grid2{gap:0 14px}
+.az-theme .lr-input-grid input[type=text],
+.az-theme .lr-input-grid input[type=number],
+.az-theme .lr-input-grid select{min-height:46px;padding:10px 12px;font-size:16px}
+.lr-input-grid #mainSA,.lr-input-grid #mainPrem{font-size:19px}
+.lr-input-grid .az-seg button{min-height:42px;padding:9px 6px;font-size:14px;line-height:1.25}
+.lr-input-grid #planSeg button{font-size:13.5px;padding:9px 4px}
+/* ทุนประกัน ⇄ เบี้ย/งวด: ในคอลัมน์แคบวางซ้อนกัน คั่นด้วยบรรทัดบอกทิศทางแทนกล่องเดิม */
+.lr-input-grid .lr-calc-pair{grid-template-columns:1fr;gap:0}
+.lr-input-grid .lr-calc-pair .az-field{margin-bottom:0}
+.lr-input-grid .lr-calc-bridge{height:auto;padding:6px 0 8px;border:0;justify-content:flex-start;font-size:11.5px}
+.lr-input-grid #mainNote{margin-top:14px;padding-top:10px;font-size:12px;line-height:1.5}
+
+/* คอลัมน์ขวา: ตารางสัญญาเพิ่มเติมเต็มความสูง ไม่ต้องมีการ์ดครอบซ้อน */
+.lr-input-grid .lr-riders-card .az-card__b{padding-top:12px}
+.lr-input-grid .lr-riders-card .riders th:nth-child(3){width:210px}
+.lr-input-grid .lr-riders-note{margin-top:8px}
+
+.calc-bar{margin-top:18px}
+
+@media(max-width:900px){
+  .lr-input-grid{grid-template-columns:1fr;gap:18px}
+  .lr-col-main{position:static;top:auto}
+  .lr-input-grid .lr-calc-pair{grid-template-columns:1fr 1fr;gap:0 16px;align-items:end}
+  /* จอกว้างพอให้สองช่องอยู่ข้างกัน — ย้ายคำอธิบายไปเป็นบรรทัดใต้ทั้งคู่ */
+  .lr-input-grid .lr-calc-bridge{grid-column:1/-1;order:3;padding:7px 0 0}
+  .lr-input-grid .lr-riders-card .riders th:nth-child(3){width:40%}
+}
+@media(max-width:560px){
+  .lr-panel{padding:14px 14px 16px}
+  .lr-input-grid .lr-calc-pair{grid-template-columns:1fr}
+  .lr-input-grid .lr-calc-bridge{order:0;padding:6px 0 8px}
+  .lr-input-grid .lr-riders-card .riders th:nth-child(3){width:42%}
+}
